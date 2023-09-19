@@ -1,8 +1,8 @@
 import { products } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
+import { TAKE } from "constants/products";
 
-const TAKE = 9;
 export default function Products() {
   const [skip, setSkip] = useState(0);
   const [products, setProducts] = useState<products[]>([]);
@@ -35,7 +35,7 @@ export default function Products() {
                 alt={item.name}
                 src={item.image_url ?? ""}
                 width={300}
-                height={200}
+                height={300}
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNcVg8AAdEBJz4pG4wAAAAASUVORK5CYII="
               />

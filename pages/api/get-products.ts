@@ -3,11 +3,23 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function getProducts(skip: number, take: number) {
+async function getProducts(skip: number, take: number, category: number) {
+  const where =
+    category && category !== -1
+      ? {
+          where: {
+            category_id: category,
+          },
+        }
+      : undefined;
   try {
     const response = await prisma.products.findMany({
       skip: skip,
       take: take,
+      ...where,
+      orderBy: {
+        name: "asc",
+      },
     });
     console.log(response);
     return response;
@@ -25,14 +37,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { skip, take } = req.query;
+  const { skip, take, category } = req.query;
   if (skip == null || take == null) {
     res.status(400).json({ message: "no skip of take" });
     return;
   }
 
   try {
-    const products = await getProducts(Number(skip), Number(take));
+    const products = await getProducts(
+      Number(skip),
+      Number(take),
+      Number(category)
+    );
     res.status(200).json({ items: products, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

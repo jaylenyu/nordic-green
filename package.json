@@ -10,8 +10,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.14.10",
     "@prisma/client": "^4.1.0",
     "axios": "^1.5.0",
     "draft-js": "^0.11.7",
@@ -23,21 +24,22 @@
   },
   "devDependencies": {
     "@types/draft-js": "^0.11.9",
-    "@types/node": "18.0.6",
+    "@types/node": "^20.6.2",
     "@types/react": "18.0.15",
     "@types/react-dom": "18.0.6",
     "@types/react-draft-wysiwyg": "^1.13.4",
-    "@types/react-image-gallery": "^1.0.5",
     "autoprefixer": "^10.4.7",
     "eslint": "8.20.0",
     "eslint-config-next": "12.2.2",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "next-sitemap": "^3.1.15",
-    "postcss": "^8.4.14",
+    "postcss": "^8.4.30",
+    "postcss-simple-vars": "^7.0.1",
     "prettier": "^2.7.1",
     "prisma": "^4.1.0",
     "tailwindcss": "^3.1.6",
+    "ts-node": "^10.9.1",
     "typescript": "4.7.4"
   },
   "lint-staged": {

@@ -97,6 +97,8 @@ export default function Products() {
         .then(() => {
           alert('Success')
         })
+    } else {
+      alert('Failed')
     }
   }
   return (

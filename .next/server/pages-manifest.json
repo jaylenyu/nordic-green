@@ -2,8 +2,6 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/products/[id]/edit": "pages/products/[id]/edit.js",
-  "/api/get-product": "pages/api/get-product.js",
-  "/products/[id]": "pages/products/[id].js",
-  "/api/update-product": "pages/api/update-product.js"
+  "/api/get-products": "pages/api/get-products.js",
+  "/api/get-products-count": "pages/api/get-products-count.js"
 }

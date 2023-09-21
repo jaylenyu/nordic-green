@@ -1,8 +1,10 @@
 import { categories, products } from "@prisma/client";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Image from "next/image";
-import { CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space } from "antd";
+import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
+import { Pagination, Select, Space, Input } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import useDebounce from "hooks/useDebounce";
 
 export default function Products() {
   const [products, setProducts] = useState<products[]>([]);
@@ -11,6 +13,8 @@ export default function Products() {
   const [activePage, setPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const [selectedCategory, setSelectedCategory] = useState<string>();
+  const [searchValue, setSearchValue] = useState<string>("");
+  const debounceSearchValue = useDebounce<string>(searchValue);
 
   useEffect(() => {
     fetch("/api/get-categories")
@@ -19,19 +23,21 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    fetch(`/api/get-products-count?category=${selectedCategory}`)
+    fetch(
+      `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`
+    )
       .then((res) => res.json())
       .then((data) => setTotal(Math.ceil(data.items / TAKE)));
-  }, [selectedCategory]);
+  }, [selectedCategory, debounceSearchValue]);
 
   useEffect(() => {
     const skip = TAKE * (activePage - 1);
     fetch(
-      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}`
+      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`
     )
       .then((res) => res.json())
       .then((data) => setProducts(data.items));
-  }, [activePage, selectedCategory, selectedFilter]);
+  }, [activePage, selectedCategory, selectedFilter, debounceSearchValue]);
 
   const handleCategory = (categoryName: string) => {
     if (categoryName === "ALL") {
@@ -50,26 +56,34 @@ export default function Products() {
     setPage(1);
   };
 
+  const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchValue(e.target.value);
+  };
+
   return (
     <div className="flex flex-col items-center p-32">
+      <div>
+        <Input
+          className="relative w-96 mb-10"
+          placeholder="제품명 검색"
+          value={searchValue}
+          size="large"
+          onChange={handleSearchInput}
+          suffix={<SearchOutlined />}
+        />
+      </div>
       <div className="flex gap-10 mb-10">
         <Space>
           <Select
+            className="w-32"
             defaultValue={FILTERS[0].value}
-            style={{ width: 120 }}
             onChange={handleFilterChange}
             options={FILTERS.map(({ label, value }) => ({ label, value }))}
           />
         </Space>
-        <button className="border" onClick={() => handleCategory("ALL")}>
-          ALL
-        </button>
+        <button onClick={() => handleCategory("ALL")}>ALL</button>
         {CATEGORY_MAP.map((categoryName, index) => (
-          <button
-            className="border"
-            onClick={() => handleCategory(categoryName)}
-            key={index}
-          >
+          <button onClick={() => handleCategory(categoryName)} key={index}>
             {categoryName}
           </button>
         ))}
@@ -84,7 +98,7 @@ export default function Products() {
               width={320}
               height={320}
               placeholder="blur"
-              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNcVg8AAdEBJz4pG4wAAAAASUVORK5CYII="
+              blurDataURL={BLUR_IMAGE}
             />
             <div>
               <div className="h-12">{item.name}</div>

@@ -1,15 +1,16 @@
 import { categories, products } from "@prisma/client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import Pagination from "@mui/material/Pagination";
-import { CATEGORY_MAP, TAKE } from "constants/products";
+import { CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
+import { Pagination, Select, Space } from "antd";
 
 export default function Products() {
   const [products, setProducts] = useState<products[]>([]);
   const [total, setTotal] = useState(0);
   const [categories, setCategories] = useState<categories[]>([]);
   const [activePage, setPage] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState<string>("-1");
+  const [selectedFilter, setSelectedFilter] = useState<string>("name");
+  const [selectedCategory, setSelectedCategory] = useState<string>();
 
   useEffect(() => {
     fetch("/api/get-categories")
@@ -20,20 +21,17 @@ export default function Products() {
   useEffect(() => {
     fetch(`/api/get-products-count?category=${selectedCategory}`)
       .then((res) => res.json())
-      .then((data) => {
-        setTotal(Math.ceil(data.items / TAKE));
-        console.log(data);
-      });
+      .then((data) => setTotal(Math.ceil(data.items / TAKE)));
   }, [selectedCategory]);
 
   useEffect(() => {
     const skip = TAKE * (activePage - 1);
     fetch(
-      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}`
+      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}`
     )
       .then((res) => res.json())
       .then((data) => setProducts(data.items));
-  }, [activePage, selectedCategory]);
+  }, [activePage, selectedCategory, selectedFilter]);
 
   const handleCategory = (categoryName: string) => {
     if (categoryName === "ALL") {
@@ -44,13 +42,28 @@ export default function Products() {
         setSelectedCategory((categoryIndex + 1).toString());
       }
     }
+    setPage(1);
   };
-  console.log(products);
+
+  const handleFilterChange = (value: string) => {
+    setSelectedFilter(value);
+    setPage(1);
+  };
 
   return (
     <div className="flex flex-col items-center p-32">
       <div className="flex gap-10 mb-10">
-        <button onClick={() => handleCategory("ALL")}>ALL</button>
+        <Space>
+          <Select
+            defaultValue={FILTERS[0].value}
+            style={{ width: 120 }}
+            onChange={handleFilterChange}
+            options={FILTERS.map(({ label, value }) => ({ label, value }))}
+          />
+        </Space>
+        <button className="border" onClick={() => handleCategory("ALL")}>
+          ALL
+        </button>
         {CATEGORY_MAP.map((categoryName, index) => (
           <button
             className="border"
@@ -62,7 +75,7 @@ export default function Products() {
         ))}
       </div>
       <div className="grid grid-cols-3 gap-4 justify-items-center w-full">
-        {products.map((item) => (
+        {products?.map((item) => (
           <div key={item.id} className="max-w-xs border">
             <Image
               className="rounded"
@@ -84,9 +97,11 @@ export default function Products() {
         ))}
       </div>
       <Pagination
-        count={total}
-        page={activePage}
-        onChange={(_, value) => setPage(value)}
+        total={total}
+        pageSize={1}
+        defaultCurrent={1}
+        current={activePage}
+        onChange={(value) => setPage(value)}
       />
     </div>
   );

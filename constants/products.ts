@@ -1,3 +1,6 @@
+export const BLUR_IMAGE =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNcVg8AAdEBJz4pG4wAAAAASUVORK5CYII=";
+
 export const CATEGORY_MAP = ["Plants", "Vase", "GrowingAccessories"];
 
 export const TAKE = 9;

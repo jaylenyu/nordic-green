@@ -1,43 +1,48 @@
-import { categories, products } from "@prisma/client";
-import { ChangeEvent, useEffect, useState } from "react";
-import Image from "next/image";
+import { products } from "@prisma/client";
+import { ChangeEvent, useState } from "react";
 import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
 import { Pagination, Select, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
+import Image from "next/image";
 
 export default function Products() {
-  const [products, setProducts] = useState<products[]>([]);
-  const [total, setTotal] = useState(0);
-  const [categories, setCategories] = useState<categories[]>([]);
   const [activePage, setPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const [selectedCategory, setSelectedCategory] = useState<string>();
   const [searchValue, setSearchValue] = useState<string>("");
   const debounceSearchValue = useDebounce<string>(searchValue);
+  const skip = TAKE * (activePage - 1);
 
-  useEffect(() => {
-    fetch("/api/get-categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.items));
-  }, []);
+  const { data: total } = useQuery(
+    [
+      `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`,
+    ],
+    () =>
+      fetch(
+        `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`
+      )
+        .then((res) => res.json())
+        .then((data) => Math.ceil(data.items / TAKE))
+  );
 
-  useEffect(() => {
-    fetch(
-      `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`
-    )
-      .then((res) => res.json())
-      .then((data) => setTotal(Math.ceil(data.items / TAKE)));
-  }, [selectedCategory, debounceSearchValue]);
-
-  useEffect(() => {
-    const skip = TAKE * (activePage - 1);
-    fetch(
-      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`
-    )
-      .then((res) => res.json())
-      .then((data) => setProducts(data.items));
-  }, [activePage, selectedCategory, selectedFilter, debounceSearchValue]);
+  const { data: products } = useQuery<
+    { items: products[] },
+    unknown,
+    products[]
+  >(
+    [
+      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`,
+    ],
+    () =>
+      fetch(
+        `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`
+      ).then((res) => res.json()),
+    {
+      select: (data) => data.items,
+    }
+  );
 
   const handleCategory = (categoryName: string) => {
     if (categoryName === "ALL") {
@@ -81,12 +86,14 @@ export default function Products() {
             options={FILTERS.map(({ label, value }) => ({ label, value }))}
           />
         </Space>
-        <button onClick={() => handleCategory("ALL")}>ALL</button>
-        {CATEGORY_MAP.map((categoryName, index) => (
-          <button onClick={() => handleCategory(categoryName)} key={index}>
-            {categoryName}
-          </button>
-        ))}
+        <div>
+          <button onClick={() => handleCategory("ALL")}>ALL</button>
+          {CATEGORY_MAP.map((categoryName, index) => (
+            <button onClick={() => handleCategory(categoryName)} key={index}>
+              {categoryName}
+            </button>
+          ))}
+        </div>
       </div>
       <div className="grid grid-cols-3 gap-4 justify-items-center w-full">
         {products?.map((item) => (

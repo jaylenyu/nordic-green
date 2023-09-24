@@ -83,5 +83,32 @@ model VerificationToken {
 model WishList {
   id Int @id @default(autoincrement())
   userId String @unique
-  productIds String
+  productIds String?
+}
+
+model Cart {
+  id Int @id @default(autoincrement())
+  userId String
+  productId Int
+  quantity Int
+  amount Int
+}
+
+model OrderItem {
+  id Int @id @default(autoincrement())
+  productId Int
+  quantity Int
+  price Int
+  amount Int
+}
+
+model Orders {
+  id Int @id @default(autoincrement())
+  userId String
+  orderItemIds String
+  receiver String?
+  address String?
+  phoneNumber String?
+  createAt DateTime @default(now())
+  status Int
 }

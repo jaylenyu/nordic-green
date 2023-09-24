@@ -6,8 +6,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function Products() {
+  const router = useRouter();
   const [activePage, setPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const [selectedCategory, setSelectedCategory] = useState<string>();
@@ -97,7 +99,11 @@ export default function Products() {
       </div>
       <div className="grid grid-cols-3 gap-4 justify-items-center w-full">
         {products?.map((item) => (
-          <div key={item.id} className="max-w-xs border">
+          <div
+            key={item.id}
+            className="max-w-xs border"
+            onClick={() => router.push(`/products/${item.id}`)}
+          >
             <Image
               className="rounded"
               alt={item.name}

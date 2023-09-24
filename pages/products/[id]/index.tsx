@@ -1,5 +1,5 @@
 import CustomEditor from "@components/Editor";
-import { products } from "@prisma/client";
+import { Cart, products } from "@prisma/client";
 import axios from "axios";
 import { format } from "date-fns";
 import { convertFromRaw, EditorState } from "draft-js";
@@ -10,6 +10,8 @@ import Carousel from "nuka-carousel";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
+import CountControl from "@components/CountControl";
+import { CART_QUERY_KEY } from "pages/cart";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -36,6 +38,7 @@ export default function Products(props: {
   product: products & { images: string[] };
 }) {
   const [index, setIndex] = useState(0);
+  const [quantity, setQuantity] = useState<number>();
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -98,6 +101,47 @@ export default function Products(props: {
     }
   );
 
+  const { mutate: addCart } = useMutation<
+    unknown,
+    unknown,
+    Omit<Cart, "id" | "userId">,
+    any
+  >(
+    async (item) => {
+      try {
+        const { data } = await axios.post("/api/add-cart", {
+          item,
+        });
+        return data.items;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    {
+      onMutate: () => {
+        queryClient.invalidateQueries([CART_QUERY_KEY]);
+      },
+      onSuccess: () => {
+        router.push("/cart");
+      },
+    }
+  );
+
+  const validate = (type: "cart" | "order") => {
+    if (quantity == null) {
+      alert("최소 수량을 입력하세요.");
+      return;
+    }
+    if (type == "cart") {
+      addCart({
+        productId: product.id,
+        quantity: quantity,
+        amount: product.price * quantity,
+      });
+    }
+  };
+
   const product = props.product;
 
   const isWished =
@@ -148,6 +192,25 @@ export default function Products(props: {
           <div>제품명: {product.name}</div>
           <div>제품 가격: {product.price.toLocaleString()} 원</div>
           <div>{wishlist}</div>
+
+          <div>
+            <span>수량 : </span>
+            <CountControl value={quantity} setValue={setQuantity} />
+          </div>
+          <button
+            type="button"
+            className="w-20 border hover:bg-slate-400"
+            onClick={() => {
+              if (session == null) {
+                alert("로그인 하세요.");
+                router.push("/auth/login");
+                return;
+              }
+              validate("cart");
+            }}
+          >
+            장바구니
+          </button>
           <button
             type="button"
             className="w-20 border hover:bg-slate-400"

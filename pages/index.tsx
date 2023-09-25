@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Home() {
   const router = useRouter();
@@ -16,34 +17,19 @@ export default function Home() {
   const [searchValue, setSearchValue] = useState<string>("");
   const debounceSearchValue = useDebounce<string>(searchValue);
   const skip = TAKE * (activePage - 1);
+  const TOTAL_QUERY_KEY = `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
+  const PRODUCTS_QUERY_KEY = `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
 
-  const { data: total } = useQuery(
-    [
-      `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`,
-    ],
-    () =>
-      fetch(
-        `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`
-      )
-        .then((res) => res.json())
-        .then((data) => Math.ceil(data.items / TAKE))
+  const { data: total } = useQuery([TOTAL_QUERY_KEY], () =>
+    axios.get(TOTAL_QUERY_KEY).then((res) => Math.ceil(res.data.items / TAKE))
   );
 
   const { data: products } = useQuery<
     { items: products[] },
     unknown,
     products[]
-  >(
-    [
-      `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`,
-    ],
-    () =>
-      fetch(
-        `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`
-      ).then((res) => res.json()),
-    {
-      select: (data) => data.items,
-    }
+  >([PRODUCTS_QUERY_KEY], () =>
+    axios.get(PRODUCTS_QUERY_KEY).then((res) => res.data.items)
   );
 
   const handleCategory = (categoryName: string) => {

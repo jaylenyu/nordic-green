@@ -1,7 +1,7 @@
 import { products } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { TAKE } from "constants/products";
+import { BLUR_IMAGE, TAKE } from "constants/products";
 
 export default function Products() {
   const [skip, setSkip] = useState(0);
@@ -37,7 +37,7 @@ export default function Products() {
                 width={300}
                 height={300}
                 placeholder="blur"
-                blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNcVg8AAdEBJz4pG4wAAAAASUVORK5CYII="
+                blurDataURL={BLUR_IMAGE}
               />
               <div className="flex">
                 <span>{item.name}</span>

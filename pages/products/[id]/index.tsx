@@ -1,21 +1,30 @@
-import CustomEditor from "@components/Editor";
-import { Cart, products } from "@prisma/client";
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
+import Carousel from "nuka-carousel";
+import { GetServerSidePropsContext } from "next";
+import { useSession } from "next-auth/react";
 import axios from "axios";
 import { format } from "date-fns";
 import { convertFromRaw, EditorState } from "draft-js";
-import { GetServerSidePropsContext } from "next";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import Carousel from "nuka-carousel";
-import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { Cart, OrderItem, products } from "@prisma/client";
+import CustomEditor from "@components/Editor";
 import CountControl from "@components/CountControl";
-import { CART_QUERY_KEY } from "pages/cart";
+import {
+  BASE_URL,
+  CART_ADD_QUERY_KEY,
+  CART_GET_QUERY_KEY,
+  ORDER_ADD_QUERY_KEY,
+  ORDER_GET_QUERY_KEY,
+  PRODUCT_API_PATH,
+  WISHLIST_QUERY_KEY,
+  WISHLIST_UPDATE_QUERY_KEY,
+} from "api";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const response = await axios.get(`http://localhost:3000/api/get-product`, {
+    const response = await axios.get(`${BASE_URL}${PRODUCT_API_PATH}`, {
       params: { id: context.params?.id },
     });
 
@@ -30,9 +39,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     console.error(error);
   }
 }
-
-const WISHLIST_QUERY_KEY = "/api/get-wishlist";
-const WISHLIST_UPDATE_QUERY_KEY = "/api/update-wishlist";
 
 export default function Products(props: {
   product: products & { images: string[] };
@@ -109,7 +115,7 @@ export default function Products(props: {
   >(
     async (item) => {
       try {
-        const { data } = await axios.post("/api/add-cart", {
+        const { data } = await axios.post(CART_ADD_QUERY_KEY, {
           item,
         });
         return data.items;
@@ -120,10 +126,37 @@ export default function Products(props: {
     },
     {
       onMutate: () => {
-        queryClient.invalidateQueries([CART_QUERY_KEY]);
+        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
       },
       onSuccess: () => {
         router.push("/cart");
+      },
+    }
+  );
+
+  const { mutate: addOrder } = useMutation<
+    unknown,
+    unknown,
+    Omit<OrderItem, "id">[],
+    any
+  >(
+    async (items) => {
+      try {
+        const { data } = await axios.post(ORDER_ADD_QUERY_KEY, {
+          items,
+        });
+        return data.items;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    {
+      onMutate: () => {
+        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+      },
+      onSuccess: () => {
+        router.push("/mypage");
       },
     }
   );
@@ -140,6 +173,16 @@ export default function Products(props: {
         amount: product.price * quantity,
       });
     }
+    if (type == "order") {
+      addOrder([
+        {
+          productId: product.id,
+          quantity: quantity,
+          amount: product.price * quantity,
+          price: product.price,
+        },
+      ]);
+    }
   };
 
   const product = props.product;
@@ -149,8 +192,6 @@ export default function Products(props: {
       ? wishlist.includes(productId)
       : false;
 
-  console.log(wishlist);
-
   return (
     <>
       {product != null && productId != null ? (
@@ -159,7 +200,6 @@ export default function Products(props: {
             <div>
               <Carousel
                 animation="fade"
-                // autoplay
                 withoutControls
                 wrapAround
                 speed={10}
@@ -172,7 +212,6 @@ export default function Products(props: {
                     alt="image"
                     width={300}
                     height={200}
-                    // layout="responsive"
                   />
                 ))}
               </Carousel>
@@ -228,6 +267,20 @@ export default function Products(props: {
           <div>
             등록일: {format(new Date(product.createAt), "yyyy년 M월 d일")}
           </div>
+          <button
+            type="button"
+            className="w-20 border hover:bg-slate-400"
+            onClick={() => {
+              if (session == null) {
+                alert("로그인 하세요.");
+                router.push("/auth/login");
+                return;
+              }
+              validate("order");
+            }}
+          >
+            결제하기
+          </button>
         </>
       ) : (
         <div>loading...</div>

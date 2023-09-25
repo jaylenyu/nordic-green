@@ -7,7 +7,6 @@ interface CountControlProps {
 
 export default function CountControl({ value, setValue }: CountControlProps) {
   const onChange = (value: number | null) => {
-    console.log("changed", value);
     setValue(value || undefined);
   };
 

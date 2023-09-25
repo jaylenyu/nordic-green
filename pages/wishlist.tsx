@@ -1,5 +1,7 @@
 import { products } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
+import { WISHLIST_GET_QUERY_KEY } from "api";
+import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -11,12 +13,8 @@ export default function Wishlist() {
     { items: products[] },
     unknown,
     products[]
-  >(
-    ["/api/get-wishlists"],
-    () => fetch("/api/get-wishlists").then((res) => res.json()),
-    {
-      select: (data) => data.items,
-    }
+  >([WISHLIST_GET_QUERY_KEY], () =>
+    axios.get(WISHLIST_GET_QUERY_KEY).then((res) => res.data.items)
   );
 
   return (

@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { getOrderBy } from "constants/products";
+import { getOrderBy } from "constants/order";
 
 const prisma = new PrismaClient();
 

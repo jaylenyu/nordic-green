@@ -1,41 +1,63 @@
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 import CountControl from "@components/CountControl";
-import { Cart, products } from "@prisma/client";
+import { Cart, OrderItem, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useMemo, useState } from "react";
-
-interface CartItem extends Cart {
-  name: string;
-  price: number;
-  image_url: string;
-}
-
-export const CART_QUERY_KEY = "/api/get-cart";
+import {
+  CART_DELETE_QUERY_KEY,
+  CART_GET_QUERY_KEY,
+  CART_RECOMMENDED_QUERY_KEY,
+  CART_UPDATE_QUERY_KEY,
+  ORDER_ADD_QUERY_KEY,
+  ORDER_GET_QUERY_KEY,
+} from "api";
+import { CartItem } from "types/type";
 
 export default function CartPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { data } = useQuery<{ items: CartItem[] }, unknown, CartItem[]>(
-    [CART_QUERY_KEY],
-    () =>
-      fetch(CART_QUERY_KEY)
-        .then((res) => res.json())
-        .then((data) => data.items)
+    [CART_GET_QUERY_KEY],
+    () => axios.get(CART_GET_QUERY_KEY).then((res) => res.data.items)
   );
 
   const { data: products } = useQuery<
     { items: products[] },
     unknown,
     products[]
+  >([CART_RECOMMENDED_QUERY_KEY], () =>
+    axios.get(CART_RECOMMENDED_QUERY_KEY).then((res) => res.data.items)
+  );
+
+  const { mutate: addOrder } = useMutation<
+    unknown,
+    unknown,
+    Omit<OrderItem, "id">[],
+    any
   >(
-    ["/api/get-products?skip=0&take=3"],
-    () => fetch("/api/get-products?skip=0&take=3").then((res) => res.json()),
+    async (items) => {
+      try {
+        const { data } = await axios.post(ORDER_ADD_QUERY_KEY, {
+          items,
+        });
+        return data.items;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
     {
-      select: (data) => data.items,
+      onMutate: () => {
+        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+      },
+      onSuccess: () => {
+        router.push("/mypage");
+      },
     }
   );
 
@@ -50,6 +72,17 @@ export default function CartPage() {
 
   const handleOrder = () => {
     console.log({ data }, "주문오더접수");
+    if (data == null) {
+      return;
+    }
+    addOrder(
+      data.map((cart) => ({
+        productId: cart.productId,
+        price: cart.price,
+        amount: cart.amount,
+        quantity: cart.quantity,
+      }))
+    );
   };
 
   return (
@@ -136,7 +169,7 @@ const Item = (props: CartItem) => {
   const { mutate: updateCart } = useMutation<unknown, unknown, Cart, any>(
     async (item) => {
       try {
-        const { data } = await axios.post("api/update-cart", {
+        const { data } = await axios.post(CART_UPDATE_QUERY_KEY, {
           item,
         });
         console.log("update", data.item);
@@ -148,20 +181,20 @@ const Item = (props: CartItem) => {
     },
     {
       onMutate: async (item) => {
-        await queryClient.cancelQueries([CART_QUERY_KEY]);
+        await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
 
-        const prev = queryClient.getQueriesData([CART_QUERY_KEY]);
+        const prev = queryClient.getQueryData([CART_GET_QUERY_KEY]);
 
-        queryClient.setQueryData<Cart[]>([CART_QUERY_KEY], (old) =>
+        queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
           old?.filter((category) => category.id !== item.id).concat(item)
         );
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([CART_QUERY_KEY], context.prev);
+        queryClient.setQueryData([CART_GET_QUERY_KEY], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([CART_QUERY_KEY]);
+        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
       },
     }
   );
@@ -169,7 +202,7 @@ const Item = (props: CartItem) => {
   const { mutate: deleteCart } = useMutation<unknown, unknown, number, any>(
     async (id) => {
       try {
-        const { data } = await axios.post("api/delete-cart", {
+        const { data } = await axios.post(CART_DELETE_QUERY_KEY, {
           id,
         });
         return data.items;
@@ -180,20 +213,20 @@ const Item = (props: CartItem) => {
     },
     {
       onMutate: async (id) => {
-        await queryClient.cancelQueries([CART_QUERY_KEY]);
+        await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
 
-        const prev = queryClient.getQueriesData([CART_QUERY_KEY]);
+        const prev = queryClient.getQueriesData([CART_GET_QUERY_KEY]);
 
-        queryClient.setQueryData<Cart[]>([CART_QUERY_KEY], (old) =>
+        queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
           old?.filter((category) => category.id !== id)
         );
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([CART_QUERY_KEY], context.prev);
+        queryClient.setQueryData([CART_GET_QUERY_KEY], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([CART_QUERY_KEY]);
+        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
       },
     }
   );

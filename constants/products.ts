@@ -10,13 +10,3 @@ export const FILTERS = [
   { label: "가격 낮은 순", value: "cheap" },
   { label: "가격 높은 순", value: "expensive" },
 ];
-
-export const getOrderBy = (orderBy?: string) => {
-  return orderBy
-    ? orderBy === "name"
-      ? { orderBy: { name: "asc" } }
-      : orderBy === "expensive"
-      ? { orderBy: { price: "desc" } }
-      : { orderBy: { price: "asc" } }
-    : undefined;
-};

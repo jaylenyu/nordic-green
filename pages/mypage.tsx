@@ -2,6 +2,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import CountControl from "@components/CountControl";
 import { Cart } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "antd";
 import { ORDER_GET_QUERY_KEY, ORDER_UPDATE_QUERY_KEY } from "api";
 import axios from "axios";
 import { ORDER_STATUS_MAP } from "constants/order";
@@ -113,7 +114,7 @@ const DetailItem = (props: OrderDetail) => {
       <span>
         주문일자 : {format(new Date(props.createAt), "yyyy년 M월 d일 HH:mm:ss")}
       </span>
-      <button onClick={() => updateOrderStatus(5)}>결제처리</button>
+      <Button onClick={() => updateOrderStatus(5)}>결제처리</Button>
     </div>
   );
 };
@@ -128,6 +129,10 @@ const Item = (props: OrderItemDetail & { status: number }) => {
       setAmount(quantity * Number(props.price));
     }
   }, [quantity, props.price]);
+
+  const handleComment = () => {
+    router.push(`/comment/edit?orderItemIds=${props.id}`);
+  };
 
   return (
     <div>
@@ -146,6 +151,11 @@ const Item = (props: OrderItemDetail & { status: number }) => {
         <CountControl value={quantity} setValue={setQuantity} />
       </div>
       <span>{amount.toLocaleString()}</span>
+      <div>
+        {props.status === 5 && (
+          <Button onClick={handleComment}>후기작성</Button>
+        )}
+      </div>
     </div>
   );
 };

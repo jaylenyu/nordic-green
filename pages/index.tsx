@@ -1,7 +1,7 @@
 import { products } from "@prisma/client";
 import { ChangeEvent, useState } from "react";
 import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space, Input } from "antd";
+import { Pagination, Select, Space, Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
@@ -75,11 +75,11 @@ export default function Home() {
           />
         </Space>
         <div>
-          <button onClick={() => handleCategory("ALL")}>ALL</button>
+          <Button onClick={() => handleCategory("ALL")}>ALL</Button>
           {CATEGORY_MAP.map((categoryName, index) => (
-            <button onClick={() => handleCategory(categoryName)} key={index}>
+            <Button onClick={() => handleCategory(categoryName)} key={index}>
               {categoryName}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

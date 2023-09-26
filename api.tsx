@@ -1,5 +1,6 @@
 export const BASE_URL = "http://localhost:3000";
 export const PRODUCT_API_PATH = "/api/get-product";
+export const COMMENTS_API_PATH = "/api/get-comments";
 
 export const ORDER_GET_QUERY_KEY = "/api/get-order";
 export const ORDER_UPDATE_QUERY_KEY = "/api/update-order-status";

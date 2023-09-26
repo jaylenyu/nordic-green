@@ -1,16 +1,17 @@
-import styled from '@emotion/styled'
-import { EditorState } from 'draft-js'
-import dynamic from 'next/dynamic'
-import { Dispatch, SetStateAction } from 'react'
-import { EditorProps } from 'react-draft-wysiwyg'
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css'
+import styled from "@emotion/styled";
+import { Button, Rate } from "antd";
+import { EditorState } from "draft-js";
+import dynamic from "next/dynamic";
+import { Dispatch, SetStateAction, useState } from "react";
+import { EditorProps } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 const Editor = dynamic<EditorProps>(
-  () => import('react-draft-wysiwyg').then((module) => module.Editor),
+  () => import("react-draft-wysiwyg").then((module) => module.Editor),
   {
     ssr: false,
   }
-)
+);
 
 export default function CustomEditor({
   editorState,
@@ -18,13 +19,13 @@ export default function CustomEditor({
   onSave,
   onEditorStateChange,
 }: {
-  editorState: EditorState
-  readOnly?: boolean
-  onSave?: () => void
-  onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>
+  editorState: EditorState;
+  readOnly?: boolean;
+  onSave?: () => void;
+  onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
 }) {
   return (
-    <Wrapper className='border w-1/2'>
+    <Wrapper className="border w-1/2" readOnly={readOnly}>
       <Editor
         readOnly={readOnly}
         editorState={editorState}
@@ -33,18 +34,20 @@ export default function CustomEditor({
         toolbarClassName="editorToolbar-hidden"
         editorClassName="editor-class"
         toolbar={{
-          options: ['inline', 'list', 'textAlign', 'link'],
+          options: ["inline", "list", "textAlign", "link"],
         }}
         localization={{
-          locale: 'ko',
+          locale: "ko",
         }}
         onEditorStateChange={onEditorStateChange}
       />
-      {!readOnly && <button onClick={onSave}>Save</button>}
+      {!readOnly && <Button onClick={onSave}>Save</Button>}
     </Wrapper>
-  )
+  );
 }
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<{ readOnly: boolean }>`
   padding: 16px;
-`
+  ${(props) =>
+    props.readOnly ? "" : "border: 1px solid black; border-radius: 8px"}
+`;

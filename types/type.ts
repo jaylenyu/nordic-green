@@ -1,4 +1,4 @@
-import { Cart, OrderItem, Orders } from "@prisma/client";
+import { Cart, Comment, OrderItem, Orders } from "@prisma/client";
 
 export interface OrderItemDetail extends OrderItem {
   name: string;
@@ -14,3 +14,5 @@ export interface CartItem extends Cart {
   price: number;
   image_url: string;
 }
+
+export interface CommentsItemType extends Comment, OrderItem {}

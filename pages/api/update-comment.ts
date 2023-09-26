@@ -1,31 +1,37 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { OrderItem, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { authOption } from "./auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 
 const prisma = new PrismaClient();
 
-async function getOrder(userId: string) {
+async function updateComment({
+  userId,
+  orderItemIds,
+  rate,
+  contents,
+}: {
+  userId: string;
+  orderItemIds: number;
+  rate: number;
+  contents: string;
+}) {
   try {
-    const orders = await prisma.orders.findMany({
+    const response = await prisma.comment.upsert({
       where: {
-        userId: userId,
+        orderItemIds,
+      },
+      update: {
+        contents,
+        rate,
+      },
+      create: {
+        userId,
+        orderItemIds,
+        rate,
+        contents,
       },
     });
-
-    let response = [];
-
-    for (const order of orders) {
-      let orderItems: OrderItem[] = [];
-      for (const id of order.orderItemIds
-        .split(",")
-        .map((item) => Number(item))) {
-        const res: OrderItem[] =
-          await prisma.$queryRaw`SELECT i.id, quantity, amount, i.price, name, image_url, productId FROM OrderItem as i JOIN products as p ON i.productId=p.id WHERE i.id=${id}`;
-        orderItems.push.apply(orderItems, res);
-      }
-      response.push({ ...order, orderItems });
-    }
 
     return response;
   } catch (error) {
@@ -46,12 +52,19 @@ export default async function handler(
   const session = await getServerSession(req, res, authOption);
   console.log(session);
 
+  const { orderItemIds, rate, contents } = req.body;
+
   if (session == null) {
     res.status(200).json({ items: [], message: "No session" });
     return;
   }
   try {
-    const wishlist = await getOrder(String(session.user.id));
+    const wishlist = await updateComment({
+      userId: String(session.user.id),
+      orderItemIds: orderItemIds,
+      rate: rate,
+      contents: contents,
+    });
     res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

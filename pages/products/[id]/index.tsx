@@ -15,24 +15,36 @@ import {
   BASE_URL,
   CART_ADD_QUERY_KEY,
   CART_GET_QUERY_KEY,
+  COMMENTS_API_PATH,
   ORDER_ADD_QUERY_KEY,
   ORDER_GET_QUERY_KEY,
   PRODUCT_API_PATH,
   WISHLIST_QUERY_KEY,
   WISHLIST_UPDATE_QUERY_KEY,
 } from "api";
+import { Button } from "antd";
+import { CommentsItemType } from "types/type";
+import CommentItem from "@components/CommentItem";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const response = await axios.get(`${BASE_URL}${PRODUCT_API_PATH}`, {
+    const responseProduct = await axios.get(`${BASE_URL}${PRODUCT_API_PATH}`, {
       params: { id: context.params?.id },
     });
+    const product = responseProduct.data.items;
 
-    const product = response.data.items;
+    const responseComments = await axios.get(
+      `${BASE_URL}${COMMENTS_API_PATH}`,
+      {
+        params: { productId: context.params?.id },
+      }
+    );
+    const comments = responseComments.data.items;
 
     return {
       props: {
         product: { ...product, images: [product.image_url, product.image_url] },
+        comments: comments,
       },
     };
   } catch (error) {
@@ -42,6 +54,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
 
 export default function Products(props: {
   product: products & { images: string[] };
+  comments: CommentsItemType[];
 }) {
   const [index, setIndex] = useState(0);
   const [quantity, setQuantity] = useState<number>();
@@ -226,6 +239,13 @@ export default function Products(props: {
             {editorState != null && (
               <CustomEditor editorState={editorState} readOnly />
             )}
+            <div>
+              <p>후기</p>
+              {props.comments &&
+                props.comments.map((comment, idx) => (
+                  <CommentItem key={idx} item={comment} />
+                ))}
+            </div>
           </div>
           <div>제품 카테고리: {product.category_id}</div>
           <div>제품명: {product.name}</div>
@@ -236,8 +256,7 @@ export default function Products(props: {
             <span>수량 : </span>
             <CountControl value={quantity} setValue={setQuantity} />
           </div>
-          <button
-            type="button"
+          <Button
             className="w-20 border hover:bg-slate-400"
             onClick={() => {
               if (session == null) {
@@ -249,8 +268,8 @@ export default function Products(props: {
             }}
           >
             장바구니
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             className="w-20 border hover:bg-slate-400"
             onClick={() => {
@@ -263,12 +282,11 @@ export default function Products(props: {
             }}
           >
             {isWished ? "찜함" : "찜하기"}
-          </button>
+          </Button>
           <div>
             등록일: {format(new Date(product.createAt), "yyyy년 M월 d일")}
           </div>
-          <button
-            type="button"
+          <Button
             className="w-20 border hover:bg-slate-400"
             onClick={() => {
               if (session == null) {
@@ -280,7 +298,7 @@ export default function Products(props: {
             }}
           >
             결제하기
-          </button>
+          </Button>
         </>
       ) : (
         <div>loading...</div>

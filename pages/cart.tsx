@@ -16,6 +16,7 @@ import {
   ORDER_GET_QUERY_KEY,
 } from "api";
 import { CartItem } from "types/type";
+import { Button } from "antd";
 
 export default function CartPage() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function CartPage() {
             <span>결제금액 : </span>
             <span>{amount?.toLocaleString()} 원</span>
           </div>
-          <button onClick={handleOrder}>결제하기</button>
+          <Button onClick={handleOrder}>결제하기</Button>
         </div>
       </div>
       <div>

@@ -2,6 +2,7 @@ import { products } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import { BLUR_IMAGE, TAKE } from "constants/products";
+import { Button } from "antd";
 
 export default function Products() {
   const [skip, setSkip] = useState(0);
@@ -50,12 +51,12 @@ export default function Products() {
           ))}
         </div>
       )}
-      <button
+      <Button
         className="w-full rounded mt-20 bg-slate-200 p-4"
         onClick={getProducts}
       >
         더보기
-      </button>
+      </Button>
     </div>
   );
 }

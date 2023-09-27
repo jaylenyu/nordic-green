@@ -45,4 +45,6 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
+  background-color: #fafafa;
+  color: #333;
 }

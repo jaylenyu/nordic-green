@@ -1,7 +1,7 @@
 import { products } from "@prisma/client";
 import { ChangeEvent, useState } from "react";
 import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space, Input, Button } from "antd";
+import { Pagination, Select, Space, Input, Button, Card } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
@@ -55,17 +55,26 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center p-32">
-      <div>
-        <Input
-          className="relative w-96 mb-10"
-          placeholder="제품명 검색"
-          value={searchValue}
-          size="large"
-          onChange={handleSearchInput}
-          suffix={<SearchOutlined />}
-        />
-      </div>
-      <div className="flex gap-10 mb-10">
+      <div className="flex justify-between w-full mb-20">
+        <div>
+          <Button
+            className="text-2xl h-12"
+            type="text"
+            onClick={() => handleCategory("ALL")}
+          >
+            ALL
+          </Button>
+          {CATEGORY_MAP.map((categoryName, index) => (
+            <Button
+              className="h-12 ml-10 text-2xl"
+              type="text"
+              onClick={() => handleCategory(categoryName)}
+              key={index}
+            >
+              {categoryName}
+            </Button>
+          ))}
+        </div>
         <Space>
           <Select
             className="w-32"
@@ -74,42 +83,46 @@ export default function Home() {
             options={FILTERS.map(({ label, value }) => ({ label, value }))}
           />
         </Space>
-        <div>
-          <Button onClick={() => handleCategory("ALL")}>ALL</Button>
-          {CATEGORY_MAP.map((categoryName, index) => (
-            <Button onClick={() => handleCategory(categoryName)} key={index}>
-              {categoryName}
-            </Button>
-          ))}
-        </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 justify-items-center w-full">
+      <div>
+        <Input
+          className="relative w-96 mb-20"
+          placeholder="제품명 검색"
+          value={searchValue}
+          size="large"
+          onChange={handleSearchInput}
+          suffix={<SearchOutlined />}
+        />
+      </div>
+      <div className="grid grid-cols-3 gap-10 justify-items-center w-full">
         {products?.map((item) => (
-          <div
+          <Card
+            className="w-80"
             key={item.id}
-            className="max-w-xs border"
             onClick={() => router.push(`/products/${item.id}`)}
+            hoverable
+            bordered={false}
+            cover={
+              <Image
+                alt={item.name}
+                src={item.image_url ?? ""}
+                width={320}
+                height={320}
+                placeholder="blur"
+                blurDataURL={BLUR_IMAGE}
+              />
+            }
           >
-            <Image
-              className="rounded"
-              alt={item.name}
-              src={item.image_url ?? ""}
-              width={320}
-              height={320}
-              placeholder="blur"
-              blurDataURL={BLUR_IMAGE}
-            />
-            <div>
-              <div className="h-12">{item.name}</div>
-              <div className="text-zinc-400">
-                {CATEGORY_MAP[item.category_id - 1]}
-              </div>
-              <div>{item.price.toLocaleString()}원</div>
+            <div className="h-12 w-full">{item.name}</div>
+            <div className="text-zinc-400">
+              {CATEGORY_MAP[item.category_id - 1]}
             </div>
-          </div>
+            <div>{item.price.toLocaleString()}원</div>
+          </Card>
         ))}
       </div>
       <Pagination
+        className="mt-20"
         total={total}
         pageSize={1}
         defaultCurrent={1}

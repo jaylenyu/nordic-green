@@ -9,7 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <div className="flex justify-between gap-5 h-20 bg-white px-5">
+    <div className="flex justify-between gap-5 h-20 bg-white px-5 mb-10">
       <Image
         className="hover:cursor-pointer"
         src="/Logo.png"

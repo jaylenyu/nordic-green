@@ -54,7 +54,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center p-32">
+    <div className="flex flex-col items-center px-32">
       <div className="flex justify-between w-full mb-20">
         <div>
           <Button

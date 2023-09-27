@@ -24,6 +24,8 @@ async function getWishlists(userId: string) {
           },
         },
       });
+      console.log(response);
+
       return response;
     }
     return [];

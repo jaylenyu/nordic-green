@@ -10,5 +10,13 @@ export default function CountControl({ value, setValue }: CountControlProps) {
     setValue(value || undefined);
   };
 
-  return <InputNumber min={1} max={10} value={value} onChange={onChange} />;
+  return (
+    <InputNumber
+      className="w-16"
+      min={1}
+      max={10}
+      value={value}
+      onChange={onChange}
+    />
+  );
 }

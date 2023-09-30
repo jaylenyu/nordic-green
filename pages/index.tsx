@@ -58,7 +58,7 @@ export default function Home() {
       <div className="flex justify-between w-full mb-20">
         <div>
           <Button
-            className="text-2xl h-12"
+            className="text-2xl h-12 text-green-700"
             type="text"
             onClick={() => handleCategory("ALL")}
           >
@@ -66,7 +66,7 @@ export default function Home() {
           </Button>
           {CATEGORY_MAP.map((categoryName, index) => (
             <Button
-              className="h-12 ml-10 text-2xl"
+              className="h-12 ml-10 text-2xl text-green-700	"
               type="text"
               onClick={() => handleCategory(categoryName)}
               key={index}
@@ -94,10 +94,10 @@ export default function Home() {
           suffix={<SearchOutlined />}
         />
       </div>
-      <div className="grid grid-cols-3 gap-10 justify-items-center w-full">
+      <div className="grid grid-cols-3 gap-5 justify-items-center">
         {products?.map((item) => (
           <Card
-            className="w-80"
+            className="w-full"
             key={item.id}
             onClick={() => router.push(`/products/${item.id}`)}
             hoverable
@@ -106,23 +106,28 @@ export default function Home() {
               <Image
                 alt={item.name}
                 src={item.image_url ?? ""}
-                width={320}
-                height={320}
+                width={1000}
+                height={1000}
+                objectFit="cover"
                 placeholder="blur"
                 blurDataURL={BLUR_IMAGE}
               />
             }
           >
-            <div className="h-12 w-full">{item.name}</div>
-            <div className="text-zinc-400">
-              {CATEGORY_MAP[item.category_id - 1]}
+            <div className="flex flex-col justify-between h-24">
+              <div className="w-full text-lg font-bold">{item.name}</div>
+              <div>
+                <div className="text-zinc-400">
+                  {CATEGORY_MAP[item.category_id - 1]}
+                </div>
+                <div>{item.price.toLocaleString()}원</div>
+              </div>
             </div>
-            <div>{item.price.toLocaleString()}원</div>
           </Card>
         ))}
       </div>
       <Pagination
-        className="mt-20"
+        className="my-20"
         total={total}
         pageSize={1}
         defaultCurrent={1}

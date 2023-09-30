@@ -22,9 +22,17 @@ import {
   WISHLIST_QUERY_KEY,
   WISHLIST_UPDATE_QUERY_KEY,
 } from "api";
-import { Button } from "antd";
+import { Button, Card } from "antd";
 import { CommentsItemType } from "types/type";
 import CommentItem from "@components/CommentItem";
+import { BLUR_IMAGE } from "constants/products";
+import { CustomButton } from "styles/common.styled";
+import {
+  HeartFilled,
+  HeartOutlined,
+  ShoppingCartOutlined,
+  ShoppingOutlined,
+} from "@ant-design/icons";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -57,7 +65,7 @@ export default function Products(props: {
   comments: CommentsItemType[];
 }) {
   const [index, setIndex] = useState(0);
-  const [quantity, setQuantity] = useState<number>();
+  const [quantity, setQuantity] = useState<number>(1);
   const { data: session } = useSession();
 
   const router = useRouter();
@@ -185,6 +193,7 @@ export default function Products(props: {
         quantity: quantity,
         amount: product.price * quantity,
       });
+      alert("장바구니에 등록되었습니다.");
     }
     if (type == "order") {
       addOrder([
@@ -195,6 +204,7 @@ export default function Products(props: {
           price: product.price,
         },
       ]);
+      alert("결제화면으로 이동합니다.");
     }
   };
 
@@ -205,100 +215,125 @@ export default function Products(props: {
       ? wishlist.includes(productId)
       : false;
 
+  console.log(props);
+
   return (
     <>
       {product != null && productId != null ? (
         <>
-          <div>
-            <div>
-              <Carousel
-                animation="fade"
-                withoutControls
-                wrapAround
-                speed={10}
-                slideIndex={index}
-              >
+          <div className="flex">
+            <div className="flex justify-end w-3/5">
+              <div>
                 {product.images.map((url, idx) => (
-                  <Image
-                    key={idx}
-                    src={url}
-                    alt="image"
-                    width={300}
-                    height={200}
-                  />
+                  <div className="mb-5 mr-5 hover:opacity-50 shadow-xl w-20 h-20">
+                    <Image
+                      src={url}
+                      alt="image"
+                      width={80}
+                      height={80}
+                      objectFit="cover"
+                      placeholder="blur"
+                      blurDataURL={BLUR_IMAGE}
+                      onMouseOver={() => setIndex(idx)}
+                    />
+                  </div>
                 ))}
-              </Carousel>
+              </div>
+              <div className="w-2/3">
+                <Carousel
+                  animation="fade"
+                  withoutControls
+                  wrapAround
+                  speed={10}
+                  slideIndex={index}
+                >
+                  {product.images.map((url, idx) => (
+                    <Image
+                      className="rounded-lg"
+                      key={idx}
+                      src={url}
+                      alt="image"
+                      width={500}
+                      height={500}
+                    />
+                  ))}
+                </Carousel>
+              </div>
             </div>
-            <div className="flex">
-              {product.images.map((url, idx) => (
-                <div key={idx} onClick={() => setIndex(idx)}>
-                  <Image src={url} alt="image" width={100} height={60} />
+            <div className="w-2/5 px-20 flex flex-col justify-between">
+              <div className="text-2xl">{product.name}</div>
+              <div className="text-slate-500 text-sm">
+                등록일 : {format(new Date(product.createAt), "yyyy년 M월 d일")}
+              </div>
+              {editorState != null && (
+                <div className="text-slate-500">
+                  <CustomEditor editorState={editorState} readOnly />
                 </div>
-              ))}
+              )}
+              <div className="text-lg">
+                제품 가격: {product.price.toLocaleString()} 원
+              </div>
+              <div className="flex justify-between">
+                <div>
+                  <span>수량 : </span>
+                  <CountControl value={quantity} setValue={setQuantity} />
+                </div>
+                <div>
+                  총 가격 : {(quantity * product.price).toLocaleString()} 원
+                </div>
+              </div>
+              <CustomButton
+                onClick={() => {
+                  if (session == null) {
+                    alert("로그인 하세요.");
+                    router.push("/auth/login");
+                    return;
+                  }
+                  validate("cart");
+                }}
+                icon={<ShoppingCartOutlined />}
+              >
+                장바구니
+              </CustomButton>
+              <CustomButton
+                colorReverse={true}
+                onClick={() => {
+                  if (session == null) {
+                    alert("로그인 하세요.");
+                    router.push("/auth/login");
+                    return;
+                  }
+                  mutate(productId);
+                }}
+                icon={isWished ? <HeartFilled /> : <HeartOutlined />}
+              >
+                위시리스트
+              </CustomButton>
+              <CustomButton
+                onClick={() => {
+                  if (session == null) {
+                    alert("로그인 하세요.");
+                    router.push("/auth/login");
+                    return;
+                  }
+                  validate("order");
+                }}
+                icon={<ShoppingOutlined />}
+              >
+                결제하기
+              </CustomButton>
             </div>
-            {editorState != null && (
-              <CustomEditor editorState={editorState} readOnly />
+          </div>
+          <div className="p-32">
+            <p className="text-xl font-bold mb-10">제품 후기</p>
+            {props.comments.length > 0 ? (
+              props.comments.map((comment, idx) => (
+                <CommentItem key={idx} item={comment} />
+              ))
+            ) : (
+              <div>후기가 없습니다.</div>
             )}
-            <div>
-              <p>후기</p>
-              {props.comments &&
-                props.comments.map((comment, idx) => (
-                  <CommentItem key={idx} item={comment} />
-                ))}
-            </div>
           </div>
-          <div>제품 카테고리: {product.category_id}</div>
-          <div>제품명: {product.name}</div>
-          <div>제품 가격: {product.price.toLocaleString()} 원</div>
-          <div>{wishlist}</div>
-
-          <div>
-            <span>수량 : </span>
-            <CountControl value={quantity} setValue={setQuantity} />
-          </div>
-          <Button
-            className="w-20 border hover:bg-slate-400"
-            onClick={() => {
-              if (session == null) {
-                alert("로그인 하세요.");
-                router.push("/auth/login");
-                return;
-              }
-              validate("cart");
-            }}
-          >
-            장바구니
-          </Button>
-          <Button
-            type="button"
-            className="w-20 border hover:bg-slate-400"
-            onClick={() => {
-              if (session == null) {
-                alert("로그인 하세요.");
-                router.push("/auth/login");
-                return;
-              }
-              mutate(productId);
-            }}
-          >
-            {isWished ? "찜함" : "찜하기"}
-          </Button>
-          <div>
-            등록일: {format(new Date(product.createAt), "yyyy년 M월 d일")}
-          </div>
-          <Button
-            className="w-20 border hover:bg-slate-400"
-            onClick={() => {
-              if (session == null) {
-                alert("로그인 하세요.");
-                router.push("/auth/login");
-                return;
-              }
-              validate("order");
-            }}
-          >
-            결제하기
-          </Button>
         </>
       ) : (
         <div>loading...</div>

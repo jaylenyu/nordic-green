@@ -3,6 +3,8 @@ import type { AppProps } from "next/app";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import Header from "@components/Header";
+import Footer from "@components/Footer";
+import { ConfigProvider } from "antd";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { session } = pageProps;
@@ -15,8 +17,18 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
-        <Header />
-        <Component {...pageProps} />
+        <ConfigProvider
+          theme={{
+            token: {
+              colorPrimary: "#158041",
+              colorBgContainer: "#fff",
+            },
+          }}
+        >
+          <Header />
+          <Component {...pageProps} />
+          <Footer />
+        </ConfigProvider>
       </QueryClientProvider>
     </SessionProvider>
   );

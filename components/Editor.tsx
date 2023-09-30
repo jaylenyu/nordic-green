@@ -25,17 +25,11 @@ export default function CustomEditor({
   onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
 }) {
   return (
-    <Wrapper className="border w-1/2" readOnly={readOnly}>
+    <Wrapper readOnly={readOnly}>
       <Editor
         readOnly={readOnly}
         editorState={editorState}
         toolbarHidden
-        wrapperClassName="wrapper-class"
-        toolbarClassName="editorToolbar-hidden"
-        editorClassName="editor-class"
-        toolbar={{
-          options: ["inline", "list", "textAlign", "link"],
-        }}
         localization={{
           locale: "ko",
         }}
@@ -47,7 +41,8 @@ export default function CustomEditor({
 }
 
 const Wrapper = styled.div<{ readOnly: boolean }>`
-  padding: 16px;
+  padding: 0px;
+  color: #333;
   ${(props) =>
     props.readOnly ? "" : "border: 1px solid black; border-radius: 8px"}
 `;

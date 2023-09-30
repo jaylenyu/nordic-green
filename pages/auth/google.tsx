@@ -4,8 +4,8 @@ import axios from "axios";
 
 export default function Google() {
   return (
-    <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID || ""}>
-      <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen">
+      <GoogleOAuthProvider clientId={process.env.GOOGLE_CLIENT_ID || ""}>
         <GoogleLogin
           onSuccess={async (credentialResponse) => {
             try {
@@ -20,7 +20,7 @@ export default function Google() {
             console.log("Login Failed");
           }}
         />
-      </div>
-    </GoogleOAuthProvider>
+      </GoogleOAuthProvider>
+    </div>
   );
 }

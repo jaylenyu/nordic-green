@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React from "react";
@@ -9,7 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <div className="flex justify-between gap-5 h-20 bg-white px-5 mb-10">
+    <div className="flex justify-between gap-5 h-20 bg-white px-5 mb-32">
       <Image
         className="hover:cursor-pointer"
         src="/Logo.png"
@@ -25,9 +25,11 @@ export default function Header() {
         </HeaderList>
         <HeaderList onClick={() => router.push("/cart")}>cart</HeaderList>
         <HeaderList onClick={() => router.push("/mypage")}>mypage</HeaderList>
-        <HeaderList onClick={() => router.push("/auth/login")}>
-          login
-        </HeaderList>
+        {session ? (
+          <HeaderList onClick={() => signOut()}>logout</HeaderList>
+        ) : (
+          <HeaderList onClick={() => signIn()}>login</HeaderList>
+        )}
       </ul>
     </div>
   );

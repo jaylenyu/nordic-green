@@ -206,6 +206,8 @@ const Item = (props: CartItem) => {
         const { data } = await axios.post(CART_DELETE_QUERY_KEY, {
           id,
         });
+        console.log(data);
+
         return data.items;
       } catch (error) {
         console.error(error);
@@ -233,9 +235,9 @@ const Item = (props: CartItem) => {
   );
 
   const handleItemDelete = async () => {
-    console.log(`${props.name} 삭제`);
     await deleteCart(props.id);
   };
+
   const handleItemUpdate = () => {
     if (quantity == null) {
       alert("최소 수량을 선택하세요.");

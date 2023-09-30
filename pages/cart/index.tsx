@@ -173,7 +173,6 @@ const Item = (props: CartItem) => {
         const { data } = await axios.post(CART_UPDATE_QUERY_KEY, {
           item,
         });
-        console.log("update", data.item);
         return data.items;
       } catch (error) {
         console.error(error);
@@ -187,7 +186,7 @@ const Item = (props: CartItem) => {
         const prev = queryClient.getQueryData([CART_GET_QUERY_KEY]);
 
         queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
-          old?.filter((category) => category.id !== item.id).concat(item)
+          old?.map((category) => (category.id === item.id ? item : category))
         );
         return { prev };
       },

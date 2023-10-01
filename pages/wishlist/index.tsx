@@ -1,11 +1,7 @@
-import { DeleteFilled } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import { WishList, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  WISHLIST_DELETE_QUERY_KEY,
-  WISHLIST_GET_QUERY_KEY,
-  WISHLIST_QUERY_KEY,
-} from "api";
+import { WISHLIST_DELETE_QUERY_KEY, WISHLIST_GET_QUERY_KEY } from "api";
 import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
@@ -28,7 +24,7 @@ export default function Wishlist() {
   console.log(products);
 
   return (
-    <div className="px-32">
+    <div className="min-h-screen h-full px-32">
       <div className="text-2xl">Wishlist ({products?.length})</div>
       <div>
         {products?.map((item, idx) => (
@@ -77,26 +73,28 @@ const Item = (props: WishlistItem) => {
   };
 
   return (
-    <div className="my-5 border flex">
+    <div className="flex relative border-b my-10 pb-10">
       <Image
-        className="rounded hover:cursor-pointer"
+        className="rounded-xl hover:cursor-pointer"
         alt={props.name}
         src={props.image_url ?? ""}
-        width={120}
-        height={120}
+        width={300}
+        height={300}
         placeholder="blur"
         blurDataURL={BLUR_IMAGE}
         onClick={() => router.push(`/products/${props.id}`)}
       />
-      <div>
-        <div className="h-12">{props.name}</div>
-        <div className="text-zinc-400">
-          {CATEGORY_MAP[props.category_id - 1]}
+      <div className="flex flex-col justify-between ml-10">
+        <div className="font-bold text-2xl mb-5">{props.name}</div>
+        <div>
+          <div className="text-zinc-400">
+            {CATEGORY_MAP[props.category_id - 1]}
+          </div>
+          <div className="">{props.price.toLocaleString()}원</div>
         </div>
-        <div>{props.price.toLocaleString()}원</div>
       </div>
-      <DeleteFilled
-        className="hover:cursor-pointer"
+      <DeleteOutlined
+        className="absolute right-0 hover:cursor-pointer text-2xl"
         onClick={handleWishlistDelete}
       />
     </div>

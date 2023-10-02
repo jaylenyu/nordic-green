@@ -25,6 +25,7 @@ import {
   ItemList,
   ItemTitle,
 } from "styles/common.styled";
+import { Card } from "antd";
 
 export default function CartPage() {
   const router = useRouter();
@@ -43,7 +44,10 @@ export default function CartPage() {
     axios.get(CART_RECOMMENDED_QUERY_KEY).then((res) => res.data.items)
   );
 
-  const randomProducts = useRandomProducts(products || [], 5);
+  const randomProducts = useMemo(
+    () => useRandomProducts(products || [], 5),
+    products
+  );
 
   const { mutate: addOrder } = useMutation<
     unknown,
@@ -136,32 +140,36 @@ export default function CartPage() {
           </div>
         </div>
       </div>
-      <div>
-        <div>
-          <p>추천상품</p>
-          <div>
-            {randomProducts?.map((item) => (
-              <div key={item.id} className="max-w-xs border">
+      <div className="my-20">
+        <CustomTitle>추천상품</CustomTitle>
+        <div className="grid grid-cols-5 gap-5">
+          {randomProducts?.map((item) => (
+            <Card
+              className="w-full"
+              hoverable
+              bordered={false}
+              key={item.id}
+              onClick={() => router.push(`/products/${item.id}`)}
+              cover={
                 <Image
-                  className="rounded"
                   alt={item.name}
                   src={item.image_url ?? ""}
-                  width={120}
-                  height={120}
+                  width={1000}
+                  height={1000}
+                  className="rounded"
+                  objectFit="cover"
                   placeholder="blur"
                   blurDataURL={BLUR_IMAGE}
-                  onClick={() => router.push(`/products/${item.id}`)}
                 />
-                <div>
-                  <div className="h-12">{item.name}</div>
-                  <div className="text-zinc-400">
-                    {CATEGORY_MAP[item.category_id - 1]}
-                  </div>
-                  <div>{item.price.toLocaleString()}원</div>
-                </div>
+              }
+            >
+              <div className="h-8 font-bold truncate">{item.name}</div>
+              <div className="text-zinc-400">
+                {CATEGORY_MAP[item.category_id - 1]}
               </div>
-            ))}
-          </div>
+              <div>{item.price.toLocaleString()}원</div>
+            </Card>
+          ))}
         </div>
       </div>
     </CustomWrap>

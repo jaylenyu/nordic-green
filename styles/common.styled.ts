@@ -25,6 +25,7 @@ export const CustomWrap = styled.div`
 export const CustomTitle = styled.p`
   font-size: 1.5rem;
   line-height: 2rem;
+  margin-bottom: 3rem;
 `;
 
 export const ItemTitle = styled.p`

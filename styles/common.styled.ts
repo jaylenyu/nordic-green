@@ -15,3 +15,34 @@ export const CustomButton = styled(Button)<{ colorReverse?: boolean }>`
     background-color: ${(props) => (props.colorReverse ? "" : "white")};
   }
 `;
+
+export const CustomWrap = styled.div`
+  min-height: 100vh;
+  height: 100%;
+  padding: 0 120px;
+`;
+
+export const CustomTitle = styled.p`
+  font-size: 1.5rem;
+  line-height: 2rem;
+`;
+
+export const ItemTitle = styled.p`
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 2rem;
+`;
+
+export const ItemList = styled.div`
+  display: flex;
+  position: relative;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  margin: 2.5rem 0;
+  padding-bottom: 2.5rem;
+`;
+
+export const CartInfoContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;

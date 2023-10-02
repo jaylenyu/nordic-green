@@ -6,6 +6,7 @@ import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import { useRandomProducts } from "../../hooks/useRandomProducts";
 import React, { useEffect, useMemo, useState } from "react";
 import {
   CART_DELETE_QUERY_KEY,
@@ -16,7 +17,14 @@ import {
   ORDER_GET_QUERY_KEY,
 } from "api";
 import { CartItem } from "types/type";
-import { Button } from "antd";
+import {
+  CartInfoContent,
+  CustomButton,
+  CustomTitle,
+  CustomWrap,
+  ItemList,
+  ItemTitle,
+} from "styles/common.styled";
 
 export default function CartPage() {
   const router = useRouter();
@@ -34,6 +42,8 @@ export default function CartPage() {
   >([CART_RECOMMENDED_QUERY_KEY], () =>
     axios.get(CART_RECOMMENDED_QUERY_KEY).then((res) => res.data.items)
   );
+
+  const randomProducts = useRandomProducts(products || [], 5);
 
   const { mutate: addOrder } = useMutation<
     unknown,
@@ -57,6 +67,7 @@ export default function CartPage() {
         queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
       },
       onSuccess: () => {
+        alert("결제화면으로 이동합니다.");
         router.push("/mypage");
       },
     }
@@ -72,7 +83,6 @@ export default function CartPage() {
   }, [data]);
 
   const handleOrder = () => {
-    console.log({ data }, "주문오더접수");
     if (data == null) {
       return;
     }
@@ -87,10 +97,10 @@ export default function CartPage() {
   };
 
   return (
-    <div>
-      <span>Cart ({data ? data?.length : 0})</span>
-      <div className="flex felx-col">
-        <div>
+    <CustomWrap>
+      <CustomTitle>Cart ({data ? data?.length : 0})</CustomTitle>
+      <div className="flex relative">
+        <div className="w-2/3">
           {data ? (
             data.length > 0 ? (
               data?.map((item, idx) => <Item key={idx} {...item} />)
@@ -101,57 +111,60 @@ export default function CartPage() {
             <div>Loading...</div>
           )}
         </div>
-        <div>
-          <span>info</span>
-          <div>
-            <span>금액 : </span>
-            <span>{amount?.toLocaleString()} 원</span>
+        <div className="px-10 mt-10 w-1/3">
+          <div className="sticky top-10">
+            <div className="text-2xl mb-10">Info</div>
+            <CartInfoContent>
+              <span>금액</span>
+              <div>{amount?.toLocaleString()} 원</div>
+            </CartInfoContent>
+            <CartInfoContent>
+              <span>배송비</span>
+              <span>0 원</span>
+            </CartInfoContent>
+            <CartInfoContent className="border-b mb-5">
+              <span>할인금액</span>
+              <span>0 원</span>
+            </CartInfoContent>
+            <CartInfoContent className="border-b mb-5">
+              <span>결제금액</span>
+              <span className="font-bold">{amount?.toLocaleString()} 원</span>
+            </CartInfoContent>
+            <CustomButton className="mt-10" onClick={handleOrder}>
+              결제하기
+            </CustomButton>
           </div>
-          <div>
-            <span>배송비 : </span>
-            <span>0 원</span>
-          </div>
-          <div>
-            <span>할인금액 : </span>
-            <span>0 원</span>
-          </div>
-          <div>
-            <span>결제금액 : </span>
-            <span>{amount?.toLocaleString()} 원</span>
-          </div>
-          <Button onClick={handleOrder}>결제하기</Button>
         </div>
       </div>
       <div>
-        <p>추천상품</p>
-        <div className="flex">
-          {products?.map((item) => (
-            <div
-              key={item.id}
-              className="max-w-xs border"
-              onClick={() => router.push(`/products/${item.id}`)}
-            >
-              <Image
-                className="rounded"
-                alt={item.name}
-                src={item.image_url ?? ""}
-                width={120}
-                height={120}
-                placeholder="blur"
-                blurDataURL={BLUR_IMAGE}
-              />
-              <div>
-                <div className="h-12">{item.name}</div>
-                <div className="text-zinc-400">
-                  {CATEGORY_MAP[item.category_id - 1]}
+        <div>
+          <p>추천상품</p>
+          <div>
+            {randomProducts?.map((item) => (
+              <div key={item.id} className="max-w-xs border">
+                <Image
+                  className="rounded"
+                  alt={item.name}
+                  src={item.image_url ?? ""}
+                  width={120}
+                  height={120}
+                  placeholder="blur"
+                  blurDataURL={BLUR_IMAGE}
+                  onClick={() => router.push(`/products/${item.id}`)}
+                />
+                <div>
+                  <div className="h-12">{item.name}</div>
+                  <div className="text-zinc-400">
+                    {CATEGORY_MAP[item.category_id - 1]}
+                  </div>
+                  <div>{item.price.toLocaleString()}원</div>
                 </div>
-                <div>{item.price.toLocaleString()}원</div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </CustomWrap>
   );
 }
 
@@ -250,24 +263,35 @@ const Item = (props: CartItem) => {
   };
 
   return (
-    <div>
+    <ItemList>
       <Image
         src={props.image_url}
         width={150}
-        height={200}
+        height={150}
         alt={props.name}
         onClick={() => router.push(`/products/${props.productId}`)}
       />
-      <div>
-        <span>{props.name}</span>
-        <span>가격 : {props.price.toLocaleString()} 원</span>
+      <div className="w-full flex flex-col ml-5 justify-between">
+        <div>
+          <ItemTitle>{props.name}</ItemTitle>
+          <span>가격 : {props.price.toLocaleString()} 원</span>
+        </div>
+        <div className="flex w-full">
+          <div>
+            <span>수량 : </span>
+            <CountControl value={quantity} setValue={setQuantity} />
+            <SyncOutlined className="ml-3" onClick={handleItemUpdate} />
+          </div>
+          <div>
+            총 금액 :{" "}
+            <span className="font-bold">{amount.toLocaleString()} 원</span>
+          </div>
+        </div>
       </div>
-      <div>
-        <CountControl value={quantity} setValue={setQuantity} />
-        <SyncOutlined onClick={handleItemUpdate} />
-      </div>
-      <span>{amount.toLocaleString()}</span>
-      <DeleteOutlined onClick={handleItemDelete} />
-    </div>
+      <DeleteOutlined
+        className="absolute right-0 hover:cursor-pointer text-2xl opacity-50"
+        onClick={handleItemDelete}
+      />
+    </ItemList>
   );
 };

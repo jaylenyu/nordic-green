@@ -6,6 +6,12 @@ import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import {
+  CustomTitle,
+  CustomWrap,
+  ItemList,
+  ItemTitle,
+} from "styles/common.styled";
 import { WishlistItem } from "types/type";
 
 export default function Wishlist() {
@@ -24,14 +30,14 @@ export default function Wishlist() {
   console.log(products);
 
   return (
-    <div className="min-h-screen h-full px-32">
-      <div className="text-2xl">Wishlist ({products?.length})</div>
+    <CustomWrap>
+      <CustomTitle>Wishlist ({products?.length})</CustomTitle>
       <div>
         {products?.map((item, idx) => (
           <Item key={idx} {...item} />
         ))}
       </div>
-    </div>
+    </CustomWrap>
   );
 }
 
@@ -73,19 +79,19 @@ const Item = (props: WishlistItem) => {
   };
 
   return (
-    <div className="flex relative border-b my-10 pb-10">
+    <ItemList>
       <Image
         className="rounded-xl hover:cursor-pointer"
         alt={props.name}
         src={props.image_url ?? ""}
-        width={300}
-        height={300}
+        width={150}
+        height={150}
         placeholder="blur"
         blurDataURL={BLUR_IMAGE}
         onClick={() => router.push(`/products/${props.id}`)}
       />
       <div className="flex flex-col justify-between ml-10">
-        <div className="font-bold text-2xl mb-5">{props.name}</div>
+        <ItemTitle>{props.name}</ItemTitle>
         <div>
           <div className="text-zinc-400">
             {CATEGORY_MAP[props.category_id - 1]}
@@ -94,9 +100,9 @@ const Item = (props: WishlistItem) => {
         </div>
       </div>
       <DeleteOutlined
-        className="absolute right-0 hover:cursor-pointer text-2xl"
+        className="absolute right-0 hover:cursor-pointer text-2xl opacity-50"
         onClick={handleWishlistDelete}
       />
-    </div>
+    </ItemList>
   );
 };

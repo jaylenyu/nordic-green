@@ -19,6 +19,7 @@ export default function CountControl({
     <InputNumber
       className="w-16"
       disabled={disabled}
+      controls={true}
       min={1}
       max={10}
       value={value}

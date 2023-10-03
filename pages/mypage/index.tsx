@@ -1,8 +1,9 @@
 import { CloseOutlined } from "@ant-design/icons";
-import CountControl from "@components/CountControl";
+import EmptyBox from "@components/EmptyBox";
+import SpinnerComponent from "@components/Spinner";
 import { Cart } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Alert, Button, Card, Space } from "antd";
+import { Button } from "antd";
 import {
   ORDER_DELETE_QUERY_KEY,
   ORDER_GET_QUERY_KEY,
@@ -33,10 +34,10 @@ export default function MyPage() {
           data.length > 0 ? (
             data?.map((item, idx) => <DetailItem key={idx} {...item} />)
           ) : (
-            <p>주문내역에 아무것도 없습니다.</p>
+            <EmptyBox />
           )
         ) : (
-          <div>Loading...</div>
+          <SpinnerComponent />
         )}
       </div>
     </div>

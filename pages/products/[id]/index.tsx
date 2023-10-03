@@ -225,13 +225,13 @@ export default function Products(props: {
             <div className="flex justify-end w-3/5">
               <div>
                 {product.images.map((url, idx) => (
-                  <div className="mb-5 mr-5 hover:opacity-50 shadow-xl w-20 h-20">
+                  <div className="mb-5 mr-5 hover:opacity-50 w-20 h-20">
                     <Image
                       src={url}
                       alt="image"
+                      className="rounded-2xl"
                       width={80}
                       height={80}
-                      objectFit="cover"
                       placeholder="blur"
                       blurDataURL={BLUR_IMAGE}
                       onMouseOver={() => setIndex(idx)}
@@ -249,7 +249,7 @@ export default function Products(props: {
                 >
                   {product.images.map((url, idx) => (
                     <Image
-                      className="rounded-lg"
+                      className="rounded-2xl"
                       key={idx}
                       src={url}
                       alt="image"
@@ -270,16 +270,14 @@ export default function Products(props: {
                   <CustomEditor editorState={editorState} readOnly />
                 </div>
               )}
-              <div className="text-lg">
-                제품 가격: {product.price.toLocaleString()} 원
-              </div>
+              <div className="text-lg">{product.price.toLocaleString()} ₩</div>
               <div className="flex justify-between">
                 <div>
                   <span>수량 : </span>
                   <CountControl value={quantity} setValue={setQuantity} />
                 </div>
                 <div>
-                  총 가격 : {(quantity * product.price).toLocaleString()} 원
+                  총 가격 : {(quantity * product.price).toLocaleString()} ₩
                 </div>
               </div>
               <CustomButton
@@ -327,9 +325,9 @@ export default function Products(props: {
           <div className="p-32">
             <p className="text-xl font-bold mb-10">제품 후기</p>
             {props.comments.length > 0 ? (
-              props.comments.map((comment, idx) => (
-                <CommentItem key={idx} item={comment} />
-              ))
+              props.comments
+                .map((comment, idx) => <CommentItem key={idx} item={comment} />)
+                .reverse()
             ) : (
               <div>후기가 없습니다.</div>
             )}

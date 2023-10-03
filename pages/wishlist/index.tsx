@@ -1,6 +1,8 @@
 import { DeleteOutlined } from "@ant-design/icons";
+import EmptyBox from "@components/EmptyBox";
 import { WishList, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Empty } from "antd";
 import { WISHLIST_DELETE_QUERY_KEY, WISHLIST_GET_QUERY_KEY } from "api";
 import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
@@ -31,11 +33,15 @@ export default function Wishlist() {
 
   return (
     <div className="min-h-screen h-full px-60">
-      <CustomTitle>Wishlist ({products?.length})</CustomTitle>
+      <CustomTitle>
+        Wishlist ({products?.length ? products?.length : 0})
+      </CustomTitle>
       <div>
-        {products?.map((item, idx) => (
-          <Item key={idx} {...item} />
-        ))}
+        {products && products.length > 0 ? (
+          products?.map((item, idx) => <Item key={idx} {...item} />)
+        ) : (
+          <EmptyBox />
+        )}
       </div>
     </div>
   );

@@ -26,6 +26,8 @@ import {
   ItemTitle,
 } from "styles/common.styled";
 import { Button, Card } from "antd";
+import EmptyBox from "@components/EmptyBox";
+import SpinnerComponent from "@components/Spinner";
 
 export default function CartPage() {
   const router = useRouter();
@@ -103,42 +105,46 @@ export default function CartPage() {
   return (
     <CustomWrap>
       <CustomTitle>Cart ({data ? data?.length : 0})</CustomTitle>
-      <div className="flex relative">
+      <div className="flex relative justify-center">
         <div className="w-2/3">
           {data ? (
             data.length > 0 ? (
               data?.map((item, idx) => <Item key={idx} {...item} />)
             ) : (
-              <p>장바구니에 아무것도 없습니다.</p>
+              <EmptyBox />
             )
           ) : (
-            <div>Loading...</div>
+            <SpinnerComponent />
           )}
         </div>
-        <div className="px-10 mt-10 w-1/3">
-          <div className="sticky top-10">
-            <div className="text-2xl mb-10">Info</div>
-            <CartInfoContent>
-              <span>금액</span>
-              <div>{amount?.toLocaleString()} ₩</div>
-            </CartInfoContent>
-            <CartInfoContent>
-              <span>배송비</span>
-              <span>0 ₩</span>
-            </CartInfoContent>
-            <CartInfoContent className="border-b mb-5">
-              <span>할인금액</span>
-              <span>0 ₩</span>
-            </CartInfoContent>
-            <CartInfoContent className="border-b mb-5">
-              <span>결제금액</span>
-              <span className="font-bold">{amount?.toLocaleString()} ₩</span>
-            </CartInfoContent>
-            <CustomButton className="mt-10" onClick={handleOrder}>
-              결제하기
-            </CustomButton>
+        {data && data.length !== 0 ? (
+          <div className="px-10 mt-10 w-1/3">
+            <div className="sticky top-10">
+              <div className="text-2xl mb-10">Info</div>
+              <CartInfoContent>
+                <span>금액</span>
+                <div>{amount?.toLocaleString()} ₩</div>
+              </CartInfoContent>
+              <CartInfoContent>
+                <span>배송비</span>
+                <span>0 ₩</span>
+              </CartInfoContent>
+              <CartInfoContent className="border-b mb-5">
+                <span>할인금액</span>
+                <span>0 ₩</span>
+              </CartInfoContent>
+              <CartInfoContent className="border-b mb-5">
+                <span>결제금액</span>
+                <span className="font-bold">{amount?.toLocaleString()} ₩</span>
+              </CartInfoContent>
+              <CustomButton className="mt-10" onClick={handleOrder}>
+                결제하기
+              </CustomButton>
+            </div>
           </div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="my-20">
         <CustomTitle>추천상품</CustomTitle>

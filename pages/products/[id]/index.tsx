@@ -33,6 +33,7 @@ import {
   ShoppingCartOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
+import SpinnerComponent from "@components/Spinner";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -334,7 +335,7 @@ export default function Products(props: {
           </div>
         </>
       ) : (
-        <div>loading...</div>
+        <SpinnerComponent />
       )}
     </>
   );

@@ -16,6 +16,13 @@ export const CustomButton = styled(Button)<{ colorReverse?: boolean }>`
   }
 `;
 
+export const CategoryButton = styled(Button)`
+  font-size: x-large;
+  height: 60px;
+  color: #158041;
+  margin-bottom: 20px;
+`;
+
 export const CustomWrap = styled.div`
   min-height: 100vh;
   height: 100%;

@@ -2,8 +2,12 @@ import { CloseOutlined } from "@ant-design/icons";
 import CountControl from "@components/CountControl";
 import { Cart } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, Card } from "antd";
-import { ORDER_GET_QUERY_KEY, ORDER_UPDATE_QUERY_KEY } from "api";
+import { Alert, Button, Card, Space } from "antd";
+import {
+  ORDER_DELETE_QUERY_KEY,
+  ORDER_GET_QUERY_KEY,
+  ORDER_UPDATE_QUERY_KEY,
+} from "api";
 import axios from "axios";
 import { ORDER_STATUS_MAP } from "constants/order";
 import { format } from "date-fns";
@@ -87,6 +91,50 @@ const DetailItem = (props: OrderDetail) => {
     }
   );
 
+  const { mutate: deleteOrder } = useMutation<unknown, unknown, number, any>(
+    async (id) => {
+      try {
+        const { data } = await axios.post(ORDER_DELETE_QUERY_KEY, {
+          id,
+        });
+        console.log(data);
+
+        return data.items;
+      } catch (error) {
+        console.error(error);
+        throw error;
+      }
+    },
+    {
+      onMutate: async (id) => {
+        await queryClient.cancelQueries([ORDER_GET_QUERY_KEY]);
+
+        const prev = queryClient.getQueriesData([ORDER_GET_QUERY_KEY]);
+
+        queryClient.setQueryData<Cart[]>([ORDER_GET_QUERY_KEY], (old) =>
+          old?.filter((category) => category.id !== id)
+        );
+        return { prev };
+      },
+      onError: (error, _, context) => {
+        queryClient.setQueryData([ORDER_GET_QUERY_KEY], context.prev);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+      },
+    }
+  );
+
+  const handleOrderDelete = async () => {
+    const isConfirmed = window.confirm("삭제하시겠습니까?");
+
+    if (isConfirmed) {
+      await deleteOrder(props.id);
+    } else {
+      return;
+    }
+  };
+
   return (
     <>
       <div className="flex justify-between relative">
@@ -101,7 +149,7 @@ const DetailItem = (props: OrderDetail) => {
           <div className="sticky top-20">
             <div className="text-xl mb-10">주문 정보</div>
             <CloseOutlined
-              onClick={() => alert("삭제되었습니다!")}
+              onClick={handleOrderDelete}
               className="absolute top-0 right-0 text-2xl hover:cursor-pointer"
             />
             <div className="flex justify-between">

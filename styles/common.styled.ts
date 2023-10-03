@@ -30,7 +30,7 @@ export const CustomTitle = styled.p`
 
 export const ItemTitle = styled.p`
   margin-bottom: 1.5rem;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 2rem;
 `;
@@ -38,7 +38,7 @@ export const ItemTitle = styled.p`
 export const ItemList = styled.div`
   display: flex;
   position: relative;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin: 2.5rem 0;
   padding-bottom: 2.5rem;
 `;

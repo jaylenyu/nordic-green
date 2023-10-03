@@ -25,7 +25,7 @@ import {
   ItemList,
   ItemTitle,
 } from "styles/common.styled";
-import { Card } from "antd";
+import { Button, Card } from "antd";
 
 export default function CartPage() {
   const router = useRouter();
@@ -273,6 +273,7 @@ const Item = (props: CartItem) => {
   return (
     <ItemList>
       <Image
+        className="rounded-xl hover:cursor-pointer"
         src={props.image_url}
         width={150}
         height={150}
@@ -284,7 +285,7 @@ const Item = (props: CartItem) => {
           <ItemTitle>{props.name}</ItemTitle>
           <span>가격 : {props.price.toLocaleString()} ₩</span>
         </div>
-        <div className="flex w-full">
+        <div className="flex w-full justify-between">
           <div>
             <span>수량 : </span>
             <CountControl
@@ -292,7 +293,13 @@ const Item = (props: CartItem) => {
               setValue={setQuantity}
               disabled={false}
             />
-            <SyncOutlined className="ml-3" onClick={handleItemUpdate} />
+            <Button
+              className="ml-3 text-sm"
+              icon={<SyncOutlined />}
+              onClick={handleItemUpdate}
+            >
+              적용하기
+            </Button>
           </div>
           <div>
             총 금액 :{" "}

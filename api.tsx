@@ -4,6 +4,7 @@ export const COMMENTS_API_PATH = "/api/get-comments";
 
 export const ORDER_GET_QUERY_KEY = "/api/get-order";
 export const ORDER_UPDATE_QUERY_KEY = "/api/update-order-status";
+export const ORDER_DELETE_QUERY_KEY = "/api/delete-order";
 export const CART_GET_QUERY_KEY = "/api/get-cart";
 export const CART_UPDATE_QUERY_KEY = "/api/update-cart";
 export const CART_DELETE_QUERY_KEY = "/api/delete-cart";

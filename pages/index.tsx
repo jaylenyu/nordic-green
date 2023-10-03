@@ -1,13 +1,16 @@
 import { products } from "@prisma/client";
 import { ChangeEvent, useState } from "react";
 import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space, Input, Button, Card, Empty } from "antd";
+import { Pagination, Select, Space, Input, Button, Card } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { CategoryButton } from "styles/common.styled";
+import EmptyBox from "@components/EmptyBox";
+import SpinnerComponent from "@components/Spinner";
 
 export default function Home() {
   const router = useRouter();
@@ -54,80 +57,91 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col items-center px-32">
-      <div className="flex justify-between w-full mb-20">
+    <div>
+      <div className="min-h-screen px-60">
+        <div className="flex justify-center">
+          <Input
+            className="w-96 mb-10"
+            placeholder="제품명 검색"
+            value={searchValue}
+            size="large"
+            onChange={handleSearchInput}
+            suffix={<SearchOutlined />}
+          />
+        </div>
         <div>
-          <Button
-            className="text-2xl h-12 text-green-700"
+          <CategoryButton
+            className="h-12 text-2xl text-green-700	"
             type="text"
             onClick={() => handleCategory("ALL")}
           >
             ALL
-          </Button>
+          </CategoryButton>
           {CATEGORY_MAP.map((categoryName, index) => (
-            <Button
-              className="h-12 ml-10 text-2xl text-green-700	"
+            <CategoryButton
+              className="h-12 text-2xl text-green-700	"
               type="text"
               onClick={() => handleCategory(categoryName)}
               key={index}
             >
               {categoryName}
-            </Button>
+            </CategoryButton>
           ))}
         </div>
-        <Space>
-          <Select
-            className="w-32"
-            defaultValue={FILTERS[0].value}
-            onChange={handleFilterChange}
-            options={FILTERS.map(({ label, value }) => ({ label, value }))}
-          />
-        </Space>
-      </div>
-      <div>
-        <Input
-          className="relative w-96 mb-20"
-          placeholder="제품명 검색"
-          value={searchValue}
-          size="large"
-          onChange={handleSearchInput}
-          suffix={<SearchOutlined />}
-        />
-      </div>
-      <div className="grid grid-cols-3 gap-5 justify-items-center">
-        {products?.map((item) => (
-          <Card
-            className="w-full"
-            key={item.id}
-            onClick={() => router.push(`/products/${item.id}`)}
-            hoverable
-            bordered={false}
-            cover={
-              <Image
-                alt={item.name}
-                src={item.image_url ?? ""}
-                width={1000}
-                height={1000}
-                objectFit="cover"
-                placeholder="blur"
-                blurDataURL={BLUR_IMAGE}
-              />
-            }
-          >
-            <div className="flex flex-col justify-between h-24">
-              <div className="w-full text-lg font-bold">{item.name}</div>
-              <div>
-                <div className="text-zinc-400">
-                  {CATEGORY_MAP[item.category_id - 1]}
+        <div>
+          <Space className="flex justify-end mb-10">
+            <Select
+              className="w-32"
+              defaultValue={FILTERS[0].value}
+              onChange={handleFilterChange}
+              options={FILTERS.map(({ label, value }) => ({ label, value }))}
+            />
+          </Space>
+          <div className="grid grid-cols-3 gap-10 justify-items-center">
+            {products && products?.length > 0 ? (
+              products?.map((item) => (
+                <Card
+                  className="w-full"
+                  key={item.id}
+                  onClick={() => router.push(`/products/${item.id}`)}
+                  hoverable
+                  bordered={false}
+                  cover={
+                    <Image
+                      alt={item.name}
+                      src={item.image_url ?? ""}
+                      width={1000}
+                      height={1000}
+                      objectFit="cover"
+                      placeholder="blur"
+                      blurDataURL={BLUR_IMAGE}
+                    />
+                  }
+                >
+                  <div className="flex flex-col justify-between h-24">
+                    <div className="w-full text-lg font-bold">{item.name}</div>
+                    <div>
+                      <div className="text-zinc-400">
+                        {CATEGORY_MAP[item.category_id - 1]}
+                      </div>
+                      <div>{item.price.toLocaleString()} ₩</div>
+                    </div>
+                  </div>
+                </Card>
+              ))
+            ) : (
+              <>
+                <div />
+                <div>
+                  {products?.length === 0 ? <EmptyBox /> : <SpinnerComponent />}
                 </div>
-                <div>{item.price.toLocaleString()} ₩</div>
-              </div>
-            </div>
-          </Card>
-        ))}
+              </>
+            )}
+          </div>
+        </div>
       </div>
       <Pagination
-        className="my-20"
+        className="flex justify-center my-20"
         total={total}
         pageSize={1}
         defaultCurrent={1}

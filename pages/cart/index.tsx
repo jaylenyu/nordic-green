@@ -57,7 +57,6 @@ export default function CartPage() {
         const { data } = await axios.post(CART_DELETE_QUERY_KEY, {
           id,
         });
-        console.log(data);
 
         return data.items;
       } catch (error) {
@@ -146,7 +145,9 @@ export default function CartPage() {
         <div className="w-2/3">
           {data ? (
             data.length > 0 ? (
-              data?.map((item, idx) => <Item key={idx} {...item} />)
+              data?.map((item, idx) => (
+                <Item key={idx} {...item} deleteCart={deleteCart} />
+              ))
             ) : (
               <EmptyBox />
             )

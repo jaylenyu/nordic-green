@@ -120,19 +120,19 @@ export default function CartPage() {
             <div className="text-2xl mb-10">Info</div>
             <CartInfoContent>
               <span>금액</span>
-              <div>{amount?.toLocaleString()} 원</div>
+              <div>{amount?.toLocaleString()} ₩</div>
             </CartInfoContent>
             <CartInfoContent>
               <span>배송비</span>
-              <span>0 원</span>
+              <span>0 ₩</span>
             </CartInfoContent>
             <CartInfoContent className="border-b mb-5">
               <span>할인금액</span>
-              <span>0 원</span>
+              <span>0 ₩</span>
             </CartInfoContent>
             <CartInfoContent className="border-b mb-5">
               <span>결제금액</span>
-              <span className="font-bold">{amount?.toLocaleString()} 원</span>
+              <span className="font-bold">{amount?.toLocaleString()} ₩</span>
             </CartInfoContent>
             <CustomButton className="mt-10" onClick={handleOrder}>
               결제하기
@@ -167,7 +167,7 @@ export default function CartPage() {
               <div className="text-zinc-400">
                 {CATEGORY_MAP[item.category_id - 1]}
               </div>
-              <div>{item.price.toLocaleString()}원</div>
+              <div>{item.price.toLocaleString()}₩</div>
             </Card>
           ))}
         </div>
@@ -282,17 +282,21 @@ const Item = (props: CartItem) => {
       <div className="w-full flex flex-col ml-5 justify-between">
         <div>
           <ItemTitle>{props.name}</ItemTitle>
-          <span>가격 : {props.price.toLocaleString()} 원</span>
+          <span>가격 : {props.price.toLocaleString()} ₩</span>
         </div>
         <div className="flex w-full">
           <div>
             <span>수량 : </span>
-            <CountControl value={quantity} setValue={setQuantity} />
+            <CountControl
+              value={quantity}
+              setValue={setQuantity}
+              disabled={false}
+            />
             <SyncOutlined className="ml-3" onClick={handleItemUpdate} />
           </div>
           <div>
             총 금액 :{" "}
-            <span className="font-bold">{amount.toLocaleString()} 원</span>
+            <span className="font-bold">{amount.toLocaleString()} ₩</span>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import CountControl from "@components/CountControl";
 import { Cart } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "antd";
+import { Button, Card } from "antd";
 import { ORDER_GET_QUERY_KEY, ORDER_UPDATE_QUERY_KEY } from "api";
 import axios from "axios";
 import { ORDER_STATUS_MAP } from "constants/order";
@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { CustomButton, CustomTitle } from "styles/common.styled";
 import { OrderDetail, OrderItemDetail } from "types/type";
 
 export default function MyPage() {
@@ -21,9 +22,9 @@ export default function MyPage() {
   );
 
   return (
-    <div>
-      <span className="text-2xl">주문내역 ({data ? data?.length : 0})</span>
-      <div className="border">
+    <div className="min-h-screen h-full px-60">
+      <CustomTitle>주문내역 ({data ? data?.length : 0})</CustomTitle>
+      <div>
         {data ? (
           data.length > 0 ? (
             data?.map((item, idx) => <DetailItem key={idx} {...item} />)
@@ -86,36 +87,60 @@ const DetailItem = (props: OrderDetail) => {
     }
   );
 
+  console.log(props.status);
+
   return (
-    <div>
-      <div>
-        <span>{ORDER_STATUS_MAP[props.status + 1]}</span>
-        <span>
-          <CloseOutlined onClick={() => updateOrderStatus(-1)} />
-        </span>
-        {props.orderItems.map((orderItem, idx) => (
-          <Item key={idx} {...orderItem} status={props.status} />
-        ))}
+    <>
+      <div className="flex justify-between relative">
+        <div className="w-2/3">
+          <div className="w-full">
+            {props.orderItems.map((orderItem, idx) => (
+              <Item key={idx} {...orderItem} status={props.status} />
+            ))}
+          </div>
+        </div>
+        <div className="flex flex-col justify-between ml-10 w-1/3 ">
+          <div className="sticky top-20">
+            <div className="text-xl mb-10">주문 정보</div>
+            <CloseOutlined
+              onClick={() => alert("삭제되었습니다!")}
+              className="absolute top-0 right-0 text-2xl hover:cursor-pointer"
+            />
+            <span>주문 상태 : </span>
+            <span className="font-bold">
+              {ORDER_STATUS_MAP[props.status + 1]}
+            </span>
+            <div className="mt-5 border-b">
+              총 주문 금액 :{" "}
+              <span className="font-bold">
+                {props.orderItems
+                  .map((item) => item.amount)
+                  .reduce((prev, curr) => prev + curr, 0)
+                  .toLocaleString()}{" "}
+                ₩
+              </span>
+            </div>
+            <div className="mt-20">
+              {props.status === -1 || props.status === 0 ? (
+                <CustomButton onClick={() => updateOrderStatus(2)}>
+                  결제처리
+                </CustomButton>
+              ) : (
+                <CustomButton
+                  colorReverse={true}
+                  onClick={() => updateOrderStatus(-1)}
+                >
+                  취소처리
+                </CustomButton>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-      <div>
-        <div>주문정보</div>
-        <div>받는사람 : {props.receiver ?? "입력필요"}</div>
-        <div>주소 : {props.address ?? "입력필요"}</div>
-        <div>연락처 : {props.phoneNumber ?? "입력필요"}</div>
-      </div>
-      <div>
-        합계 금액 :{" "}
-        {props.orderItems
-          .map((item) => item.amount)
-          .reduce((prev, curr) => prev + curr, 0)
-          .toLocaleString()}
-        원
-      </div>
-      <span>
+      <div className="flex justify-end text-sm text-gray-500 border-b py-10 mb-20">
         주문일자 : {format(new Date(props.createAt), "yyyy년 M월 d일 HH:mm:ss")}
-      </span>
-      <Button onClick={() => updateOrderStatus(5)}>결제처리</Button>
-    </div>
+      </div>
+    </>
   );
 };
 
@@ -135,25 +160,32 @@ const Item = (props: OrderItemDetail & { status: number }) => {
   };
 
   return (
-    <div>
-      <Image
-        src={props.image_url}
-        width={150}
-        height={200}
-        alt={props.name}
-        onClick={() => router.push(`/products/${props.productId}`)}
-      />
-      <div>
-        <span>{props.name}</span>
-        <span>가격 : {props.price.toLocaleString()} 원</span>
+    <div className="flex w-full py-3 border-b justify-between">
+      <div className="flex w-2/3">
+        <div className="w-28 h-28 mr-5 relative">
+          <Image
+            className="rounded-2xl"
+            width={112}
+            height={112}
+            src={props.image_url}
+            alt={props.name}
+            onClick={() => router.push(`/products/${props.productId}`)}
+          />
+        </div>
+        <div className="flex flex-col justify-between">
+          <div className="font-bold">{props.name}</div>
+          <div className="text-sm">
+            <div>가격 : {props.price.toLocaleString()} ₩</div>
+            <div>수량 : {quantity} 개</div>
+            <div>합계 : {amount.toLocaleString()} ₩</div>
+          </div>
+        </div>
       </div>
       <div>
-        <CountControl value={quantity} setValue={setQuantity} />
-      </div>
-      <span>{amount.toLocaleString()}</span>
-      <div>
-        {props.status === 5 && (
-          <Button onClick={handleComment}>후기작성</Button>
+        {props.status === 2 && (
+          <Button className="h-10 rounded-full" onClick={handleComment}>
+            후기작성
+          </Button>
         )}
       </div>
     </div>

@@ -120,7 +120,7 @@ export default function Home() {
                 <div className="text-zinc-400">
                   {CATEGORY_MAP[item.category_id - 1]}
                 </div>
-                <div>{item.price.toLocaleString()}원</div>
+                <div>{item.price.toLocaleString()} ₩</div>
               </div>
             </div>
           </Card>

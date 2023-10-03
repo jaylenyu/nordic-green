@@ -30,14 +30,14 @@ export default function Wishlist() {
   console.log(products);
 
   return (
-    <CustomWrap>
+    <div className="min-h-screen h-full px-60">
       <CustomTitle>Wishlist ({products?.length})</CustomTitle>
       <div>
         {products?.map((item, idx) => (
           <Item key={idx} {...item} />
         ))}
       </div>
-    </CustomWrap>
+    </div>
   );
 }
 
@@ -96,7 +96,7 @@ const Item = (props: WishlistItem) => {
           <div className="text-zinc-400">
             {CATEGORY_MAP[props.category_id - 1]}
           </div>
-          <div className="">{props.price.toLocaleString()}원</div>
+          <div className="">{props.price.toLocaleString()} ₩</div>
         </div>
       </div>
       <DeleteOutlined

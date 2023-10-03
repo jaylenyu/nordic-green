@@ -87,8 +87,6 @@ const DetailItem = (props: OrderDetail) => {
     }
   );
 
-  console.log(props.status);
-
   return (
     <>
       <div className="flex justify-between relative">
@@ -106,19 +104,21 @@ const DetailItem = (props: OrderDetail) => {
               onClick={() => alert("삭제되었습니다!")}
               className="absolute top-0 right-0 text-2xl hover:cursor-pointer"
             />
-            <span>주문 상태 : </span>
-            <span className="font-bold">
-              {ORDER_STATUS_MAP[props.status + 1]}
-            </span>
-            <div className="mt-5 border-b">
-              총 주문 금액 :{" "}
-              <span className="font-bold">
+            <div className="flex justify-between">
+              <div>주문 상태</div>
+              <div className="font-bold">
+                {ORDER_STATUS_MAP[props.status + 1]}
+              </div>
+            </div>
+            <div className="flex justify-between mt-5 border-b">
+              <div>총 주문 금액</div>
+              <div className="font-bold">
                 {props.orderItems
                   .map((item) => item.amount)
                   .reduce((prev, curr) => prev + curr, 0)
                   .toLocaleString()}{" "}
                 ₩
-              </span>
+              </div>
             </div>
             <div className="mt-20">
               {props.status === -1 || props.status === 0 ? (
@@ -161,18 +161,17 @@ const Item = (props: OrderItemDetail & { status: number }) => {
 
   return (
     <div className="flex w-full py-3 border-b justify-between">
-      <div className="flex w-2/3">
-        <div className="w-28 h-28 mr-5 relative">
+      <div className="flex w-4/5">
+        <div className="w-40 h-28 object-cover relative">
           <Image
             className="rounded-2xl"
-            width={112}
-            height={112}
+            layout="fill"
             src={props.image_url}
             alt={props.name}
             onClick={() => router.push(`/products/${props.productId}`)}
           />
         </div>
-        <div className="flex flex-col justify-between">
+        <div className="flex flex-col justify-between ml-10 w-full">
           <div className="font-bold">{props.name}</div>
           <div className="text-sm">
             <div>가격 : {props.price.toLocaleString()} ₩</div>
@@ -181,7 +180,7 @@ const Item = (props: OrderItemDetail & { status: number }) => {
           </div>
         </div>
       </div>
-      <div>
+      <div className="flex justify-end">
         {props.status === 2 && (
           <Button className="h-10 rounded-full" onClick={handleComment}>
             후기작성

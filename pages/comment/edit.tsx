@@ -5,6 +5,7 @@ import axios from "axios";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { CustomTitle } from "styles/common.styled";
 
 export default function CommentEdit() {
   const router = useRouter();
@@ -70,7 +71,8 @@ export default function CommentEdit() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen h-full px-80">
+      <CustomTitle>후기 작성</CustomTitle>
       {editorState != null && (
         <div>
           <Rate
@@ -79,13 +81,13 @@ export default function CommentEdit() {
             value={rate}
             onChange={setRate}
             allowClear={false}
+            className="mb-10"
           />
           {rate ? (
             <Button className="ml-3 text-xs">{tooltips[rate - 1]}</Button>
           ) : (
             ""
           )}
-
           <CustomEditor
             editorState={editorState}
             onEditorStateChange={setEditorState}

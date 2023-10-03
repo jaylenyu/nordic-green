@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Dispatch, SetStateAction, useState } from "react";
 import { EditorProps } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import { CustomButton } from "styles/common.styled";
 
 const Editor = dynamic<EditorProps>(
   () => import("react-draft-wysiwyg").then((module) => module.Editor),
@@ -35,13 +36,17 @@ export default function CustomEditor({
         }}
         onEditorStateChange={onEditorStateChange}
       />
-      {!readOnly && <Button onClick={onSave}>Save</Button>}
+      {!readOnly && (
+        <Button className="w-24 h-12 m-4" onClick={onSave}>
+          Save
+        </Button>
+      )}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div<{ readOnly: boolean }>`
-  padding: 0px;
+  ${(props) => (props.readOnly ? "" : "padding: 20px")}
   color: #333;
   ${(props) =>
     props.readOnly ? "" : "border: 1px solid black; border-radius: 8px"}

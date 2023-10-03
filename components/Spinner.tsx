@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 
 export default function SpinnerComponent() {
   return (
-    <div className="flex justify-center items-center min-h-fit">
+    <div className="flex justify-center items-center h-full">
       <Spinner />
     </div>
   );

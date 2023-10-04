@@ -22,7 +22,6 @@ import {
   WISHLIST_QUERY_KEY,
   WISHLIST_UPDATE_QUERY_KEY,
 } from "api";
-import { Button, Card } from "antd";
 import { CommentsItemType } from "types/type";
 import CommentItem from "@components/CommentItem";
 import { BLUR_IMAGE } from "constants/products";
@@ -72,6 +71,18 @@ export default function Products(props: {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { id: productId } = router.query;
+  const { data: comments } = useQuery(
+    [COMMENTS_API_PATH, productId],
+    async () => {
+      const response = await axios.get(`${BASE_URL}${COMMENTS_API_PATH}`, {
+        params: { productId: productId },
+      });
+      return response.data.items;
+    },
+    {
+      initialData: props.comments,
+    }
+  );
 
   const [editorState] = useState<EditorState | undefined>(() =>
     props.product.contents
@@ -216,8 +227,6 @@ export default function Products(props: {
       ? wishlist.includes(productId)
       : false;
 
-  console.log(props);
-
   return (
     <>
       {product != null && productId != null ? (
@@ -325,9 +334,16 @@ export default function Products(props: {
           </div>
           <div className="p-32">
             <p className="text-xl font-bold mb-10">제품 후기</p>
-            {props.comments.length > 0 ? (
-              props.comments
-                .map((comment, idx) => <CommentItem key={idx} item={comment} />)
+            {comments && comments.length > 0 ? (
+              comments
+                .map((comment, idx) => (
+                  <CommentItem
+                    key={idx}
+                    item={comment}
+                    queryClient={queryClient}
+                    productId={productId}
+                  />
+                ))
                 .reverse()
             ) : (
               <div>후기가 없습니다.</div>

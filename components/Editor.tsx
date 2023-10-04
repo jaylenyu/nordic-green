@@ -1,8 +1,9 @@
 import styled from "@emotion/styled";
-import { Button, Rate } from "antd";
+import { Button } from "antd";
 import { EditorState } from "draft-js";
 import dynamic from "next/dynamic";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useRouter } from "next/router";
+import { Dispatch, SetStateAction } from "react";
 import { EditorProps } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { CustomButton } from "styles/common.styled";
@@ -25,29 +26,44 @@ export default function CustomEditor({
   onSave?: () => void;
   onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
 }) {
+  const router = useRouter();
+  const pathname = router.pathname;
+
   return (
-    <Wrapper readOnly={readOnly}>
-      <Editor
-        readOnly={readOnly}
-        editorState={editorState}
-        toolbarHidden
-        localization={{
-          locale: "ko",
-        }}
-        onEditorStateChange={onEditorStateChange}
-      />
-      {!readOnly && (
-        <Button className="w-24 h-12 m-4" onClick={onSave}>
-          Save
-        </Button>
-      )}
-    </Wrapper>
+    <>
+      <Wrapper readOnly={readOnly}>
+        <Editor
+          readOnly={readOnly}
+          editorState={editorState}
+          toolbarHidden
+          localization={{
+            locale: "ko",
+          }}
+          onEditorStateChange={onEditorStateChange}
+        />
+        {!readOnly && pathname !== "/products/[id]" && (
+          <Button className="w-24 h-12 m-4" onClick={onSave}>
+            Save
+          </Button>
+        )}
+      </Wrapper>
+      <div className="my-5">
+        {pathname !== "/products/[id]" && (
+          <CustomButton onClick={() => router.back()}>
+            다음에 할게요!
+          </CustomButton>
+        )}
+      </div>
+    </>
   );
 }
 
 const Wrapper = styled.div<{ readOnly: boolean }>`
+  ${(props) => (props.readOnly ? "" : "width: 100%")}
   ${(props) => (props.readOnly ? "" : "padding: 20px")}
   color: #333;
   ${(props) =>
-    props.readOnly ? "" : "border: 1px solid black; border-radius: 8px"}
+    props.readOnly
+      ? ""
+      : "border: 1px solid rgba(0,0,0,0.1); border-radius: 8px"}
 `;

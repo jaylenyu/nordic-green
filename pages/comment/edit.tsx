@@ -1,11 +1,15 @@
 import CustomEditor from "@components/Editor";
+import { useQuery } from "@tanstack/react-query";
 import { Button, Rate } from "antd";
-import { PRODUCT_UPDATE_QUERY_KEY } from "api";
+import { ORDER_GET_QUERY_KEY } from "api";
 import axios from "axios";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { CustomTitle } from "styles/common.styled";
+import { CustomTitle, ItemTitle } from "styles/common.styled";
+import { OrderDetail } from "types/type";
+import { tooltips } from "constants/comment";
 
 export default function CommentEdit() {
   const router = useRouter();
@@ -14,13 +18,17 @@ export default function CommentEdit() {
   const [editorState, setEditorState] = useState<EditorState | undefined>(
     undefined
   );
-  const tooltips = [
-    "매우 별로에요",
-    "별로에요",
-    "보통이에요",
-    "좋아요",
-    "매우 좋아요",
-  ];
+
+  const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
+    [ORDER_GET_QUERY_KEY],
+    () => axios.get(ORDER_GET_QUERY_KEY).then((res) => res.data.items)
+  );
+
+  const commentProduct = data
+    ?.find((item) =>
+      item.orderItems.some((orderItem) => orderItem.id === Number(orderItemIds))
+    )
+    ?.orderItems.find((orderItem) => orderItem.id === Number(orderItemIds));
 
   const fetchComment = async () => {
     if (orderItemIds != null) {
@@ -29,6 +37,7 @@ export default function CommentEdit() {
           `/api/get-comment?orderItemIds=${orderItemIds}`
         );
         const data = response.data;
+
         if (data.items.contents) {
           setEditorState(
             EditorState.createWithContent(
@@ -64,7 +73,7 @@ export default function CommentEdit() {
         console.log(error);
       }
       alert("후기 등록 성공!");
-      router.back();
+      router.push(`/products/${commentProduct?.productId}`);
     } else {
       alert("후기 등록 실패");
     }
@@ -73,15 +82,43 @@ export default function CommentEdit() {
   return (
     <div className="min-h-screen h-full px-80">
       <CustomTitle>후기 작성</CustomTitle>
+      <div className="flex flex-col items-center mb-10">
+        {commentProduct && (
+          <>
+            <div>
+              <Image
+                src={commentProduct?.image_url}
+                alt={commentProduct?.name}
+                width={200}
+                height={200}
+                className="rounded-2xl"
+              />
+            </div>
+            <ItemTitle>{commentProduct?.name}</ItemTitle>
+            <div>
+              <div>가격 : {commentProduct.price.toLocaleString()} ₩</div>
+              <div>수량 : {commentProduct.quantity} 개</div>
+              <div>
+                합계 :{" "}
+                <span className="font-bold">
+                  {commentProduct.amount.toLocaleString()} ₩
+                </span>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
       {editorState != null && (
-        <div>
+        <div className="px-20 py-10 bg-white">
+          <p>제품 후기를 남겨주세요 !</p>
           <Rate
             tooltips={tooltips}
             defaultValue={5}
             value={rate}
             onChange={setRate}
             allowClear={false}
-            className="mb-10"
+            className="my-5"
           />
           {rate ? (
             <Button className="ml-3 text-xs">{tooltips[rate - 1]}</Button>

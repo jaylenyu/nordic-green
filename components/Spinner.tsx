@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 
 export default function SpinnerComponent() {
   return (
-    <div className="flex justify-center items-center h-full">
+    <div className="flex justify-center items-center h-80">
       <Spinner />
     </div>
   );
@@ -23,7 +23,7 @@ const Spinner = styled.div`
   margin: 0 auto;
   width: 50px;
   height: 50px;
-  border: 3px solid rgba(50, 71, 128, 0.2);
-  border-top: 3px solid rgba(50, 71, 128, 1);
+  border: 3px solid #15884129;
+  border-top: 3px solid #158841;
   border-radius: 50%;
 `;

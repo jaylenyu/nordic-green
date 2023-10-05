@@ -28,7 +28,7 @@ export default function MyPage() {
 
   return (
     <div className="min-h-screen h-full px-60">
-      <CustomTitle>주문내역 ({data ? data?.length : 0})</CustomTitle>
+      <CustomTitle>Orders ({data ? data?.length : 0})</CustomTitle>
       <div>
         {data ? (
           data.length > 0 ? (

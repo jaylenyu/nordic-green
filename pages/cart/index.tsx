@@ -107,7 +107,7 @@ export default function CartPage() {
       },
       onSuccess: () => {
         alert("결제화면으로 이동합니다.");
-        router.push("/mypage");
+        router.push("/order");
         data?.forEach((cartItem) => {
           deleteCart(cartItem.id);
         });
@@ -140,7 +140,7 @@ export default function CartPage() {
 
   return (
     <CustomWrap>
-      <CustomTitle>Cart ({data ? data?.length : 0})</CustomTitle>
+      <CustomTitle>Carts ({data ? data?.length : 0})</CustomTitle>
       <div className="flex relative justify-center">
         <div className="w-2/3">
           {data ? (

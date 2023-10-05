@@ -1,24 +1,18 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import EmptyBox from "@components/EmptyBox";
+import SpinnerComponent from "@components/Spinner";
 import { WishList, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Empty } from "antd";
 import { WISHLIST_DELETE_QUERY_KEY, WISHLIST_GET_QUERY_KEY } from "api";
 import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import {
-  CustomTitle,
-  CustomWrap,
-  ItemList,
-  ItemTitle,
-} from "styles/common.styled";
+import { CustomTitle, ItemList, ItemTitle } from "styles/common.styled";
 import { WishlistItem } from "types/type";
 
 export default function Wishlist() {
   const router = useRouter();
-
   const { data: products } = useQuery<
     { items: products[] },
     unknown,
@@ -27,20 +21,20 @@ export default function Wishlist() {
     axios.get(WISHLIST_GET_QUERY_KEY).then((res) => res.data.items)
   );
 
-  const queryClient = useQueryClient();
-
-  console.log(products);
-
   return (
     <div className="min-h-screen h-full px-60">
       <CustomTitle>
-        Wishlist ({products?.length ? products?.length : 0})
+        Wishlists ({products?.length ? products?.length : 0})
       </CustomTitle>
       <div>
-        {products && products.length > 0 ? (
-          products?.map((item, idx) => <Item key={idx} {...item} />)
+        {products ? (
+          products && products.length > 0 ? (
+            products?.map((item, idx) => <Item key={idx} {...item} />)
+          ) : (
+            <EmptyBox />
+          )
         ) : (
-          <EmptyBox />
+          <SpinnerComponent />
         )}
       </div>
     </div>

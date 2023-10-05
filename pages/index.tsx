@@ -1,7 +1,7 @@
 import { products } from "@prisma/client";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space, Input, Button, Card } from "antd";
+import { Pagination, Select, Space, Input, Card } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
@@ -56,9 +56,13 @@ export default function Home() {
     setSearchValue(e.target.value);
   };
 
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [activePage]);
+
   return (
-    <div>
-      <div className="min-h-screen px-60">
+    <div className="min-h-screen">
+      <div className="px-60">
         <div className="flex justify-center">
           <Input
             className="w-96 mb-10"
@@ -141,7 +145,7 @@ export default function Home() {
         </div>
       </div>
       <Pagination
-        className="flex justify-center my-20"
+        className="flex justify-center mt-20"
         total={total}
         pageSize={1}
         defaultCurrent={1}

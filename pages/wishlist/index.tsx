@@ -52,9 +52,7 @@ const Item = (props: WishlistItem) => {
     {
       onMutate: async (productId) => {
         await queryClient.cancelQueries([WISHLIST_GET_QUERY_KEY]);
-
         const prev = queryClient.getQueryData([WISHLIST_GET_QUERY_KEY]);
-
         queryClient.setQueryData<WishList[]>([WISHLIST_GET_QUERY_KEY], (old) =>
           old?.filter((item) => item.id !== productId)
         );
@@ -86,6 +84,7 @@ const Item = (props: WishlistItem) => {
         src={props.image_url ?? ""}
         width={150}
         height={150}
+        priority
         placeholder="blur"
         blurDataURL={BLUR_IMAGE}
         onClick={() => router.push(`/products/${props.id}`)}

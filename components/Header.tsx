@@ -9,7 +9,7 @@ export default function Header() {
   const router = useRouter();
 
   return (
-    <div className="flex justify-between gap-5 h-20 bg-white px-5 mb-20">
+    <div className="flex justify-between gap-5 h-20 bg-white px-5 mb-20 shadow-xl">
       <Image
         className="hover:cursor-pointer"
         src="/Logo.png"
@@ -19,16 +19,27 @@ export default function Header() {
         onClick={() => router.push("/")}
       />
       <ul className="flex gap-5 items-center">
-        <HeaderList onClick={() => router.push("/")}>product</HeaderList>
+        {session?.user?.name && session?.user?.image && (
+          <>
+            <div className="flex items-center">
+              <img
+                className="w-10 h-10 rounded-full mr-3"
+                src={session.user.image}
+                alt="user"
+              />
+              <HeaderList>{session?.user?.name}님</HeaderList>
+            </div>
+          </>
+        )}
         <HeaderList onClick={() => router.push("/wishlist")}>
-          wishlist
+          위시리스트
         </HeaderList>
-        <HeaderList onClick={() => router.push("/cart")}>cart</HeaderList>
-        <HeaderList onClick={() => router.push("/mypage")}>mypage</HeaderList>
+        <HeaderList onClick={() => router.push("/cart")}>장바구니</HeaderList>
+        <HeaderList onClick={() => router.push("/order")}>주문내역</HeaderList>
         {session ? (
-          <HeaderList onClick={() => signOut()}>logout</HeaderList>
+          <HeaderList onClick={() => signOut()}>로그아웃</HeaderList>
         ) : (
-          <HeaderList onClick={() => signIn()}>login</HeaderList>
+          <HeaderList onClick={() => signIn()}>로그인</HeaderList>
         )}
       </ul>
     </div>
@@ -37,6 +48,7 @@ export default function Header() {
 
 const HeaderList = styled.li`
   font-size: 16px;
+  font-weight: 500;
 
   :hover {
     cursor: pointer;

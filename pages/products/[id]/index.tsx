@@ -1,16 +1,18 @@
 import { useRouter } from "next/router";
+import Image from "next/image";
+import { GetServerSidePropsContext } from "next";
+import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import Image from "next/image";
 import Carousel from "nuka-carousel";
-import { GetServerSidePropsContext } from "next";
-import { useSession } from "next-auth/react";
 import axios from "axios";
 import { format } from "date-fns";
 import { convertFromRaw, EditorState } from "draft-js";
 import { Cart, OrderItem, products } from "@prisma/client";
 import CustomEditor from "@components/Editor";
 import CountControl from "@components/CountControl";
+import CommentItem from "@components/CommentItem";
+import SpinnerComponent from "@components/Spinner";
 import {
   BASE_URL,
   CART_ADD_QUERY_KEY,
@@ -23,7 +25,6 @@ import {
   WISHLIST_UPDATE_QUERY_KEY,
 } from "api";
 import { CommentsItemType } from "types/type";
-import CommentItem from "@components/CommentItem";
 import { BLUR_IMAGE } from "constants/products";
 import { CustomButton } from "styles/common.styled";
 import {
@@ -32,7 +33,6 @@ import {
   ShoppingCartOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
-import SpinnerComponent from "@components/Spinner";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -64,13 +64,20 @@ export default function Products(props: {
   product: products & { images: string[] };
   comments: CommentsItemType[];
 }) {
-  const [index, setIndex] = useState(0);
-  const [quantity, setQuantity] = useState<number>(1);
-  const { data: session } = useSession();
-
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const { id: productId } = router.query;
+  const [index, setIndex] = useState(0);
+  const [quantity, setQuantity] = useState<number | undefined>(1);
+  const [editorState] = useState<EditorState | undefined>(() =>
+    props.product.contents
+      ? EditorState.createWithContent(
+          convertFromRaw(JSON.parse(props.product.contents))
+        )
+      : EditorState.createEmpty()
+  );
+
   const { data: comments } = useQuery(
     [COMMENTS_API_PATH, productId],
     async () => {
@@ -82,14 +89,6 @@ export default function Products(props: {
     {
       initialData: props.comments,
     }
-  );
-
-  const [editorState] = useState<EditorState | undefined>(() =>
-    props.product.contents
-      ? EditorState.createWithContent(
-          convertFromRaw(JSON.parse(props.product.contents))
-        )
-      : EditorState.createEmpty()
   );
 
   const { data: wishlist } = useQuery([WISHLIST_QUERY_KEY], async () => {
@@ -189,7 +188,7 @@ export default function Products(props: {
         queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
       },
       onSuccess: () => {
-        router.push("/mypage");
+        router.push("/order");
       },
     }
   );
@@ -284,17 +283,22 @@ export default function Products(props: {
               <div className="flex justify-between">
                 <div>
                   <span>수량 : </span>
-                  <CountControl value={quantity} setValue={setQuantity} />
+                  <CountControl
+                    disabled={false}
+                    value={quantity}
+                    setValue={setQuantity}
+                  />
                 </div>
                 <div>
-                  총 가격 : {(quantity * product.price).toLocaleString()} ₩
+                  총 가격 :{" "}
+                  {quantity && (quantity * product.price).toLocaleString()} ₩
                 </div>
               </div>
               <CustomButton
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");
-                    router.push("/auth/login");
+                    signIn();
                     return;
                   }
                   validate("cart");
@@ -308,7 +312,7 @@ export default function Products(props: {
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");
-                    router.push("/auth/login");
+                    signIn();
                     return;
                   }
                   mutate(productId);
@@ -321,7 +325,7 @@ export default function Products(props: {
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");
-                    router.push("/auth/login");
+                    signIn();
                     return;
                   }
                   validate("order");
@@ -336,7 +340,7 @@ export default function Products(props: {
             <p className="text-xl font-bold mb-10">제품 후기</p>
             {comments && comments.length > 0 ? (
               comments
-                .map((comment, idx) => (
+                .map((comment: any, idx: number) => (
                   <CommentItem
                     key={idx}
                     item={comment}

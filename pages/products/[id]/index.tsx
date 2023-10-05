@@ -157,9 +157,6 @@ export default function Products(props: {
       onMutate: () => {
         queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
       },
-      onSuccess: () => {
-        router.push("/cart");
-      },
     }
   );
 
@@ -310,7 +307,7 @@ export default function Products(props: {
                 장바구니
               </CustomButton>
               <CustomButton
-                colorreverse="true"
+                colorreverse={true}
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");

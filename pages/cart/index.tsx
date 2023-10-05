@@ -48,7 +48,7 @@ export default function CartPage() {
 
   const randomProducts = useMemo(
     () => useRandomProducts(products || [], 5),
-    products
+    [products]
   );
 
   const { mutate: deleteCart } = useMutation<unknown, unknown, number, any>(
@@ -57,7 +57,6 @@ export default function CartPage() {
         const { data } = await axios.post(CART_DELETE_QUERY_KEY, {
           id,
         });
-
         return data.items;
       } catch (error) {
         console.error(error);
@@ -67,9 +66,7 @@ export default function CartPage() {
     {
       onMutate: async (id) => {
         await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
-
         const prev = queryClient.getQueriesData([CART_GET_QUERY_KEY]);
-
         queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
           old?.filter((category) => category.id !== id)
         );
@@ -200,6 +197,7 @@ export default function CartPage() {
                   src={item.image_url ?? ""}
                   width={1000}
                   height={1000}
+                  priority
                   className="rounded"
                   objectFit="cover"
                   placeholder="blur"
@@ -248,9 +246,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
     {
       onMutate: async (item) => {
         await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
-
         const prev = queryClient.getQueryData([CART_GET_QUERY_KEY]);
-
         queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
           old?.map((category) => (category.id === item.id ? item : category))
         );
@@ -266,7 +262,13 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
   );
 
   const handleItemDelete = async () => {
-    await deleteCart(props.id);
+    const isConfirmed = window.confirm("삭제하시겠습니까?");
+
+    if (isConfirmed) {
+      await deleteCart(props.id);
+    } else {
+      return;
+    }
   };
 
   const handleItemUpdate = () => {
@@ -288,6 +290,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
         src={props.image_url}
         width={150}
         height={150}
+        priority
         alt={props.name}
         onClick={() => router.push(`/products/${props.productId}`)}
       />

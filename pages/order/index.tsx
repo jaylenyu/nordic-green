@@ -60,7 +60,6 @@ const DetailItem = (props: OrderDetail) => {
           status: status,
           userId: props.userId,
         });
-        console.log("update", data.item);
         return data.items;
       } catch (error) {
         console.error(error);
@@ -70,9 +69,7 @@ const DetailItem = (props: OrderDetail) => {
     {
       onMutate: async (status) => {
         await queryClient.cancelQueries([ORDER_GET_QUERY_KEY]);
-
         const prev = queryClient.getQueryData([ORDER_GET_QUERY_KEY]);
-
         queryClient.setQueryData<Cart[]>([ORDER_GET_QUERY_KEY], (old) =>
           old?.map((category) => {
             if (category.id === props.id) {
@@ -98,8 +95,6 @@ const DetailItem = (props: OrderDetail) => {
         const { data } = await axios.post(ORDER_DELETE_QUERY_KEY, {
           id,
         });
-        console.log(data);
-
         return data.items;
       } catch (error) {
         console.error(error);
@@ -109,9 +104,7 @@ const DetailItem = (props: OrderDetail) => {
     {
       onMutate: async (id) => {
         await queryClient.cancelQueries([ORDER_GET_QUERY_KEY]);
-
         const prev = queryClient.getQueriesData([ORDER_GET_QUERY_KEY]);
-
         queryClient.setQueryData<Cart[]>([ORDER_GET_QUERY_KEY], (old) =>
           old?.filter((category) => category.id !== id)
         );
@@ -176,7 +169,7 @@ const DetailItem = (props: OrderDetail) => {
                 </CustomButton>
               ) : (
                 <CustomButton
-                  colorReverse={true}
+                  colorreverse={true}
                   onClick={() => updateOrderStatus(-1)}
                 >
                   취소처리
@@ -211,10 +204,12 @@ const Item = (props: OrderItemDetail & { status: number }) => {
   return (
     <div className="flex w-full py-3 border-b justify-between">
       <div className="flex w-4/5">
-        <div className="w-40 h-28 object-cover relative">
+        <div className="object-cover relative hover:cursor-pointer">
           <Image
             className="rounded-2xl"
-            layout="fill"
+            width="200"
+            height="200"
+            priority
             src={props.image_url}
             alt={props.name}
             onClick={() => router.push(`/products/${props.productId}`)}

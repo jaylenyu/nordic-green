@@ -37,7 +37,6 @@ export default function CommentEdit() {
           `/api/get-comment?orderItemIds=${orderItemIds}`
         );
         const data = response.data;
-
         if (data.items.contents) {
           setEditorState(
             EditorState.createWithContent(
@@ -91,6 +90,7 @@ export default function CommentEdit() {
                 alt={commentProduct?.name}
                 width={200}
                 height={200}
+                priority
                 className="rounded-2xl"
               />
             </div>

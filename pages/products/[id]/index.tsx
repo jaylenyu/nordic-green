@@ -40,7 +40,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       params: { id: context.params?.id },
     });
     const product = responseProduct.data.items;
-
     const responseComments = await axios.get(
       `${BASE_URL}${COMMENTS_API_PATH}`,
       {
@@ -118,9 +117,7 @@ export default function Products(props: {
     {
       onMutate: async (productId) => {
         await queryClient.cancelQueries([WISHLIST_QUERY_KEY]);
-
         const prev = queryClient.getQueriesData([WISHLIST_QUERY_KEY]);
-
         queryClient.setQueryData<string[]>([WISHLIST_QUERY_KEY], (old) =>
           old
             ? old.includes(String(productId))
@@ -234,13 +231,17 @@ export default function Products(props: {
             <div className="flex justify-end w-3/5">
               <div>
                 {product.images.map((url, idx) => (
-                  <div className="mb-5 mr-5 hover:opacity-50 w-20 h-20">
+                  <div
+                    key={idx}
+                    className="mb-5 mr-5 hover:opacity-50 w-20 h-20"
+                  >
                     <Image
                       src={url}
                       alt="image"
                       className="rounded-2xl"
                       width={80}
                       height={80}
+                      priority
                       placeholder="blur"
                       blurDataURL={BLUR_IMAGE}
                       onMouseOver={() => setIndex(idx)}
@@ -264,6 +265,7 @@ export default function Products(props: {
                       alt="image"
                       width={500}
                       height={500}
+                      priority
                     />
                   ))}
                 </Carousel>
@@ -308,7 +310,7 @@ export default function Products(props: {
                 장바구니
               </CustomButton>
               <CustomButton
-                colorReverse={true}
+                colorreverse="true"
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");

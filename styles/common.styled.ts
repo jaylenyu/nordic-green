@@ -26,7 +26,13 @@ export const CategoryButton = styled(Button)`
 export const CustomWrap = styled.div`
   min-height: 100vh;
   height: 100%;
-  padding: 0 120px;
+  padding: 150px 240px;
+`;
+
+export const CustomWhiteWrap = styled.div`
+  margin-top: 80px;
+  padding: 80px 240px;
+  background-color: #fff;
 `;
 
 export const CustomTitle = styled.p`

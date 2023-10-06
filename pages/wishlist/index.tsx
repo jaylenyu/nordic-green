@@ -8,7 +8,12 @@ import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { CustomTitle, ItemList, ItemTitle } from "styles/common.styled";
+import {
+  CustomTitle,
+  CustomWrap,
+  ItemList,
+  ItemTitle,
+} from "styles/common.styled";
 import { WishlistItem } from "types/type";
 
 export default function Wishlist() {
@@ -22,7 +27,7 @@ export default function Wishlist() {
   );
 
   return (
-    <div className="min-h-screen h-full px-60">
+    <CustomWrap>
       <CustomTitle>
         Wishlists ({products?.length ? products?.length : 0})
       </CustomTitle>
@@ -37,7 +42,7 @@ export default function Wishlist() {
           <SpinnerComponent />
         )}
       </div>
-    </div>
+    </CustomWrap>
   );
 }
 

@@ -7,7 +7,12 @@ import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { CustomTitle, ItemTitle } from "styles/common.styled";
+import {
+  CustomTitle,
+  CustomWhiteWrap,
+  CustomWrap,
+  ItemTitle,
+} from "styles/common.styled";
 import { OrderDetail } from "types/type";
 import { tooltips } from "constants/comment";
 
@@ -79,59 +84,62 @@ export default function CommentEdit() {
   };
 
   return (
-    <div className="min-h-screen h-full px-80">
-      <CustomTitle>후기 작성</CustomTitle>
-      <div className="flex flex-col items-center mb-10">
-        {commentProduct && (
-          <>
-            <div>
-              <Image
-                src={commentProduct?.image_url}
-                alt={commentProduct?.name}
-                width={200}
-                height={200}
-                priority
-                className="rounded-2xl"
-              />
-            </div>
-            <ItemTitle>{commentProduct?.name}</ItemTitle>
-            <div>
-              <div>가격 : {commentProduct.price.toLocaleString()} ₩</div>
-              <div>수량 : {commentProduct.quantity} 개</div>
+    <>
+      <div className="pt-40 px-60">
+        <CustomTitle>후기 작성</CustomTitle>
+        <div className="flex items-center justify-center">
+          {commentProduct && (
+            <>
               <div>
-                합계 :{" "}
-                <span className="font-bold">
-                  {commentProduct.amount.toLocaleString()} ₩
-                </span>
+                <Image
+                  src={commentProduct?.image_url}
+                  alt={commentProduct?.name}
+                  width={200}
+                  height={200}
+                  priority
+                  className="rounded-2xl"
+                />
               </div>
-            </div>
+              <div className="pl-20 flex flex-col">
+                <ItemTitle>{commentProduct?.name}</ItemTitle>
+                <div>가격 : {commentProduct.price.toLocaleString()} ₩</div>
+                <div>수량 : {commentProduct.quantity} 개</div>
+                <div>
+                  합계 :{" "}
+                  <span className="font-bold">
+                    {commentProduct.amount.toLocaleString()} ₩
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+      <div className="mt-10 px-60 bg-white py-20">
+        {editorState != null && (
+          <>
+            <p className="text-lg font-bold">제품 후기를 남겨주세요 !</p>
+            <Rate
+              tooltips={tooltips}
+              defaultValue={5}
+              value={rate}
+              onChange={setRate}
+              allowClear={false}
+              className="my-5"
+            />
+            {rate ? (
+              <Button className="ml-3 text-xs">{tooltips[rate - 1]}</Button>
+            ) : (
+              ""
+            )}
+            <CustomEditor
+              editorState={editorState}
+              onEditorStateChange={setEditorState}
+              onSave={handleSave}
+            />
           </>
         )}
       </div>
-
-      {editorState != null && (
-        <div className="px-20 py-10 bg-white">
-          <p>제품 후기를 남겨주세요 !</p>
-          <Rate
-            tooltips={tooltips}
-            defaultValue={5}
-            value={rate}
-            onChange={setRate}
-            allowClear={false}
-            className="my-5"
-          />
-          {rate ? (
-            <Button className="ml-3 text-xs">{tooltips[rate - 1]}</Button>
-          ) : (
-            ""
-          )}
-          <CustomEditor
-            editorState={editorState}
-            onEditorStateChange={setEditorState}
-            onSave={handleSave}
-          />
-        </div>
-      )}
-    </div>
+    </>
   );
 }

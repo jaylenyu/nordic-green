@@ -6,7 +6,12 @@ const nextConfig = {
     emotion: true,
   },
   images: {
-    domains: ["picsum.photos", "raw.githubusercontent.com", "www.ikea.com"],
+    domains: [
+      "picsum.photos",
+      "raw.githubusercontent.com",
+      "www.ikea.com",
+      "nordic-green.vercel.app",
+    ],
   },
 };
 

@@ -7,12 +7,13 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { CustomButton, Wrapper } from "styles/common.styled";
 import { CustomEditorProps } from "types/type";
 
-const Editor = dynamic(
+const Editor: React.ComponentType<any> = dynamic(
   () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
   {
     ssr: false,
   }
-);
+) as React.ComponentType<any>;
+
 export default function CustomEditor({
   editorState,
   readOnly = false,

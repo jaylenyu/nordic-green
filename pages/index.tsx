@@ -16,7 +16,7 @@ export default function Home() {
   const router = useRouter();
   const [activePage, setPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
-  const [selectedCategory, setSelectedCategory] = useState<string>();
+  const [selectedCategory, setSelectedCategory] = useState<string>("-1");
   const [searchValue, setSearchValue] = useState<string>("");
   const debounceSearchValue = useDebounce<string>(searchValue);
   const skip = TAKE * (activePage - 1);

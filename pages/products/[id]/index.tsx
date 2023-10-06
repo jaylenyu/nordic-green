@@ -28,8 +28,8 @@ import { CommentsItemType } from "types/type";
 import { BLUR_IMAGE } from "constants/products";
 import {
   CustomButton,
+  CustomWhiteButton,
   CustomWhiteWrap,
-  CustomWrap,
 } from "styles/common.styled";
 import {
   HeartFilled,
@@ -310,8 +310,7 @@ export default function Products(props: {
               >
                 장바구니
               </CustomButton>
-              <CustomButton
-                colorreverse={true}
+              <CustomWhiteButton
                 onClick={() => {
                   if (session == null) {
                     alert("로그인 하세요.");
@@ -323,7 +322,7 @@ export default function Products(props: {
                 icon={isWished ? <HeartFilled /> : <HeartOutlined />}
               >
                 위시리스트
-              </CustomButton>
+              </CustomWhiteButton>
               <CustomButton
                 onClick={() => {
                   if (session == null) {

@@ -18,7 +18,9 @@ export const authOption: NextAuthOptions = {
     maxAge: 1 * 60 * 60 * 24,
   },
   callbacks: {
-    session: async ({ session, user }) => {
+    session: async (params) => {
+      const session = params.session as any;
+      const user = params.user;
       if (session.user && user) {
         session.user.id = user.id;
       }

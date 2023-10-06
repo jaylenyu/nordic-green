@@ -31,7 +31,6 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const session = await getServerSession(req, res, authOption);
-  console.log(session);
 
   const { id, status } = req.body;
 

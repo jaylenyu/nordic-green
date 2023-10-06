@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { COMMENTS_API_PATH } from "api";
 import { tooltips } from "constants/comment";
+import { getCustomUser } from "constants/user";
 
 const CustomEditor = dynamic(() => import("./Editor"), {
   ssr: false,
@@ -24,6 +25,7 @@ export default function CommentItem({
   productId: string | string[] | undefined;
 }) {
   const { data: session } = useSession();
+  const user = getCustomUser(session);
   const router = useRouter();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [rate, setRate] = useState(5);
@@ -65,7 +67,7 @@ export default function CommentItem({
 
         alert("후기 등록 성공!");
       } catch (error) {
-        console.log(error);
+        console.error(error);
         alert("후기 등록 실패!");
       } finally {
         queryClient.invalidateQueries([COMMENTS_API_PATH, productId]);
@@ -130,7 +132,7 @@ export default function CommentItem({
                   onEditorStateChange={setEditorState}
                   onSave={handleSave}
                 />
-                {item.userId === session?.user?.id && (
+                {item.userId === user?.id && (
                   <div className="z-10 absolute top-3 right-3">
                     <Button onClick={handleSave}>저장</Button>
                     <Button onClick={() => setEditMode(false)}>취소</Button>
@@ -150,7 +152,7 @@ export default function CommentItem({
                   )}
                   readOnly
                 />
-                {item.userId === session?.user?.id && (
+                {item.userId === user?.id && (
                   <div>
                     <Button onClick={() => setEditMode(true)}>수정</Button>
                     <Button onClick={handleDeleteComment}>삭제</Button>

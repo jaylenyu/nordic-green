@@ -21,6 +21,7 @@ import {
   CartInfoContent,
   CustomButton,
   CustomTitle,
+  CustomWhiteWrap,
   CustomWrap,
   ItemList,
   ItemTitle,
@@ -136,52 +137,56 @@ export default function CartPage() {
   };
 
   return (
-    <CustomWrap>
-      <CustomTitle>Carts ({data ? data?.length : 0})</CustomTitle>
-      <div className="flex relative justify-center">
-        <div className="w-2/3">
-          {data ? (
-            data.length > 0 ? (
-              data?.map((item, idx) => (
-                <Item key={idx} {...item} deleteCart={deleteCart} />
-              ))
+    <>
+      <CustomWrap>
+        <CustomTitle>Carts ({data ? data?.length : 0})</CustomTitle>
+        <div className="flex relative justify-center">
+          <div className="w-2/3">
+            {data ? (
+              data.length > 0 ? (
+                data?.map((item, idx) => (
+                  <Item key={idx} {...item} deleteCart={deleteCart} />
+                ))
+              ) : (
+                <EmptyBox />
+              )
             ) : (
-              <EmptyBox />
-            )
+              <SpinnerComponent />
+            )}
+          </div>
+          {data && data.length !== 0 ? (
+            <div className="px-10 mt-10 w-1/3">
+              <div className="sticky top-10">
+                <div className="text-2xl mb-10">Info</div>
+                <CartInfoContent>
+                  <span>금액</span>
+                  <div>{amount?.toLocaleString()} ₩</div>
+                </CartInfoContent>
+                <CartInfoContent>
+                  <span>배송비</span>
+                  <span>0 ₩</span>
+                </CartInfoContent>
+                <CartInfoContent className="border-b mb-5">
+                  <span>할인금액</span>
+                  <span>0 ₩</span>
+                </CartInfoContent>
+                <CartInfoContent className="border-b mb-5">
+                  <span>결제금액</span>
+                  <span className="font-bold">
+                    {amount?.toLocaleString()} ₩
+                  </span>
+                </CartInfoContent>
+                <CustomButton className="mt-10" onClick={handleOrder}>
+                  결제하기
+                </CustomButton>
+              </div>
+            </div>
           ) : (
-            <SpinnerComponent />
+            <></>
           )}
         </div>
-        {data && data.length !== 0 ? (
-          <div className="px-10 mt-10 w-1/3">
-            <div className="sticky top-10">
-              <div className="text-2xl mb-10">Info</div>
-              <CartInfoContent>
-                <span>금액</span>
-                <div>{amount?.toLocaleString()} ₩</div>
-              </CartInfoContent>
-              <CartInfoContent>
-                <span>배송비</span>
-                <span>0 ₩</span>
-              </CartInfoContent>
-              <CartInfoContent className="border-b mb-5">
-                <span>할인금액</span>
-                <span>0 ₩</span>
-              </CartInfoContent>
-              <CartInfoContent className="border-b mb-5">
-                <span>결제금액</span>
-                <span className="font-bold">{amount?.toLocaleString()} ₩</span>
-              </CartInfoContent>
-              <CustomButton className="mt-10" onClick={handleOrder}>
-                결제하기
-              </CustomButton>
-            </div>
-          </div>
-        ) : (
-          <></>
-        )}
-      </div>
-      <div className="my-20">
+      </CustomWrap>
+      <CustomWhiteWrap>
         <CustomTitle>추천상품</CustomTitle>
         <div className="grid grid-cols-5 gap-5">
           {randomProducts?.map((item) => (
@@ -213,8 +218,8 @@ export default function CartPage() {
             </Card>
           ))}
         </div>
-      </div>
-    </CustomWrap>
+      </CustomWhiteWrap>
+    </>
   );
 }
 

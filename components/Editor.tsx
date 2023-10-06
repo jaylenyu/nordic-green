@@ -31,7 +31,7 @@ export default function CustomEditor({
 
   return (
     <>
-      <Wrapper readOnly={readOnly}>
+      <Wrapper readOnly={readOnly} className="relative">
         <Editor
           readOnly={readOnly}
           editorState={editorState}
@@ -42,8 +42,11 @@ export default function CustomEditor({
           onEditorStateChange={onEditorStateChange}
         />
         {!readOnly && pathname !== "/products/[id]" && (
-          <Button className="w-24 h-12 m-4" onClick={onSave}>
-            Save
+          <Button
+            className="w-24 h-10 absolute top-2 right-2 z-10"
+            onClick={onSave}
+          >
+            후기 등록
           </Button>
         )}
       </Wrapper>

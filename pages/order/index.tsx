@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { CustomButton, CustomTitle } from "styles/common.styled";
+import { CustomButton, CustomTitle, CustomWrap } from "styles/common.styled";
 import { OrderDetail, OrderItemDetail } from "types/type";
 
 export default function MyPage() {
@@ -27,7 +27,7 @@ export default function MyPage() {
   );
 
   return (
-    <div className="min-h-screen h-full px-60">
+    <CustomWrap>
       <CustomTitle>Orders ({data ? data?.length : 0})</CustomTitle>
       <div>
         {data ? (
@@ -40,7 +40,7 @@ export default function MyPage() {
           <SpinnerComponent />
         )}
       </div>
-    </div>
+    </CustomWrap>
   );
 }
 

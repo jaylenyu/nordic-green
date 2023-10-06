@@ -26,7 +26,11 @@ import {
 } from "api";
 import { CommentsItemType } from "types/type";
 import { BLUR_IMAGE } from "constants/products";
-import { CustomButton } from "styles/common.styled";
+import {
+  CustomButton,
+  CustomWhiteWrap,
+  CustomWrap,
+} from "styles/common.styled";
 import {
   HeartFilled,
   HeartOutlined,
@@ -224,7 +228,7 @@ export default function Products(props: {
     <>
       {product != null && productId != null ? (
         <>
-          <div className="flex">
+          <div className="flex pt-40">
             <div className="flex justify-end w-3/5">
               <div>
                 {product.images.map((url, idx) => (
@@ -335,8 +339,8 @@ export default function Products(props: {
               </CustomButton>
             </div>
           </div>
-          <div className="p-32">
-            <p className="text-xl font-bold mb-10">제품 후기</p>
+          <CustomWhiteWrap>
+            <p className="text-lg font-bold mb-12">제품 후기</p>
             {comments && comments.length > 0 ? (
               comments
                 .map((comment: any, idx: number) => (
@@ -351,7 +355,7 @@ export default function Products(props: {
             ) : (
               <div>후기가 없습니다.</div>
             )}
-          </div>
+          </CustomWhiteWrap>
         </>
       ) : (
         <SpinnerComponent />

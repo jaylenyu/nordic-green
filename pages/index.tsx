@@ -8,7 +8,7 @@ import useDebounce from "hooks/useDebounce";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { CategoryButton } from "styles/common.styled";
+import { CategoryButton, CustomWrap } from "styles/common.styled";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
 
@@ -61,88 +61,86 @@ export default function Home() {
   }, [activePage]);
 
   return (
-    <div className="min-h-screen">
-      <div className="px-60">
-        <div className="flex justify-center">
-          <Input
-            className="w-96 mb-10"
-            placeholder="제품명 검색"
-            value={searchValue}
-            size="large"
-            onChange={handleSearchInput}
-            suffix={<SearchOutlined />}
-          />
-        </div>
-        <div>
+    <CustomWrap>
+      <div className="flex justify-center">
+        <Input
+          className="w-96 mb-10"
+          placeholder="제품명 검색"
+          value={searchValue}
+          size="large"
+          onChange={handleSearchInput}
+          suffix={<SearchOutlined />}
+        />
+      </div>
+      <div>
+        <CategoryButton
+          className="h-12 text-2xl text-green-700	"
+          type="text"
+          onClick={() => handleCategory("ALL")}
+        >
+          ALL
+        </CategoryButton>
+        {CATEGORY_MAP.map((categoryName, index) => (
           <CategoryButton
             className="h-12 text-2xl text-green-700	"
             type="text"
-            onClick={() => handleCategory("ALL")}
+            onClick={() => handleCategory(categoryName)}
+            key={index}
           >
-            ALL
+            {categoryName}
           </CategoryButton>
-          {CATEGORY_MAP.map((categoryName, index) => (
-            <CategoryButton
-              className="h-12 text-2xl text-green-700	"
-              type="text"
-              onClick={() => handleCategory(categoryName)}
-              key={index}
-            >
-              {categoryName}
-            </CategoryButton>
-          ))}
-        </div>
-        <div>
-          <Space className="flex justify-end mb-10">
-            <Select
-              className="w-32"
-              defaultValue={FILTERS[0].value}
-              onChange={handleFilterChange}
-              options={FILTERS.map(({ label, value }) => ({ label, value }))}
-            />
-          </Space>
-          <div className="grid grid-cols-3 gap-10 justify-items-center">
-            {products && products?.length > 0 ? (
-              products?.map((item) => (
-                <Card
-                  className="w-full"
-                  key={item.id}
-                  onClick={() => router.push(`/products/${item.id}`)}
-                  hoverable
-                  bordered={false}
-                  cover={
-                    <Image
-                      alt={item.name}
-                      src={item.image_url ?? ""}
-                      width={1000}
-                      height={1000}
-                      priority
-                      objectFit="cover"
-                      placeholder="blur"
-                      blurDataURL={BLUR_IMAGE}
-                    />
-                  }
-                >
-                  <div className="flex flex-col justify-between h-24">
-                    <div className="w-full text-lg font-bold">{item.name}</div>
-                    <div>
-                      <div className="text-zinc-400">
-                        {CATEGORY_MAP[item.category_id - 1]}
-                      </div>
-                      <div>{item.price.toLocaleString()} ₩</div>
+        ))}
+      </div>
+      <div>
+        <Space className="flex justify-end mb-10">
+          <Select
+            className="w-32"
+            defaultValue={FILTERS[0].value}
+            onChange={handleFilterChange}
+            options={FILTERS.map(({ label, value }) => ({ label, value }))}
+          />
+        </Space>
+        <div className="grid grid-cols-3 gap-10 justify-items-center">
+          {products && products?.length > 0 ? (
+            products?.map((item) => (
+              <Card
+                className="w-full"
+                key={item.id}
+                onClick={() => router.push(`/products/${item.id}`)}
+                hoverable
+                bordered={false}
+                cover={
+                  <Image
+                    alt={item.name}
+                    src={item.image_url ?? ""}
+                    width={1000}
+                    height={1000}
+                    priority
+                    objectFit="cover"
+                    placeholder="blur"
+                    blurDataURL={BLUR_IMAGE}
+                  />
+                }
+              >
+                <div className="flex flex-col justify-between h-24">
+                  <div className="w-full text-lg font-bold">{item.name}</div>
+                  <div>
+                    <div className="text-zinc-400">
+                      {CATEGORY_MAP[item.category_id - 1]}
                     </div>
+                    <div>{item.price.toLocaleString()} ₩</div>
                   </div>
-                </Card>
-              ))
-            ) : (
-              <>
-                <div />
-                <div>
-                  {products?.length === 0 ? <EmptyBox /> : <SpinnerComponent />}
                 </div>
-              </>
-            )}
-          </div>
+              </Card>
+            ))
+          ) : (
+            <>
+              <div />
+              <div>
+                {products?.length === 0 ? <EmptyBox /> : <SpinnerComponent />}
+              </div>
+            </>
+          )}
         </div>
       </div>
       <Pagination
@@ -153,6 +151,6 @@ export default function Home() {
         current={activePage}
         onChange={(value) => setPage(value)}
       />
-    </div>
+    </CustomWrap>
   );
 }

@@ -7,7 +7,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { COMMENTS_API_PATH } from "api";
+import API_PATHS from "api";
 import { tooltips } from "constants/comment";
 import { getCustomUser } from "constants/user";
 
@@ -58,7 +58,7 @@ export default function CommentItem({
       }
 
       try {
-        const response = await axios.post("/api/update-comment", {
+        const response = await axios.post(API_PATHS.COMMENTS.UPDATE, {
           rate: rate,
           orderItemIds: Number(item.orderItemIds),
           contents: JSON.stringify(convertToRaw(rawContent)),
@@ -70,7 +70,7 @@ export default function CommentItem({
         console.error(error);
         alert("후기 등록 실패!");
       } finally {
-        queryClient.invalidateQueries([COMMENTS_API_PATH, productId]);
+        queryClient.invalidateQueries([API_PATHS.COMMENTS.GET, productId]);
         setEditMode(false);
       }
     }
@@ -82,11 +82,11 @@ export default function CommentItem({
     if (!isConfirmed) return;
 
     try {
-      await axios.delete("/api/delete-comment", {
+      await axios.delete(API_PATHS.COMMENTS.DELETE, {
         data: { orderItemIds: item.orderItemIds },
       });
 
-      queryClient.invalidateQueries([COMMENTS_API_PATH, productId]);
+      queryClient.invalidateQueries([API_PATHS.COMMENTS.GET, productId]);
 
       alert("댓글이 삭제되었습니다.");
     } catch (error) {

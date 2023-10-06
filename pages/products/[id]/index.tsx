@@ -34,7 +34,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       params: { id: context.params?.id },
     });
     const product = responseProduct.data.items;
-    const responseComments = await axios.get(API_PATHS.PRODUCT.GET, {
+    const responseComments = await axios.get(API_PATHS.COMMENTS.GET, {
       params: { productId: context.params?.id },
     });
     const comments = responseComments.data.items;
@@ -60,13 +60,17 @@ export default function Products(props: {
   const { id: productId } = router.query;
   const [index, setIndex] = useState(0);
   const [quantity, setQuantity] = useState<number | undefined>(1);
-  const [editorState] = useState<EditorState | undefined>(() =>
-    props.product.contents
+  const [editorState] = useState<EditorState | undefined>(() => {
+    if (!props.product) {
+      return EditorState.createEmpty();
+    }
+
+    return props.product.contents
       ? EditorState.createWithContent(
           convertFromRaw(JSON.parse(props.product.contents))
         )
-      : EditorState.createEmpty()
-  );
+      : EditorState.createEmpty();
+  });
 
   const { data: comments } = useQuery(
     [API_PATHS.COMMENTS.GET, productId],

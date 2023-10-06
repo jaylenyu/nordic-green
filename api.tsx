@@ -1,3 +1,4 @@
+// export const BASE_URL = "http://localhost:3000";
 export const BASE_URL = "https://nordic-green.vercel.app";
 export const PRODUCT_API_PATH = "/api/get-product";
 export const COMMENTS_API_PATH = "/api/get-comments";
@@ -10,6 +11,8 @@ const API_PATHS = {
   },
   COMMENTS: {
     GET: `${BASE_URL}/api/get-comments`,
+    UPDATE: `${BASE_URL}/api/update-comment`,
+    DELETE: `${BASE_URL}/api/delete-comment`,
   },
   ORDER: {
     GET: `${BASE_URL}/api/get-order`,

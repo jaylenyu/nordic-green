@@ -11,8 +11,6 @@ async function getComments(productId: number) {
       },
     });
 
-    console.log(orderItems);
-
     let response = [];
 
     for (const orderItem of orderItems) {
@@ -25,8 +23,6 @@ async function getComments(productId: number) {
         response.push({ ...orderItem, ...res });
       }
     }
-
-    console.log(response);
 
     return response;
   } catch (error) {

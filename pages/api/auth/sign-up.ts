@@ -22,8 +22,6 @@ async function signUp(credential: string) {
         image: decoded.picture,
       },
     });
-    console.log(response);
-
     return response;
   } catch (error) {
     console.error(error);
@@ -40,6 +38,7 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { credential } = req.query;
+
   try {
     const products = await signUp(String(credential));
     res.status(200).json({ items: products, message: "Success" });

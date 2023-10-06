@@ -13,7 +13,7 @@ export default function Google() {
                 params: { credential: credentialResponse.credential },
               });
             } catch (error) {
-              console.log(error);
+              console.error(error);
             }
           }}
           onError={() => {

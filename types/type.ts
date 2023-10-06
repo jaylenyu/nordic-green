@@ -34,3 +34,10 @@ export type CustomEditorProps = {
   onSave?: () => void;
   onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
 };
+
+export type CustomUser = {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  id: string;
+};

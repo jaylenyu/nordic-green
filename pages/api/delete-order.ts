@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Cart, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { authOption } from "./auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 
@@ -30,7 +30,6 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const session = await getServerSession(req, res, authOption);
-  console.log(session);
 
   const { id } = req.body;
 

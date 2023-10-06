@@ -17,7 +17,6 @@ async function getProductsCount(category: number, contains: string) {
       : undefined;
   try {
     const response = await prisma.products.count({ where: where });
-    console.log(response);
     return response;
   } catch (error) {
     console.error(error);

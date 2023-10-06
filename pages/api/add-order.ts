@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { Cart, OrderItem, PrismaClient } from "@prisma/client";
+import { OrderItem, PrismaClient } from "@prisma/client";
 import { authOption } from "./auth/[...nextauth]";
 import { getServerSession } from "next-auth";
+import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +20,6 @@ async function addOrder(
           ...item,
         },
       });
-      console.log(`Created id : ${orderItem.id}`);
       orderItemIds.push(orderItem.id);
     }
 
@@ -49,16 +49,22 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const session = await getServerSession(req, res, authOption);
-  console.log(session);
 
   const { items, orderInfo } = req.body;
 
-  if (session == null) {
+  if (!session || !session.user) {
     res.status(200).json({ items: [], message: "No session" });
     return;
   }
+
+  const customUser = getCustomUser(session);
+  if (!customUser || !customUser.id) {
+    res.status(400).json({ message: "Invalid user data" });
+    return;
+  }
+
   try {
-    const wishlist = await addOrder(String(session.user.id), items, orderInfo);
+    const wishlist = await addOrder(customUser.id, items, orderInfo);
     res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

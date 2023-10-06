@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { authOption } from "./auth/[...nextauth]";
 import { getServerSession } from "next-auth";
+import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
@@ -36,17 +37,23 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const session = await getServerSession(req, res, authOption);
-  console.log(session);
 
   const { orderItemIds } = req.body;
 
-  if (session == null) {
+  if (!session || !session.user) {
     res.status(200).json({ items: [], message: "No session" });
     return;
   }
+
+  const customUser = getCustomUser(session);
+  if (!customUser || !customUser.id) {
+    res.status(400).json({ message: "Invalid user data" });
+    return;
+  }
+
   try {
     const comment = await deleteComment({
-      userId: String(session.user.id),
+      userId: customUser.id,
       orderItemIds: orderItemIds,
     });
     res.status(200).json({ items: comment, message: "Success" });

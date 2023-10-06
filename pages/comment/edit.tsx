@@ -69,7 +69,7 @@ export default function CommentEdit() {
           images: [],
         });
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
       alert("후기 등록 성공!");
       router.push(`/products/${commentProduct?.productId}`);

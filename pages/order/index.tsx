@@ -4,11 +4,7 @@ import SpinnerComponent from "@components/Spinner";
 import { Cart } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "antd";
-import {
-  ORDER_DELETE_QUERY_KEY,
-  ORDER_GET_QUERY_KEY,
-  ORDER_UPDATE_QUERY_KEY,
-} from "api";
+import API_PATHS from "api";
 import axios from "axios";
 import { ORDER_STATUS_MAP } from "constants/order";
 import { format } from "date-fns";
@@ -27,8 +23,8 @@ export default function MyPage() {
   const router = useRouter();
 
   const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
-    [ORDER_GET_QUERY_KEY],
-    () => axios.get(ORDER_GET_QUERY_KEY).then((res) => res.data.items)
+    [API_PATHS.ORDER.GET],
+    () => axios.get(API_PATHS.ORDER.GET).then((res) => res.data.items)
   );
 
   return (
@@ -62,7 +58,7 @@ const DetailItem = (props: OrderDetail) => {
   >(
     async (status) => {
       try {
-        const { data } = await axios.post(ORDER_UPDATE_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.ORDER.UPDATE_STATUS, {
           id: props.id,
           status: status,
           userId: props.userId,
@@ -75,9 +71,9 @@ const DetailItem = (props: OrderDetail) => {
     },
     {
       onMutate: async (status) => {
-        await queryClient.cancelQueries([ORDER_GET_QUERY_KEY]);
-        const prev = queryClient.getQueryData([ORDER_GET_QUERY_KEY]);
-        queryClient.setQueryData<Cart[]>([ORDER_GET_QUERY_KEY], (old) =>
+        await queryClient.cancelQueries([API_PATHS.ORDER.GET]);
+        const prev = queryClient.getQueryData([API_PATHS.ORDER.GET]);
+        queryClient.setQueryData<Cart[]>([API_PATHS.ORDER.GET], (old) =>
           old?.map((category) => {
             if (category.id === props.id) {
               return { ...category, status: status };
@@ -88,10 +84,10 @@ const DetailItem = (props: OrderDetail) => {
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([ORDER_GET_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
       },
     }
   );
@@ -99,7 +95,7 @@ const DetailItem = (props: OrderDetail) => {
   const { mutate: deleteOrder } = useMutation<unknown, unknown, number, any>(
     async (id) => {
       try {
-        const { data } = await axios.post(ORDER_DELETE_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.ORDER.DELETE, {
           id,
         });
         return data.items;
@@ -110,18 +106,18 @@ const DetailItem = (props: OrderDetail) => {
     },
     {
       onMutate: async (id) => {
-        await queryClient.cancelQueries([ORDER_GET_QUERY_KEY]);
-        const prev = queryClient.getQueriesData([ORDER_GET_QUERY_KEY]);
-        queryClient.setQueryData<Cart[]>([ORDER_GET_QUERY_KEY], (old) =>
+        await queryClient.cancelQueries([API_PATHS.ORDER.GET]);
+        const prev = queryClient.getQueriesData([API_PATHS.ORDER.GET]);
+        queryClient.setQueryData<Cart[]>([API_PATHS.ORDER.GET], (old) =>
           old?.filter((category) => category.id !== id)
         );
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([ORDER_GET_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
       },
     }
   );

@@ -13,17 +13,7 @@ import CustomEditor from "@components/Editor";
 import CountControl from "@components/CountControl";
 import CommentItem from "@components/CommentItem";
 import SpinnerComponent from "@components/Spinner";
-import {
-  BASE_URL,
-  CART_ADD_QUERY_KEY,
-  CART_GET_QUERY_KEY,
-  COMMENTS_API_PATH,
-  ORDER_ADD_QUERY_KEY,
-  ORDER_GET_QUERY_KEY,
-  PRODUCT_API_PATH,
-  WISHLIST_QUERY_KEY,
-  WISHLIST_UPDATE_QUERY_KEY,
-} from "api";
+import API_PATHS from "api";
 import { CommentsItemType } from "types/type";
 import { BLUR_IMAGE } from "constants/products";
 import {
@@ -40,16 +30,13 @@ import {
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const responseProduct = await axios.get(`${BASE_URL}${PRODUCT_API_PATH}`, {
+    const responseProduct = await axios.get(API_PATHS.PRODUCT.GET, {
       params: { id: context.params?.id },
     });
     const product = responseProduct.data.items;
-    const responseComments = await axios.get(
-      `${BASE_URL}${COMMENTS_API_PATH}`,
-      {
-        params: { productId: context.params?.id },
-      }
-    );
+    const responseComments = await axios.get(API_PATHS.PRODUCT.GET, {
+      params: { productId: context.params?.id },
+    });
     const comments = responseComments.data.items;
 
     return {
@@ -82,9 +69,9 @@ export default function Products(props: {
   );
 
   const { data: comments } = useQuery(
-    [COMMENTS_API_PATH, productId],
+    [API_PATHS.COMMENTS.GET, productId],
     async () => {
-      const response = await axios.get(`${BASE_URL}${COMMENTS_API_PATH}`, {
+      const response = await axios.get(API_PATHS.COMMENTS.GET, {
         params: { productId: productId },
       });
       return response.data.items;
@@ -94,11 +81,11 @@ export default function Products(props: {
     }
   );
 
-  const { data: wishlist } = useQuery([WISHLIST_QUERY_KEY], async () => {
+  const { data: wishlist } = useQuery([API_PATHS.WISHLIST.GET], async () => {
     try {
       const {
         data: { items },
-      } = await axios.get(WISHLIST_QUERY_KEY);
+      } = await axios.get(API_PATHS.WISHLIST.GET);
       return items;
     } catch (error) {
       console.error(error);
@@ -109,7 +96,7 @@ export default function Products(props: {
   const { mutate } = useMutation<unknown, unknown, string, any>(
     async (productId) => {
       try {
-        const { data } = await axios.post(WISHLIST_UPDATE_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.WISHLIST.UPDATE, {
           productId,
         });
         return data.items;
@@ -120,9 +107,9 @@ export default function Products(props: {
     },
     {
       onMutate: async (productId) => {
-        await queryClient.cancelQueries([WISHLIST_QUERY_KEY]);
-        const prev = queryClient.getQueriesData([WISHLIST_QUERY_KEY]);
-        queryClient.setQueryData<string[]>([WISHLIST_QUERY_KEY], (old) =>
+        await queryClient.cancelQueries([API_PATHS.WISHLIST.GET]);
+        const prev = queryClient.getQueriesData([API_PATHS.WISHLIST.GET]);
+        queryClient.setQueryData<string[]>([API_PATHS.WISHLIST.GET], (old) =>
           old
             ? old.includes(String(productId))
               ? old.filter((id) => id !== String(productId))
@@ -132,10 +119,10 @@ export default function Products(props: {
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([WISHLIST_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.WISHLIST.GET], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([WISHLIST_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.WISHLIST.GET]);
       },
     }
   );
@@ -148,7 +135,7 @@ export default function Products(props: {
   >(
     async (item) => {
       try {
-        const { data } = await axios.post(CART_ADD_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.CART.ADD, {
           item,
         });
         return data.items;
@@ -159,7 +146,7 @@ export default function Products(props: {
     },
     {
       onMutate: () => {
-        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.CART.GET]);
       },
     }
   );
@@ -172,7 +159,7 @@ export default function Products(props: {
   >(
     async (items) => {
       try {
-        const { data } = await axios.post(ORDER_ADD_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.ORDER.ADD, {
           items,
         });
         return data.items;
@@ -183,7 +170,7 @@ export default function Products(props: {
     },
     {
       onMutate: () => {
-        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
       },
       onSuccess: () => {
         router.push("/order");

@@ -1,7 +1,6 @@
 import CustomEditor from "@components/Editor";
 import { useQuery } from "@tanstack/react-query";
 import { Button, Rate } from "antd";
-import { ORDER_GET_QUERY_KEY } from "api";
 import axios from "axios";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import Image from "next/image";
@@ -10,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { CustomTitle, ItemTitle } from "styles/common.styled";
 import { OrderDetail } from "types/type";
 import { tooltips } from "constants/comment";
+import API_PATHS, { BASE_URL } from "api";
 
 export default function CommentEdit() {
   const router = useRouter();
@@ -20,8 +20,8 @@ export default function CommentEdit() {
   );
 
   const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
-    [ORDER_GET_QUERY_KEY],
-    () => axios.get(ORDER_GET_QUERY_KEY).then((res) => res.data.items)
+    [API_PATHS.ORDER.GET],
+    () => axios.get(API_PATHS.ORDER.GET).then((res) => res.data.items)
   );
 
   const commentProduct = data
@@ -34,7 +34,7 @@ export default function CommentEdit() {
     if (orderItemIds != null) {
       try {
         const response = await axios.get(
-          `/api/get-comment?orderItemIds=${orderItemIds}`
+          `${BASE_URL}/api/get-comment?orderItemIds=${orderItemIds}`
         );
         const data = response.data;
         if (data.items.contents) {
@@ -60,7 +60,7 @@ export default function CommentEdit() {
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
       try {
-        const response = await axios.post("/api/update-comment", {
+        const response = await axios.post(`${BASE_URL}/api/update-comment`, {
           rate: rate,
           orderItemIds: Number(orderItemIds),
           contents: JSON.stringify(

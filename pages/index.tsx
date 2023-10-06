@@ -11,6 +11,7 @@ import axios from "axios";
 import { CategoryButton, CustomWrap } from "styles/common.styled";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
+import { BASE_URL } from "api";
 
 export default function Home() {
   const router = useRouter();
@@ -20,8 +21,8 @@ export default function Home() {
   const [searchValue, setSearchValue] = useState<string>("");
   const debounceSearchValue = useDebounce<string>(searchValue);
   const skip = TAKE * (activePage - 1);
-  const TOTAL_QUERY_KEY = `/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
-  const PRODUCTS_QUERY_KEY = `/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
+  const TOTAL_QUERY_KEY = `${BASE_URL}/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
+  const PRODUCTS_QUERY_KEY = `${BASE_URL}/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
 
   const { data: total } = useQuery([TOTAL_QUERY_KEY], () =>
     axios.get(TOTAL_QUERY_KEY).then((res) => Math.ceil(res.data.items / TAKE))

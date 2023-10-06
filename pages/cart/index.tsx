@@ -195,7 +195,7 @@ export default function CartPage() {
                   src={item.image_url ?? ""}
                   width={1000}
                   height={1000}
-                  priority
+                  priority={true}
                   className="rounded"
                   objectFit="cover"
                   placeholder="blur"
@@ -288,7 +288,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
         src={props.image_url}
         width={150}
         height={150}
-        priority
+        priority={true}
         alt={props.name}
         onClick={() => router.push(`/products/${props.productId}`)}
       />

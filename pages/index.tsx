@@ -116,7 +116,7 @@ export default function Home() {
                     src={item.image_url ?? ""}
                     width={1000}
                     height={1000}
-                    priority
+                    priority={true}
                     objectFit="cover"
                     placeholder="blur"
                     blurDataURL={BLUR_IMAGE}

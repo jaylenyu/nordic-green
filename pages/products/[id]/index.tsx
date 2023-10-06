@@ -233,7 +233,7 @@ export default function Products(props: {
                       className="rounded-2xl"
                       width={80}
                       height={80}
-                      priority
+                      priority={true}
                       placeholder="blur"
                       blurDataURL={BLUR_IMAGE}
                       onMouseOver={() => setIndex(idx)}
@@ -257,7 +257,7 @@ export default function Products(props: {
                       alt="image"
                       width={500}
                       height={500}
-                      priority
+                      priority={true}
                     />
                   ))}
                 </Carousel>

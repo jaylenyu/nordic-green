@@ -90,7 +90,7 @@ const Item = (props: WishlistItem) => {
         src={props.image_url ?? ""}
         width={150}
         height={150}
-        priority={true}
+        priority
         unoptimized
         placeholder="blur"
         blurDataURL={BLUR_IMAGE}

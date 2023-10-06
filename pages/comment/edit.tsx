@@ -91,7 +91,7 @@ export default function CommentEdit() {
                   alt={commentProduct?.name}
                   width={200}
                   height={200}
-                  priority={true}
+                  priority
                   unoptimized
                   className="rounded-2xl"
                 />

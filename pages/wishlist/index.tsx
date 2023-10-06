@@ -91,6 +91,7 @@ const Item = (props: WishlistItem) => {
         width={150}
         height={150}
         priority={true}
+        unoptimized
         placeholder="blur"
         blurDataURL={BLUR_IMAGE}
         onClick={() => router.push(`/products/${props.id}`)}

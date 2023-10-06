@@ -210,6 +210,7 @@ const Item = (props: OrderItemDetail & { status: number }) => {
             width="200"
             height="200"
             priority={true}
+            unoptimized
             src={props.image_url}
             alt={props.name}
             onClick={() => router.push(`/products/${props.productId}`)}

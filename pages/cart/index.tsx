@@ -196,6 +196,7 @@ export default function CartPage() {
                   width={1000}
                   height={1000}
                   priority={true}
+                  unoptimized
                   className="rounded"
                   objectFit="cover"
                   placeholder="blur"
@@ -289,6 +290,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
         width={150}
         height={150}
         priority={true}
+        unoptimized
         alt={props.name}
         onClick={() => router.push(`/products/${props.productId}`)}
       />

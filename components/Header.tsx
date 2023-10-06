@@ -15,6 +15,7 @@ export default function Header() {
         src="/Logo.png"
         alt="Logo"
         priority={true}
+        unoptimized
         width={250}
         height={70}
         onClick={() => router.push("/")}

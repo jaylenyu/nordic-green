@@ -3,10 +3,10 @@ import { Button } from "antd";
 import { EditorState } from "draft-js";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { Dispatch, SetStateAction } from "react";
 import { EditorProps } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { CustomButton } from "styles/common.styled";
+import { CustomEditorProps } from "types/type";
 
 const Editor = dynamic<EditorProps>(
   () => import("react-draft-wysiwyg").then((module) => module.Editor),
@@ -20,12 +20,7 @@ export default function CustomEditor({
   readOnly = false,
   onSave,
   onEditorStateChange,
-}: {
-  editorState: EditorState;
-  readOnly?: boolean;
-  onSave?: () => void;
-  onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
-}) {
+}: CustomEditorProps) {
   const router = useRouter();
   const pathname = router.pathname;
 
@@ -34,7 +29,7 @@ export default function CustomEditor({
       <Wrapper readOnly={readOnly} className="relative">
         <Editor
           readOnly={readOnly}
-          editorState={editorState}
+          editorState={editorState || EditorState.createEmpty()}
           toolbarHidden
           localization={{
             locale: "ko",

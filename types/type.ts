@@ -1,4 +1,7 @@
 import { Cart, Comment, OrderItem, Orders } from "@prisma/client";
+import { EditorState } from "draft-js";
+import { Dispatch, SetStateAction } from "react";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
 export interface OrderItemDetail extends OrderItem {
   name: string;
@@ -24,3 +27,10 @@ export interface WishlistItem {
   image_url: string | null;
   category_id: number;
 }
+
+export type CustomEditorProps = {
+  editorState: EditorState | undefined;
+  readOnly?: boolean;
+  onSave?: () => void;
+  onEditorStateChange?: Dispatch<SetStateAction<EditorState | undefined>>;
+};

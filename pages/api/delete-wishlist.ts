@@ -18,7 +18,7 @@ async function removeProductFromWishlist(userId: string, productId: number) {
       },
     });
 
-    if (!wishlist) throw new Error("Wishlist not found");
+    if (!wishlist?.productIds) throw new Error("Wishlist not found");
 
     const updatedProductIds = wishlist.productIds
       .split(",")
@@ -58,7 +58,7 @@ export default async function handler(
     );
     res.status(200).json({ items: updatedWishlist, message: "Success" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: error.message });
+    console.log(error);
+    res.status(500).json({ message: "error" });
   }
 }

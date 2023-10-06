@@ -13,6 +13,8 @@ async function getWishlists(userId: string) {
       },
     });
 
+    if (!wishlist?.productIds) return [];
+
     const productId = wishlist?.productIds
       .split(",")
       .map((item) => Number(item));

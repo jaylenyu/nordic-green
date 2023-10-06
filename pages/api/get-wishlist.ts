@@ -13,7 +13,7 @@ async function getWishlist(userId: string) {
       },
     });
     console.log(response);
-    return response?.productIds.split(",") || [];
+    return response?.productIds?.split(",") || [];
   } catch (error) {
     console.error(error);
     return [];

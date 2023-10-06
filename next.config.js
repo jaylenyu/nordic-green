@@ -12,6 +12,7 @@ const nextConfig = {
       "www.ikea.com",
       "nordic-green.vercel.app",
     ],
+    path: "/_next/image",
   },
 };
 

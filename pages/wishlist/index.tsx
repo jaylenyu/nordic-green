@@ -46,7 +46,7 @@ const Item = (props: WishlistItem) => {
   const router = useRouter();
 
   const { mutate: deleteWishlist } = useMutation(
-    async (productId) => {
+    async (productId: number) => {
       await axios.post(WISHLIST_DELETE_QUERY_KEY, { productId });
     },
     {

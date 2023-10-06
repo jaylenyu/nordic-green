@@ -314,7 +314,7 @@ export default function Products(props: {
                     signIn();
                     return;
                   }
-                  mutate(productId);
+                  mutate(String(productId));
                 }}
                 icon={isWished ? <HeartFilled /> : <HeartOutlined />}
               >

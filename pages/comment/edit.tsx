@@ -92,6 +92,7 @@ export default function CommentEdit() {
                   width={200}
                   height={200}
                   priority={true}
+                  unoptimized
                   className="rounded-2xl"
                 />
               </div>

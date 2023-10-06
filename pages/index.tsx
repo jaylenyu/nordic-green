@@ -117,6 +117,7 @@ export default function Home() {
                     width={1000}
                     height={1000}
                     priority={true}
+                    unoptimized
                     objectFit="cover"
                     placeholder="blur"
                     blurDataURL={BLUR_IMAGE}

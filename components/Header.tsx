@@ -14,7 +14,7 @@ export default function Header() {
         className="hover:cursor-pointer"
         src="/Logo.png"
         alt="Logo"
-        priority={true}
+        priority
         unoptimized
         width={250}
         height={70}

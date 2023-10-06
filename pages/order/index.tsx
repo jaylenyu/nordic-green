@@ -209,7 +209,7 @@ const Item = (props: OrderItemDetail & { status: number }) => {
             className="rounded-2xl"
             width="200"
             height="200"
-            priority={true}
+            priority
             unoptimized
             src={props.image_url}
             alt={props.name}

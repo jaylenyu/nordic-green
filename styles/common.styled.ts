@@ -1,6 +1,16 @@
 import styled from "@emotion/styled";
 import { Button } from "antd";
 
+export const Wrapper = styled.div<{ readOnly: boolean }>`
+  ${(props) => (props.readOnly ? "" : "width: 100%")}
+  ${(props) => (props.readOnly ? "" : "padding: 20px")}
+  color: #333;
+  ${(props) =>
+    props.readOnly
+      ? ""
+      : "border: 1px solid rgba(0,0,0,0.1); border-radius: 8px"}
+`;
+
 export const CustomButton = styled(Button)`
   font-size: x-large;
   height: 50px;

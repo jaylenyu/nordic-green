@@ -3,18 +3,16 @@ import { Button } from "antd";
 import { EditorState } from "draft-js";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { EditorProps } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { CustomButton } from "styles/common.styled";
+import { CustomButton, Wrapper } from "styles/common.styled";
 import { CustomEditorProps } from "types/type";
 
-const Editor = dynamic<EditorProps>(
-  () => import("react-draft-wysiwyg").then((module) => module.Editor),
+const Editor = dynamic(
+  () => import("react-draft-wysiwyg").then((mod) => mod.Editor),
   {
     ssr: false,
   }
 );
-
 export default function CustomEditor({
   editorState,
   readOnly = false,
@@ -55,13 +53,3 @@ export default function CustomEditor({
     </>
   );
 }
-
-const Wrapper = styled.div<{ readOnly: boolean }>`
-  ${(props) => (props.readOnly ? "" : "width: 100%")}
-  ${(props) => (props.readOnly ? "" : "padding: 20px")}
-  color: #333;
-  ${(props) =>
-    props.readOnly
-      ? ""
-      : "border: 1px solid rgba(0,0,0,0.1); border-radius: 8px"}
-`;

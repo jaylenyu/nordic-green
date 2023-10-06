@@ -14,7 +14,7 @@ export default function Header() {
         className="hover:cursor-pointer"
         src="/Logo.png"
         alt="Logo"
-        priority
+        priority={true}
         width={250}
         height={70}
         onClick={() => router.push("/")}

@@ -156,7 +156,7 @@ export default function CartPage() {
           </div>
           {data && data.length !== 0 ? (
             <div className="px-10 mt-10 w-1/3">
-              <div className="sticky top-10">
+              <div className="sticky top-32">
                 <div className="text-2xl mb-10">Info</div>
                 <CartInfoContent>
                   <span>금액</span>

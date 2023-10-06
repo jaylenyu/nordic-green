@@ -7,12 +7,7 @@ import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import {
-  CustomTitle,
-  CustomWhiteWrap,
-  CustomWrap,
-  ItemTitle,
-} from "styles/common.styled";
+import { CustomTitle, ItemTitle } from "styles/common.styled";
 import { OrderDetail } from "types/type";
 import { tooltips } from "constants/comment";
 

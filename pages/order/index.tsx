@@ -1,4 +1,4 @@
-import { CloseOutlined } from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
 import { Cart } from "@prisma/client";
@@ -15,7 +15,12 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import { CustomButton, CustomTitle, CustomWrap } from "styles/common.styled";
+import {
+  CustomButton,
+  CustomTitle,
+  CustomWhiteButton,
+  CustomWrap,
+} from "styles/common.styled";
 import { OrderDetail, OrderItemDetail } from "types/type";
 
 export default function MyPage() {
@@ -32,7 +37,9 @@ export default function MyPage() {
       <div>
         {data ? (
           data.length > 0 ? (
-            data?.map((item, idx) => <DetailItem key={idx} {...item} />)
+            data
+              ?.map((item, idx) => <DetailItem key={idx} {...item} />)
+              .reverse()
           ) : (
             <EmptyBox />
           )
@@ -140,9 +147,9 @@ const DetailItem = (props: OrderDetail) => {
           </div>
         </div>
         <div className="flex flex-col justify-between ml-10 w-1/3 ">
-          <div className="sticky top-20">
+          <div className="sticky top-32">
             <div className="text-xl mb-10">주문 정보</div>
-            <CloseOutlined
+            <DeleteOutlined
               onClick={handleOrderDelete}
               className="absolute top-0 right-0 text-2xl hover:cursor-pointer"
             />
@@ -168,12 +175,9 @@ const DetailItem = (props: OrderDetail) => {
                   결제처리
                 </CustomButton>
               ) : (
-                <CustomButton
-                  colorreverse={true}
-                  onClick={() => updateOrderStatus(-1)}
-                >
+                <CustomWhiteButton onClick={() => updateOrderStatus(-1)}>
                   취소처리
-                </CustomButton>
+                </CustomWhiteButton>
               )}
             </div>
           </div>

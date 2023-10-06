@@ -3,7 +3,7 @@ import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
 import { WishList, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { WISHLIST_DELETE_QUERY_KEY, WISHLIST_GET_QUERY_KEY } from "api";
+import API_PATHS from "api";
 import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
@@ -22,8 +22,8 @@ export default function Wishlist() {
     { items: products[] },
     unknown,
     products[]
-  >([WISHLIST_GET_QUERY_KEY], () =>
-    axios.get(WISHLIST_GET_QUERY_KEY).then((res) => res.data.items)
+  >([API_PATHS.WISHLIST.GET_ALL], () =>
+    axios.get(API_PATHS.WISHLIST.GET_ALL).then((res) => res.data.items)
   );
 
   return (
@@ -52,23 +52,24 @@ const Item = (props: WishlistItem) => {
 
   const { mutate: deleteWishlist } = useMutation(
     async (productId: number) => {
-      await axios.post(WISHLIST_DELETE_QUERY_KEY, { productId });
+      await axios.post(API_PATHS.WISHLIST.DELETE, { productId });
     },
     {
       onMutate: async (productId) => {
-        await queryClient.cancelQueries([WISHLIST_GET_QUERY_KEY]);
-        const prev = queryClient.getQueryData([WISHLIST_GET_QUERY_KEY]);
-        queryClient.setQueryData<WishList[]>([WISHLIST_GET_QUERY_KEY], (old) =>
-          old?.filter((item) => item.id !== productId)
+        await queryClient.cancelQueries([API_PATHS.WISHLIST.GET_ALL]);
+        const prev = queryClient.getQueryData([API_PATHS.WISHLIST.GET_ALL]);
+        queryClient.setQueryData<WishList[]>(
+          [API_PATHS.WISHLIST.GET_ALL],
+          (old) => old?.filter((item) => item.id !== productId)
         );
 
         return { prev };
       },
       onError: (error, _, context: any) => {
-        queryClient.setQueryData([WISHLIST_GET_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.WISHLIST.GET_ALL], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([WISHLIST_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.WISHLIST.GET_ALL]);
       },
     }
   );

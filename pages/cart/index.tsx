@@ -8,14 +8,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useRandomProducts } from "../../hooks/useRandomProducts";
 import React, { useEffect, useMemo, useState } from "react";
-import {
-  CART_DELETE_QUERY_KEY,
-  CART_GET_QUERY_KEY,
-  CART_RECOMMENDED_QUERY_KEY,
-  CART_UPDATE_QUERY_KEY,
-  ORDER_ADD_QUERY_KEY,
-  ORDER_GET_QUERY_KEY,
-} from "api";
+import API_PATHS from "api";
 import { CartItem } from "types/type";
 import {
   CartInfoContent,
@@ -35,16 +28,16 @@ export default function CartPage() {
   const queryClient = useQueryClient();
 
   const { data } = useQuery<{ items: CartItem[] }, unknown, CartItem[]>(
-    [CART_GET_QUERY_KEY],
-    () => axios.get(CART_GET_QUERY_KEY).then((res) => res.data.items)
+    [API_PATHS.CART.GET],
+    () => axios.get(API_PATHS.CART.GET).then((res) => res.data.items)
   );
 
   const { data: products } = useQuery<
     { items: products[] },
     unknown,
     products[]
-  >([CART_RECOMMENDED_QUERY_KEY], () =>
-    axios.get(CART_RECOMMENDED_QUERY_KEY).then((res) => res.data.items)
+  >([API_PATHS.PRODUCT.RECOMMENDED], () =>
+    axios.get(API_PATHS.PRODUCT.RECOMMENDED).then((res) => res.data.items)
   );
 
   const randomProducts = useMemo(
@@ -55,7 +48,7 @@ export default function CartPage() {
   const { mutate: deleteCart } = useMutation<unknown, unknown, number, any>(
     async (id) => {
       try {
-        const { data } = await axios.post(CART_DELETE_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.CART.DELETE, {
           id,
         });
         return data.items;
@@ -66,18 +59,18 @@ export default function CartPage() {
     },
     {
       onMutate: async (id) => {
-        await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
-        const prev = queryClient.getQueriesData([CART_GET_QUERY_KEY]);
-        queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
+        await queryClient.cancelQueries([API_PATHS.CART.GET]);
+        const prev = queryClient.getQueriesData([API_PATHS.CART.GET]);
+        queryClient.setQueryData<Cart[]>([API_PATHS.CART.GET], (old) =>
           old?.filter((category) => category.id !== id)
         );
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([CART_GET_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.CART.GET], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.CART.GET]);
       },
     }
   );
@@ -90,7 +83,7 @@ export default function CartPage() {
   >(
     async (items) => {
       try {
-        const { data } = await axios.post(ORDER_ADD_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.ORDER.ADD, {
           items,
         });
         return data.items;
@@ -101,7 +94,7 @@ export default function CartPage() {
     },
     {
       onMutate: () => {
-        queryClient.invalidateQueries([ORDER_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
       },
       onSuccess: () => {
         alert("결제화면으로 이동합니다.");
@@ -239,7 +232,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
   const { mutate: updateCart } = useMutation<unknown, unknown, Cart, any>(
     async (item) => {
       try {
-        const { data } = await axios.post(CART_UPDATE_QUERY_KEY, {
+        const { data } = await axios.post(API_PATHS.CART.UPDATE, {
           item,
         });
         return data.items;
@@ -250,18 +243,18 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
     },
     {
       onMutate: async (item) => {
-        await queryClient.cancelQueries([CART_GET_QUERY_KEY]);
-        const prev = queryClient.getQueryData([CART_GET_QUERY_KEY]);
-        queryClient.setQueryData<Cart[]>([CART_GET_QUERY_KEY], (old) =>
+        await queryClient.cancelQueries([API_PATHS.CART.GET]);
+        const prev = queryClient.getQueryData([API_PATHS.CART.GET]);
+        queryClient.setQueryData<Cart[]>([API_PATHS.CART.GET], (old) =>
           old?.map((category) => (category.id === item.id ? item : category))
         );
         return { prev };
       },
       onError: (error, _, context) => {
-        queryClient.setQueryData([CART_GET_QUERY_KEY], context.prev);
+        queryClient.setQueryData([API_PATHS.CART.GET], context.prev);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries([CART_GET_QUERY_KEY]);
+        queryClient.invalidateQueries([API_PATHS.CART.GET]);
       },
     }
   );

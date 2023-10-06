@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:3000";
+// export const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "https://nordic-green.vercel.app";
 export const PRODUCT_API_PATH = "/api/get-product";
 export const COMMENTS_API_PATH = "/api/get-comments";
 

@@ -6,6 +6,10 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export const authOption: NextAuthOptions = {
+  theme: {
+    colorScheme: "light",
+    logo: "/Logo.png",
+  },
   adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({

@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import { CustomTitle, ItemTitle } from "styles/common.styled";
 import { OrderDetail } from "types/type";
 import { tooltips } from "constants/comment";
-import API_PATHS, { BASE_URL } from "api";
+import API_PATHS from "api";
 
 export default function CommentEdit() {
   const router = useRouter();
@@ -34,7 +34,7 @@ export default function CommentEdit() {
     if (orderItemIds != null) {
       try {
         const response = await axios.get(
-          `${BASE_URL}/api/get-comment?orderItemIds=${orderItemIds}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-comment?orderItemIds=${orderItemIds}`
         );
         const data = response.data;
         if (data.items.contents) {
@@ -60,14 +60,17 @@ export default function CommentEdit() {
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
       try {
-        const response = await axios.post(`${BASE_URL}/api/update-comment`, {
-          rate: rate,
-          orderItemIds: Number(orderItemIds),
-          contents: JSON.stringify(
-            convertToRaw(editorState.getCurrentContent())
-          ),
-          images: [],
-        });
+        const response = await axios.post(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-comment`,
+          {
+            rate: rate,
+            orderItemIds: Number(orderItemIds),
+            contents: JSON.stringify(
+              convertToRaw(editorState.getCurrentContent())
+            ),
+            images: [],
+          }
+        );
       } catch (error) {
         console.error(error);
       }

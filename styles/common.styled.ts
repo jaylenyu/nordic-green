@@ -39,10 +39,11 @@ export const CustomWhiteButton = styled(Button)`
   }
 `;
 
-export const CategoryButton = styled(Button)`
+export const CategoryButton = styled(Button)<{ selected?: boolean }>`
   font-size: x-large;
+  font-weight: 600;
   height: 60px;
-  color: #158041;
+  color: ${(props) => (props.selected ? "#000000" : "#158041")};
   margin-bottom: 20px;
 `;
 

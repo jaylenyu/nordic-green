@@ -3,7 +3,6 @@ import CountControl from "@components/CountControl";
 import { Cart, OrderItem, products } from "@prisma/client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useRandomProducts } from "../../hooks/useRandomProducts";
@@ -14,14 +13,14 @@ import {
   CartInfoContent,
   CustomButton,
   CustomTitle,
-  CustomWhiteWrap,
   CustomWrap,
   ItemList,
   ItemTitle,
 } from "styles/common.styled";
-import { Button, Card } from "antd";
+import { Button } from "antd";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
+import ProductCard from "@components/ProductCard";
 
 export default function CartPage() {
   const router = useRouter();
@@ -41,7 +40,7 @@ export default function CartPage() {
   );
 
   const randomProducts = useMemo(
-    () => useRandomProducts(products || [], 5),
+    () => useRandomProducts(products || [], 4),
     [products]
   );
 
@@ -150,7 +149,7 @@ export default function CartPage() {
           </div>
           {data && data.length !== 0 ? (
             <div className="px-10 mt-10 w-1/3">
-              <div className="sticky top-32">
+              <div className="sticky top-32 ">
                 <div className="text-2xl mb-10">Info</div>
                 <CartInfoContent>
                   <span>금액</span>
@@ -180,40 +179,14 @@ export default function CartPage() {
           )}
         </div>
       </CustomWrap>
-      <CustomWhiteWrap>
+      <div className="px-20 py-20 bg-white">
         <CustomTitle>추천상품</CustomTitle>
-        <div className="grid grid-cols-5 gap-5">
+        <div className="grid grid-cols-4 gap-5">
           {randomProducts?.map((item) => (
-            <Card
-              className="w-full"
-              hoverable
-              bordered={false}
-              key={item.id}
-              onClick={() => router.push(`/products/${item.id}`)}
-              cover={
-                <Image
-                  alt={item.name}
-                  src={item.image_url ?? ""}
-                  width={1000}
-                  height={1000}
-                  priority
-                  unoptimized
-                  className="rounded"
-                  objectFit="cover"
-                  placeholder="blur"
-                  blurDataURL={BLUR_IMAGE}
-                />
-              }
-            >
-              <div className="h-8 font-bold truncate">{item.name}</div>
-              <div className="text-zinc-400">
-                {CATEGORY_MAP[item.category_id - 1]}
-              </div>
-              <div>{item.price.toLocaleString()}₩</div>
-            </Card>
+            <ProductCard products={item} />
           ))}
         </div>
-      </CustomWhiteWrap>
+      </div>
     </>
   );
 }
@@ -324,7 +297,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
         </div>
       </div>
       <DeleteOutlined
-        className="absolute right-0 hover:cursor-pointer text-2xl opacity-50"
+        className="absolute right-5 hover:cursor-pointer text-2xl opacity-50"
         onClick={handleItemDelete}
       />
     </ItemList>

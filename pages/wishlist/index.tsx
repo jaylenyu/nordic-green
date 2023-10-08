@@ -106,7 +106,7 @@ const Item = (props: WishlistItem) => {
         </div>
       </div>
       <DeleteOutlined
-        className="absolute right-0 hover:cursor-pointer text-2xl opacity-50"
+        className="absolute right-5 hover:cursor-pointer text-2xl opacity-50"
         onClick={handleWishlistDelete}
       />
     </ItemList>

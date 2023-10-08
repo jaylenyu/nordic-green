@@ -73,7 +73,10 @@ export const ItemTitle = styled.p`
 
 export const ItemList = styled.div`
   display: flex;
+  background-color: #fff;
+  padding: 20px;
   position: relative;
+  border-radius: 1rem;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   margin: 2.5rem 0;
   padding-bottom: 2.5rem;

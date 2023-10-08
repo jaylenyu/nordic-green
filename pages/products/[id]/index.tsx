@@ -27,6 +27,7 @@ import {
   ShoppingCartOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
+import Head from "next/head";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -124,6 +125,7 @@ export default function ProductsDetail(props: {
       },
       onError: (error, _, context) => {
         queryClient.setQueryData([API_PATHS.WISHLIST.GET], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.WISHLIST.GET]);
@@ -220,6 +222,31 @@ export default function ProductsDetail(props: {
       {product != null && productId != null ? (
         <>
           <div className="flex pt-40">
+            <Head>
+              <title>{product.name} - Nordic Green</title>
+              <meta
+                name="description"
+                content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`}
+              />
+              <meta
+                name="keywords"
+                content={`${product.name}, plants, Nordic Green, boutique`}
+              />
+              <meta
+                property="og:title"
+                content={`${product.name} - Nordic Green`}
+              />
+              <meta
+                property="og:description"
+                content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`}
+              />
+              <meta property="og:image" content={product.images[0]} />
+              <meta
+                property="og:url"
+                content={`https://nordic-green.vercel.app/products/${product.id}`}
+              />
+              <link rel="icon" href="/favicon.ico" />
+            </Head>
             <div className="flex justify-end w-3/5">
               <div>
                 {product.images.map((url, idx) => (

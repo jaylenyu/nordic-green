@@ -17,7 +17,6 @@ import {
 import { WishlistItem } from "types/type";
 
 export default function Wishlist() {
-  const router = useRouter();
   const { data: products } = useQuery<
     { items: products[] },
     unknown,
@@ -67,6 +66,7 @@ const Item = (props: WishlistItem) => {
       },
       onError: (error, _, context: any) => {
         queryClient.setQueryData([API_PATHS.WISHLIST.GET_ALL], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.WISHLIST.GET_ALL]);

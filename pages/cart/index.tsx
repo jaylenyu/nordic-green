@@ -68,6 +68,7 @@ export default function CartPage() {
       },
       onError: (error, _, context) => {
         queryClient.setQueryData([API_PATHS.CART.GET], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.CART.GET]);
@@ -253,6 +254,7 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
       },
       onError: (error, _, context) => {
         queryClient.setQueryData([API_PATHS.CART.GET], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.CART.GET]);

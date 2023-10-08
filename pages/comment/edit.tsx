@@ -60,7 +60,7 @@ export default function CommentEdit() {
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-comment`,
           {
             rate: rate,

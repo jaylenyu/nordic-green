@@ -1,12 +1,10 @@
 import { products } from "@prisma/client";
 import { ChangeEvent, useEffect, useState } from "react";
-import { BLUR_IMAGE, CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
-import { Pagination, Select, Space, Input, Card } from "antd";
+import { CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
+import { Pagination, Select, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import useDebounce from "hooks/useDebounce";
-import Image from "next/image";
-import { useRouter } from "next/router";
 import axios from "axios";
 import { CategoryButton, CustomWrap } from "styles/common.styled";
 import EmptyBox from "@components/EmptyBox";
@@ -14,7 +12,6 @@ import SpinnerComponent from "@components/Spinner";
 import ProductCard from "@components/ProductCard";
 
 export default function Products() {
-  const router = useRouter();
   const [activePage, setPage] = useState(1);
   const [selectedFilter, setSelectedFilter] = useState<string>("name");
   const [selectedCategory, setSelectedCategory] = useState<string>("-1");

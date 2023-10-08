@@ -8,13 +8,10 @@
   "env": {
     "node": true
   },
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended",
-    "next/core-web-vitals"
-  ],
+  "extends": ["plugin:prettier/recommended"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }]
+    "react/jsx-filename-extension": [1, { "extensions": [".ts", ".tsx"] }],
+    "prettier/prettier": "error"
   }
 }

@@ -23,6 +23,12 @@ function MyApp({ Component, pageProps }: AppProps) {
             token: {
               colorPrimary: "#158041",
               colorBgContainer: "#fff",
+              colorLink: "#45a96f",
+            },
+            components: {
+              Button: {
+                textHoverBg: "none",
+              },
             },
           }}
         >

@@ -142,7 +142,7 @@ const DetailItem = (props: OrderDetail) => {
             ))}
           </div>
         </div>
-        <div className="flex flex-col justify-between ml-10 w-1/3 ">
+        <div className="flex flex-col justify-between ml-10 w-1/3 pt-10">
           <div className="sticky top-32">
             <div className="text-xl mb-10">주문 정보</div>
             <DeleteOutlined
@@ -202,7 +202,7 @@ const Item = (props: OrderItemDetail & { status: number }) => {
   };
 
   return (
-    <div className="flex w-full py-3 border-b justify-between">
+    <div className="flex w-full py-10 border-b justify-between">
       <div className="flex w-4/5">
         <div className="object-cover relative hover:cursor-pointer">
           <Image
@@ -227,7 +227,10 @@ const Item = (props: OrderItemDetail & { status: number }) => {
       </div>
       <div className="flex justify-end">
         {props.status === 2 && (
-          <Button className="h-10 rounded-full" onClick={handleComment}>
+          <Button
+            className="h-10 rounded-full bg-white text-green-800"
+            onClick={handleComment}
+          >
             후기작성
           </Button>
         )}

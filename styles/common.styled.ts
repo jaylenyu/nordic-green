@@ -47,10 +47,10 @@ export const CategoryButton = styled(Button)<{ selected?: boolean }>`
   margin-bottom: 20px;
 `;
 
-export const CustomWrap = styled.div`
+export const CustomWrap = styled.div<{ padding?: string }>`
   min-height: 100vh;
   height: 100%;
-  padding: 150px 240px;
+  padding: ${(props) => (props.padding ? props.padding : "150px 240px")};
 `;
 
 export const CustomWhiteWrap = styled.div`

@@ -59,68 +59,69 @@ export default function Products() {
   }, [activePage]);
 
   return (
-    <CustomWrap>
-      <div className="flex justify-center">
-        <Input
-          className="w-96 mb-10"
-          placeholder="제품명 검색"
-          value={searchValue}
-          size="large"
-          onChange={handleSearchInput}
-          suffix={<SearchOutlined />}
-        />
-      </div>
-      <div>
-        <CategoryButton
-          className="h-12 text-2xl"
-          type="text"
-          selected={selectedCategory === "-1"}
-          onClick={() => handleCategory("ALL")}
-        >
-          ALL
-        </CategoryButton>
-        {CATEGORY_MAP.map((categoryName, index) => (
+    <>
+      <CustomWrap padding="150px 120px">
+        <div className="flex justify-center">
+          <Input
+            className="w-96 mb-10"
+            placeholder="제품명 검색"
+            value={searchValue}
+            size="large"
+            onChange={handleSearchInput}
+            suffix={<SearchOutlined />}
+          />
+        </div>
+        <div>
           <CategoryButton
             className="h-12 text-2xl"
             type="text"
-            selected={selectedCategory === (index + 1).toString()}
-            onClick={() => handleCategory(categoryName)}
-            key={index}
+            selected={selectedCategory === "-1"}
+            onClick={() => handleCategory("ALL")}
           >
-            {categoryName}
+            ALL
           </CategoryButton>
-        ))}
-      </div>
-      <div>
-        <Space className="flex justify-end mb-10">
-          <Select
-            className="w-32"
-            defaultValue={FILTERS[0].value}
-            onChange={handleFilterChange}
-            options={FILTERS.map(({ label, value }) => ({ label, value }))}
-          />
-        </Space>
-        <div className="grid grid-cols-3 gap-10 justify-items-center">
+          {CATEGORY_MAP.map((categoryName, index) => (
+            <CategoryButton
+              className="h-12 text-2xl"
+              type="text"
+              selected={selectedCategory === (index + 1).toString()}
+              onClick={() => handleCategory(categoryName)}
+              key={index}
+            >
+              {categoryName}
+            </CategoryButton>
+          ))}
+        </div>
+        <div>
+          <Space className="flex justify-end mb-10">
+            <Select
+              className="w-32"
+              defaultValue={FILTERS[0].value}
+              onChange={handleFilterChange}
+              options={FILTERS.map(({ label, value }) => ({ label, value }))}
+            />
+          </Space>
           {products && products?.length > 0 ? (
-            products?.map((item) => <ProductCard products={item} />)
+            <div className="grid grid-cols-4 gap-5 justify-items-center">
+              {products?.map((item) => (
+                <ProductCard products={item} />
+              ))}
+            </div>
+          ) : products?.length === 0 ? (
+            <EmptyBox />
           ) : (
-            <>
-              <div />
-              <div>
-                {products?.length === 0 ? <EmptyBox /> : <SpinnerComponent />}
-              </div>
-            </>
+            <SpinnerComponent />
           )}
         </div>
-      </div>
-      <Pagination
-        className="flex justify-center mt-20"
-        total={total}
-        pageSize={1}
-        defaultCurrent={1}
-        current={activePage}
-        onChange={(value) => setPage(value)}
-      />
-    </CustomWrap>
+        <Pagination
+          className="flex justify-center mt-20"
+          total={total}
+          pageSize={1}
+          defaultCurrent={1}
+          current={activePage}
+          onChange={(value) => setPage(value)}
+        />
+      </CustomWrap>
+    </>
   );
 }

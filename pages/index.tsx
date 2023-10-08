@@ -1,6 +1,6 @@
 import ProductCard from "@components/ProductCard";
 import axios from "axios";
-import { mainCarousel, mainSectionBackground } from "constants/mainCarousel";
+import { MainCarousel, SectionBackground } from "constants/homeData";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import Carousel from "nuka-carousel";
@@ -8,21 +8,20 @@ import React from "react";
 import { CustomButton, CustomWhiteButton } from "styles/common.styled";
 import { HomeProps } from "types/type";
 import styled from "@emotion/styled";
+import API_PATHS from "api";
 
 export async function getStaticProps() {
   try {
-    const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=1&take=8&category=&orderBy=&contains=`
-    );
+    const response = await axios.get(API_PATHS.MAIN.GET);
     const responseProducts = response.data.items;
-    const MainCarousel = mainCarousel;
-    const SectionBackground = mainSectionBackground;
+    const responseCarousel = MainCarousel;
+    const responseSection = SectionBackground;
 
     return {
       props: {
         product: responseProducts,
-        carousel: MainCarousel,
-        sectionImage: SectionBackground,
+        carousel: responseCarousel,
+        sectionImage: responseSection,
       },
     };
   } catch (error) {

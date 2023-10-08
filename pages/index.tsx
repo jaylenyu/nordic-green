@@ -35,7 +35,13 @@ export default function Home({ product, carousel, sectionImage }: HomeProps) {
   return (
     <div className="pt-20">
       <section className="w-full">
-        <Carousel autoplay={true} speed={500} withoutControls wrapAround>
+        <Carousel
+          autoplay={true}
+          speed={500}
+          withoutControls
+          wrapAround
+          pauseOnHover={false}
+        >
           {carousel &&
             carousel.map(({ title, contents, image }, idx) => (
               <div key={idx} className="w-full relative">

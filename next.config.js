@@ -12,6 +12,7 @@ const nextConfig = {
       "www.ikea.com",
       "app.planetscale.com",
       "nordic-green.vercel.app",
+      "plantan-store-demo.myshopify.com",
     ],
     path: "/_next/image",
   },

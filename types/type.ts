@@ -1,4 +1,4 @@
-import { Cart, Comment, OrderItem, Orders } from "@prisma/client";
+import { Cart, Comment, OrderItem, Orders, products } from "@prisma/client";
 import { EditorState } from "draft-js";
 import { Dispatch, SetStateAction } from "react";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -40,4 +40,26 @@ export type CustomUser = {
   email?: string | null;
   image?: string | null;
   id: string;
+};
+
+export type Block = {
+  key: string;
+  text: string;
+  type: string;
+  depth: number;
+  inlineStyleRanges: any[];
+  entityRanges: any[];
+  data: object;
+};
+
+export interface CarouselData {
+  title: string;
+  contents: string;
+  image: string;
+}
+
+export type HomeProps = {
+  product: products[];
+  carousel: CarouselData[];
+  sectionImage: string;
 };

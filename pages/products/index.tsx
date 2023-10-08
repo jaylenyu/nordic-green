@@ -11,6 +11,7 @@ import axios from "axios";
 import { CategoryButton, CustomWrap } from "styles/common.styled";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
+import ProductCard from "@components/ProductCard";
 
 export default function Products() {
   const router = useRouter();
@@ -102,38 +103,7 @@ export default function Products() {
         </Space>
         <div className="grid grid-cols-3 gap-10 justify-items-center">
           {products && products?.length > 0 ? (
-            products?.map((item) => (
-              <Card
-                className="w-full"
-                key={item.id}
-                onClick={() => router.push(`/products/${item.id}`)}
-                hoverable
-                bordered={false}
-                cover={
-                  <Image
-                    alt={item.name}
-                    src={item.image_url ?? ""}
-                    width={1000}
-                    height={1000}
-                    priority
-                    unoptimized
-                    objectFit="cover"
-                    placeholder="blur"
-                    blurDataURL={BLUR_IMAGE}
-                  />
-                }
-              >
-                <div className="flex flex-col justify-between h-24">
-                  <div className="w-full text-lg font-bold">{item.name}</div>
-                  <div>
-                    <div className="text-zinc-500">
-                      {CATEGORY_MAP[item.category_id - 1]}
-                    </div>
-                    <div>{item.price.toLocaleString()} ₩</div>
-                  </div>
-                </div>
-              </Card>
-            ))
+            products?.map((item) => <ProductCard products={item} />)
           ) : (
             <>
               <div />

@@ -3,7 +3,7 @@ export const BLUR_IMAGE =
 
 export const CATEGORY_MAP = ["Plants", "Vase", "Growing Accessories"];
 
-export const TAKE = 9;
+export const TAKE = 8;
 
 export const FILTERS = [
   { label: "제품명 순", value: "name" },

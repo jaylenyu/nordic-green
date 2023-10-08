@@ -271,10 +271,10 @@ export default function ProductsDetail(props: {
               </div>
               <div className="w-2/3">
                 <Carousel
-                  animation="fade"
+                  animation="zoom"
                   withoutControls
                   wrapAround
-                  speed={10}
+                  speed={200}
                   slideIndex={index}
                 >
                   {product.images.map((url, idx) => (
@@ -293,7 +293,7 @@ export default function ProductsDetail(props: {
               </div>
             </div>
             <div className="w-2/5 px-20 flex flex-col justify-between">
-              <div className="text-2xl">{product.name}</div>
+              <div className="text-2xl font-bold">{product.name}</div>
               <div className="text-slate-500 text-sm">
                 등록일 : {format(new Date(product.createAt), "yyyy년 M월 d일")}
               </div>
@@ -312,7 +312,7 @@ export default function ProductsDetail(props: {
                     setValue={setQuantity}
                   />
                 </div>
-                <div>
+                <div className="font-bold">
                   총 가격 :{" "}
                   {quantity && (quantity * product.price).toLocaleString()} ₩
                 </div>

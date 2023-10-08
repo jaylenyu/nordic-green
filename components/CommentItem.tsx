@@ -5,7 +5,6 @@ import { CommentsItemType } from "types/type";
 import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import axios from "axios";
 import API_PATHS from "api";
 import { tooltips } from "constants/comment";
@@ -26,7 +25,6 @@ export default function CommentItem({
 }) {
   const { data: session } = useSession();
   const user = getCustomUser(session);
-  const router = useRouter();
   const [editMode, setEditMode] = useState<boolean>(false);
   const [rate, setRate] = useState(5);
   const [editorState, setEditorState] = useState<EditorState | undefined>(
@@ -58,7 +56,7 @@ export default function CommentItem({
       }
 
       try {
-        const response = await axios.post(API_PATHS.COMMENTS.UPDATE, {
+        await axios.post(API_PATHS.COMMENTS.UPDATE, {
           rate: rate,
           orderItemIds: Number(item.orderItemIds),
           contents: JSON.stringify(convertToRaw(rawContent)),

@@ -20,8 +20,6 @@ import {
 import { OrderDetail, OrderItemDetail } from "types/type";
 
 export default function MyPage() {
-  const router = useRouter();
-
   const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
     [API_PATHS.ORDER.GET],
     () => axios.get(API_PATHS.ORDER.GET).then((res) => res.data.items)
@@ -85,6 +83,7 @@ const DetailItem = (props: OrderDetail) => {
       },
       onError: (error, _, context) => {
         queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
@@ -115,6 +114,7 @@ const DetailItem = (props: OrderDetail) => {
       },
       onError: (error, _, context) => {
         queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
+        console.error(error);
       },
       onSuccess: () => {
         queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
@@ -188,7 +188,7 @@ const DetailItem = (props: OrderDetail) => {
 
 const Item = (props: OrderItemDetail & { status: number }) => {
   const router = useRouter();
-  const [quantity, setQuantity] = useState<number | undefined>(props.quantity);
+  const quantity = props.quantity;
   const [amount, setAmount] = useState<number>(props.quantity);
 
   useEffect(() => {

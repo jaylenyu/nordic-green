@@ -2,17 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 import { authOption } from "./auth/[...nextauth]";
 import { getServerSession } from "next-auth";
-import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
-async function deleteComment({
-  userId,
-  orderItemIds,
-}: {
-  userId: string;
-  orderItemIds: number;
-}) {
+async function deleteComment({ orderItemIds }: { orderItemIds: number }) {
   try {
     const response = await prisma.comment.delete({
       where: {
@@ -45,15 +38,8 @@ export default async function handler(
     return;
   }
 
-  const customUser = getCustomUser(session);
-  if (!customUser || !customUser.id) {
-    res.status(400).json({ message: "Invalid user data" });
-    return;
-  }
-
   try {
     const comment = await deleteComment({
-      userId: customUser.id,
       orderItemIds: orderItemIds,
     });
     res.status(200).json({ items: comment, message: "Success" });

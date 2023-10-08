@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import Carousel from "nuka-carousel";
 import React from "react";
 import { CustomButton, CustomWhiteButton } from "styles/common.styled";
-import { Block, HomeProps } from "types/type";
+import { HomeProps } from "types/type";
 import styled from "@emotion/styled";
 
 export async function getStaticProps() {

@@ -1,4 +1,7 @@
 const API_PATHS = {
+  MAIN: {
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=1&take=8&category=&orderBy=&contains=`,
+  },
   PRODUCT: {
     GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-product`,
     UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-product`,

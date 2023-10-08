@@ -1,6 +1,6 @@
-export const mainCarousel = [
+export const MainCarousel = [
   {
-    title: "자연의 터치로 집을 변화시켜보세요!",
+    title: "공간의 분위기를 변화시켜보세요!",
     contents:
       "보기만 해도 절로 미소가 피어나는 화분처럼 작은 변화로 공간이 달라지는 모습을 확인해 보세요. 컨트리 풍과 어울리는 스틸 소재 화분부터 정교한 디자인의 다용도 스톤웨어 화분까지 다양한 디자인 중에서 선택해 보세요.",
     image:
@@ -15,5 +15,5 @@ export const mainCarousel = [
   },
 ];
 
-export const mainSectionBackground =
+export const SectionBackground =
   "https://plantan-store-demo.myshopify.com/cdn/shop/files/banner-v6.jpg";

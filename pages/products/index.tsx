@@ -72,16 +72,18 @@ export default function Products() {
       </div>
       <div>
         <CategoryButton
-          className="h-12 text-2xl text-green-700	"
+          className="h-12 text-2xl"
           type="text"
+          selected={selectedCategory === "-1"}
           onClick={() => handleCategory("ALL")}
         >
           ALL
         </CategoryButton>
         {CATEGORY_MAP.map((categoryName, index) => (
           <CategoryButton
-            className="h-12 text-2xl text-green-700	"
+            className="h-12 text-2xl"
             type="text"
+            selected={selectedCategory === (index + 1).toString()}
             onClick={() => handleCategory(categoryName)}
             key={index}
           >

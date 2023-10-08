@@ -50,7 +50,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-export default function Products(props: {
+export default function ProductsDetail(props: {
   product: products & { images: string[] };
   comments: CommentsItemType[];
 }) {

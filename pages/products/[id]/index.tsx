@@ -221,7 +221,7 @@ export default function ProductsDetail(props: {
     <>
       {product != null && productId != null ? (
         <>
-          <div className="flex pt-40">
+          <div className="flex pt-40 sx:flex-col sx:justify-center sx:items-center">
             <Head>
               <title>{product.name} - Nordic Green</title>
               <meta
@@ -247,7 +247,7 @@ export default function ProductsDetail(props: {
               />
               <link rel="icon" href="/favicon.ico" />
             </Head>
-            <div className="flex justify-end w-3/5">
+            <div className="flex justify-end w-3/5 sm:w-full sm:justify-center sx:w-full sx:justify-center">
               <div>
                 {product.images.map((url, idx) => (
                   <div
@@ -292,74 +292,84 @@ export default function ProductsDetail(props: {
                 </Carousel>
               </div>
             </div>
-            <div className="w-2/5 px-20 flex flex-col justify-between">
-              <div className="text-2xl font-bold">{product.name}</div>
-              <div className="text-slate-500 text-sm">
+            <div className="w-2/5 px-20 flex flex-col justify-between sm:w-full sm:mt-5 sx:w-full sx:mt-3 md:px-10 sm:px-10 sx:px-10">
+              <div className="text-2xl font-bold md:text-xl sm:text-xl sx:text-lg">
+                {product.name}
+              </div>
+              <div className="text-slate-500 sm:text-sm sx:text-xs">
                 등록일 : {format(new Date(product.createAt), "yyyy년 M월 d일")}
               </div>
               {editorState != null && (
-                <div className="text-slate-500">
+                <div className="text-slate-500 sm:text-sm sx:text-sm">
                   <CustomEditor editorState={editorState} readOnly />
                 </div>
               )}
-              <div className="text-lg">{product.price.toLocaleString()} ₩</div>
-              <div className="flex justify-between">
+              <div className="text-lg md:text-base sm:text-sm sx:text-sm">
+                {product.price.toLocaleString()} ₩
+              </div>
+              <div className="flex justify-between sm:flex-col sx:flex-col">
                 <div>
-                  <span>수량 : </span>
+                  <span className="md:text-sm sm:text-sm sx:text-sm">
+                    수량 :{" "}
+                  </span>
                   <CountControl
                     disabled={false}
                     value={quantity}
                     setValue={setQuantity}
                   />
                 </div>
-                <div className="font-bold">
+                <div className="font-bold md:text-sm sm:text-sm sx:text-sm">
                   총 가격 :{" "}
                   {quantity && (quantity * product.price).toLocaleString()} ₩
                 </div>
               </div>
-              <CustomButton
-                onClick={() => {
-                  if (session == null) {
-                    alert("로그인 하세요.");
-                    signIn();
-                    return;
-                  }
-                  validate("cart");
-                }}
-                icon={<ShoppingCartOutlined />}
-              >
-                장바구니
-              </CustomButton>
-              <CustomWhiteButton
-                onClick={() => {
-                  if (session == null) {
-                    alert("로그인 하세요.");
-                    signIn();
-                    return;
-                  }
-                  mutate(String(productId));
-                }}
-                icon={isWished ? <HeartFilled /> : <HeartOutlined />}
-              >
-                위시리스트
-              </CustomWhiteButton>
-              <CustomButton
-                onClick={() => {
-                  if (session == null) {
-                    alert("로그인 하세요.");
-                    signIn();
-                    return;
-                  }
-                  validate("order");
-                }}
-                icon={<ShoppingOutlined />}
-              >
-                결제하기
-              </CustomButton>
+              <div className="mt-5 grid gap-5 md:gap-4 sm:gap-3 sx:gap-2">
+                <CustomButton
+                  onClick={() => {
+                    if (session == null) {
+                      alert("로그인 하세요.");
+                      signIn();
+                      return;
+                    }
+                    validate("cart");
+                  }}
+                  icon={<ShoppingCartOutlined />}
+                >
+                  장바구니
+                </CustomButton>
+                <CustomWhiteButton
+                  onClick={() => {
+                    if (session == null) {
+                      alert("로그인 하세요.");
+                      signIn();
+                      return;
+                    }
+                    mutate(String(productId));
+                  }}
+                  icon={isWished ? <HeartFilled /> : <HeartOutlined />}
+                >
+                  위시리스트
+                </CustomWhiteButton>
+                <CustomButton
+                  onClick={() => {
+                    if (session == null) {
+                      alert("로그인 하세요.");
+                      signIn();
+                      return;
+                    }
+                    validate("order");
+                  }}
+                  icon={<ShoppingOutlined />}
+                >
+                  결제하기
+                </CustomButton>
+              </div>
             </div>
           </div>
           <CustomWhiteWrap>
-            <p className="text-lg font-bold mb-12">제품 후기</p>
+            <p className="text-lg font-bold mb-12 sm:mb-5 sx:mb-3 sm:text-base sx:text-sm">
+              제품 후기
+            </p>
             {comments && comments.length > 0 ? (
               comments
                 .map((comment: any, idx: number) => (

@@ -21,10 +21,12 @@ import { Button } from "antd";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
 import ProductCard from "@components/ProductCard";
+import { useScreenWidth } from "hooks/useScreenWidth";
 
 export default function CartPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const screenWidth = useScreenWidth();
 
   const { data } = useQuery<{ items: CartItem[] }, unknown, CartItem[]>(
     [API_PATHS.CART.GET],
@@ -131,10 +133,10 @@ export default function CartPage() {
 
   return (
     <>
-      <CustomWrap>
+      <CustomWrap padding="150px 120px">
         <CustomTitle>Carts ({data ? data?.length : 0})</CustomTitle>
-        <div className="flex relative justify-center">
-          <div className="w-2/3">
+        <div className="flex relative justify-center sm:flex-col sx:flex-col">
+          <div className="w-2/3 sm:w-full sx:w-full">
             {data ? (
               data.length > 0 ? (
                 data?.map((item, idx) => (
@@ -148,7 +150,7 @@ export default function CartPage() {
             )}
           </div>
           {data && data.length !== 0 ? (
-            <div className="px-10 my-10  w-1/3">
+            <div className="px-10 my-10  w-1/3 sm:w-full sx:w-full">
               <div className="sticky top-32 grid gap-2">
                 <div className="text-2xl mb-10">Info</div>
                 <CartInfoContent>
@@ -169,7 +171,10 @@ export default function CartPage() {
                     {amount?.toLocaleString()} ₩
                   </span>
                 </CartInfoContent>
-                <CustomButton className="mt-10" onClick={handleOrder}>
+                <CustomButton
+                  className="mt-10 lg:mt-5 md:mt-5 sm:mt-5 sx:mt-3"
+                  onClick={handleOrder}
+                >
                   결제하기
                 </CustomButton>
               </div>
@@ -179,14 +184,16 @@ export default function CartPage() {
           )}
         </div>
       </CustomWrap>
-      <div className="px-20 py-20 bg-white">
-        <CustomTitle>추천상품</CustomTitle>
-        <div className="grid grid-cols-4 gap-5">
-          {randomProducts?.map((item) => (
-            <ProductCard products={item} />
-          ))}
+      {screenWidth >= 680 && (
+        <div className="px-20 py-20 bg-white">
+          <CustomTitle>추천상품</CustomTitle>
+          <div className="grid grid-cols-4 gap-5">
+            {randomProducts?.map((item) => (
+              <ProductCard products={item} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 }
@@ -259,38 +266,46 @@ const Item = (props: CartItem & { deleteCart: (id: number) => void }) => {
 
   return (
     <ItemList>
-      <Image
-        className="rounded-xl hover:cursor-pointer"
-        src={props.image_url}
-        width={150}
-        height={150}
-        priority
-        unoptimized
-        alt={props.name}
-        onClick={() => router.push(`/products/${props.productId}`)}
-      />
+      <div className="block">
+        <Image
+          className="rounded-xl hover:cursor-pointer"
+          src={props.image_url}
+          width={150}
+          height={150}
+          priority
+          unoptimized
+          alt={props.name}
+          onClick={() => router.push(`/products/${props.productId}`)}
+        />
+      </div>
       <div className="w-full flex flex-col ml-5 justify-between">
         <div>
           <ItemTitle>{props.name}</ItemTitle>
-          <span>가격 : {props.price.toLocaleString()} ₩</span>
+          <span className="md:text-sm sm:text-sm sx:text-sm">
+            가격 : {props.price.toLocaleString()} ₩
+          </span>
         </div>
-        <div className="flex w-full justify-between">
-          <div>
-            <span>수량 : </span>
-            <CountControl
-              value={quantity}
-              setValue={setQuantity}
-              disabled={false}
-            />
+        <div className="flex w-full justify-between lg:flex-col md:flex-col sm:flex-col sx:flex-col">
+          <div className="flex items-center sx:items-start sx:flex-col">
+            <div>
+              <span className="mr-2 md:text-sm sm:text-sm sx:text-sm">
+                수량 :{" "}
+              </span>
+              <CountControl
+                value={quantity}
+                setValue={setQuantity}
+                disabled={false}
+              />
+            </div>
             <Button
-              className="ml-3 text-sm"
+              className="flex items-center ml-3 sx:ml-0 sm:flex sm:items-center"
               icon={<SyncOutlined />}
               onClick={handleItemUpdate}
             >
               적용하기
             </Button>
           </div>
-          <div>
+          <div className="md:text-sm sm:text-sm sx:text-sm">
             총 금액 :{" "}
             <span className="font-bold">{amount.toLocaleString()} ₩</span>
           </div>

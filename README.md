@@ -169,3 +169,21 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 | Order             | ![order](https://github.com/jaylenyu/nordic-green/assets/124610396/144b7719-f5d0-4285-9cb6-a4e675350222)   | useQuery로 데이터 캐싱. <br/> useMutation으로 Optomistic Update구현. <br/> 제품 주문부터 주문한 주문내역 삭제까지 CRUD 구현. <br/> 결제하기 버튼으로 주문상태 업데이트 및 후기작성을 가능하도록 구현         |
 | Wishlist          | ![wishlist](https://github.com/jaylenyu/nordic-green/assets/124610396/5a2d48b0-5669-4fe6-9158-723c94e52393) | useQuery로 데이터 캐싱. <br/> useMutation으로 위시리스트 Optomistic Update구현. |
 
+<br />
+<br />
+
+## Pages and API Routes Overview
+
+| Route                        |
+|------------------------------|
+| ● /                          |
+| /_app                        |
+| ○ /404                       |
+| λ /api/*                     |
+| ○ /auth/login                |
+| ○ /cart                      |
+| ○ /comment/edit              |
+| ○ /order                     |
+| ○ /products                  |
+| λ /products/[id]             |
+| ○ /wishlist                  |

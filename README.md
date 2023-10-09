@@ -1,16 +1,20 @@
 # Nordic Green
 
 <br/>
+<br />
 
 <div align='center' >
   <img width="50%" alt="Logo" src="https://github.com/jaylenyu/nordic-green/assets/124610396/c957bce1-a815-4717-82b0-a50d42205936">
 </div>
 
 <br />
+<br />
 
 노르딕 그린은 실내 식물 및 관련 용품을 전문적으로 판매하는 온라인 커머스 웹 서비스입니다. 
 <br />
 사용자 중심의 디자인과 Nextjs의 최적화 기능을 통해 편리한 쇼핑 경험을 제공할 수 있도록 제작하였습니다.
+<br />
+<a href="https://jaylenyu.tistory.com/61">Nordic Green 배포 링크 🌿</a>
 
 <br />
 
@@ -35,6 +39,7 @@
 
 ## 📝 Description
 
+<br />
 <br />
 Next.js의 SSG를 활용하여 메인페이지를 서버 사이드 렌더링으로 구현하였고, 제품 상세 페이지는 ISG로 렌더링되도록 개발하였습니다. 
 <br />
@@ -68,3 +73,79 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 ## 🗂️ Project Structure
 
 <br />
+<br />
+
+```
+.
+├── 📁 components
+│   ├── CommentItem.tsx
+│   ├── CountControl.tsx
+│   ├── Editor.tsx
+│   ├── EmptyBox.tsx
+│   ├── Footer.tsx
+│   ├── GoogleLogin.tsx
+│   ├── Header.tsx
+│   ├── ProductCard.tsx
+│   └── Spinner.tsx
+│
+├── 📁 constants
+│
+├── 📁 hooks
+│   ├── useDebounce.ts
+│   ├── useRandomProducts.ts
+│   └── useScreenWidth.ts
+│
+├── 📁 pages
+│   ├── 📁 api
+│   │   ├── 📁 auth
+│   │   │   ├── [...nextauth].ts
+│   │   │   └── sign-up.ts
+│   │   ├── add-cart.ts
+│   │   ├── add-order.ts
+│   │   ├── delete-cart.ts
+│   │   ├── delete-comment.ts
+│   │   ├── delete-order.ts
+│   │   ├── delete-wishlist.ts
+│   │   ├── get-cart.ts
+│   │   ├── get-comment.ts
+│   │   ├── get-comments.ts
+│   │   ├── get-order.ts
+│   │   ├── get-product.ts
+│   │   ├── get-products-count.ts
+│   │   ├── get-products.ts
+│   │   ├── get-wishlist.ts
+│   │   ├── get-wishlists.ts
+│   │   ├── update-cart.ts
+│   │   ├── update-comment.ts
+│   │   ├── update-order-status.ts
+│   │   ├── update-product.ts
+│   │   └── update-wishlist.ts
+│   │
+│   ├── 📁 auth
+│   │   └── login.tsx
+│   ├── 📁 cart
+│   │   └── index.tsx
+│   ├── 📁 comment
+│   │   └── edit.tsx
+│   ├── 📁 order
+│   │   └── index.tsx
+│   ├── 📁 products
+│   │   ├── 📁 [id]
+│   │   │   └── index.tsx
+│   │   └── index.tsx
+│   ├── 📁 wishlist
+│   │   └── index.tsx
+│   ├── _app.tsx
+│   ├── _document.tsx
+│   └── index.tsx
+│
+├── 📁 prisma
+│   ├── productWithCategory.ts
+│   └── schema.prisma
+│
+├── 📁 public
+├── 📁 styles
+├── 📁 types
+├── api.tsx
+.
+```

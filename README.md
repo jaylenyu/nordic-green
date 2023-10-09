@@ -14,7 +14,7 @@
 <br />
 사용자 중심의 디자인과 Nextjs의 최적화 기능을 통해 편리한 쇼핑 경험을 제공할 수 있도록 제작하였습니다.
 <br />
-배포 링크 : <a href="https://jaylenyu.tistory.com/61">Nordic Green 🌿</a>
+배포 링크 : <a href="https://nordic-green.vercel.app">Nordic Green 🌿</a>
 
 <br />
 

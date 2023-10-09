@@ -17,7 +17,7 @@ export default function CountControl({
 
   return (
     <InputNumber
-      className="w-16"
+      className="w-16 sm:w-12 sx:w-12"
       disabled={disabled}
       controls={true}
       min={1}

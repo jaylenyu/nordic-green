@@ -24,25 +24,24 @@ export default function CustomEditor({
 
   return (
     <>
-      <Wrapper readOnly={readOnly} className="relative">
-        <Editor
-          readOnly={readOnly}
-          editorState={editorState || EditorState.createEmpty()}
-          toolbarHidden
-          localization={{
-            locale: "ko",
-          }}
-          onEditorStateChange={onEditorStateChange}
-        />
+      <div className="flex items-center justify-between">
+        <Wrapper readOnly={readOnly}>
+          <Editor
+            readOnly={readOnly}
+            editorState={editorState || EditorState.createEmpty()}
+            toolbarHidden
+            localization={{
+              locale: "ko",
+            }}
+            onEditorStateChange={onEditorStateChange}
+          />
+        </Wrapper>
         {!readOnly && pathname !== "/products/[id]" && (
-          <Button
-            className="w-24 h-10 absolute top-2 right-2 z-10"
-            onClick={onSave}
-          >
+          <Button className="w-24 h-10" onClick={onSave}>
             후기 등록
           </Button>
         )}
-      </Wrapper>
+      </div>
       <div className="my-5">
         {pathname !== "/products/[id]" && (
           <CustomButton onClick={() => router.back()}>

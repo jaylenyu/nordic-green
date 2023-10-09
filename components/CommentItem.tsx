@@ -101,10 +101,14 @@ export default function CommentItem({
     <div className="border-b mb-10">
       <div className="flex justify-between">
         <div className="flex">
-          <div className="font-bold mb-3 mr-3">{maskedUserId}</div>
-          <div className="text-sm">({item.quantity}개 구매)</div>
+          <div className="font-bold mb-3 mr-3 sm:text-sm sx:text-sm">
+            {maskedUserId}
+          </div>
+          <div className="text-sm sm:text-xs sx:text-xs">
+            ({item.quantity}개 구매)
+          </div>
         </div>
-        <div className="text-sm text-slate-500">
+        <div className="text-sm sm:text-xs sx:text-xs text-slate-500">
           {format(new Date(item.updatedAt), "yyyy년 M월 d일")}
         </div>
       </div>
@@ -131,7 +135,7 @@ export default function CommentItem({
                   onSave={handleSave}
                 />
                 {item.userId === user?.id && (
-                  <div className="z-10 absolute top-3 right-3">
+                  <div className="z-20 absolute top-1 right-0">
                     <Button onClick={handleSave}>저장</Button>
                     <Button onClick={() => setEditMode(false)}>취소</Button>
                   </div>
@@ -151,7 +155,7 @@ export default function CommentItem({
                   readOnly
                 />
                 {item.userId === user?.id && (
-                  <div>
+                  <div className="flex">
                     <Button onClick={() => setEditMode(true)}>수정</Button>
                     <Button onClick={handleDeleteComment}>삭제</Button>
                   </div>

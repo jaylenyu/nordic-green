@@ -71,9 +71,8 @@ export default function Products() {
             suffix={<SearchOutlined />}
           />
         </div>
-        <div>
+        <div className="mb-10">
           <CategoryButton
-            className="h-12 text-2xl"
             type="link"
             selected={selectedCategory === "-1"}
             onClick={() => handleCategory("ALL")}
@@ -82,7 +81,6 @@ export default function Products() {
           </CategoryButton>
           {CATEGORY_MAP.map((categoryName, index) => (
             <CategoryButton
-              className="h-12 text-2xl"
               type="link"
               selected={selectedCategory === (index + 1).toString()}
               onClick={() => handleCategory(categoryName)}
@@ -102,7 +100,7 @@ export default function Products() {
             />
           </Space>
           {products && products?.length > 0 ? (
-            <div className="grid grid-cols-4 gap-5 justify-items-center">
+            <div className="grid grid-cols-4 sm:grid-cols-2 sx:grid-cols-2 gap-5 lg:gap-3 md:gap-3 sm:gap-2 sx:gap-2  justify-items-center">
               {products?.map((item) => (
                 <ProductCard products={item} />
               ))}

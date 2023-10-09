@@ -1,4 +1,4 @@
-# Nordic Green
+# Nordic Green | Online Plant and Potting Boutique
 
 <br/>
 <br />

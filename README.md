@@ -56,7 +56,7 @@ nextAuth를 통해 Google Login API를 프로젝트에 구현하였습니다.
 useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담을 줄일 수 있도록 구현하였습니다.
 <br />
 <a href="https://jaylenyu.tistory.com/66">개발기록</a>
- 또한 반응형 레이아웃을 적용하고, 검색엔진(SEO)와 성능 최적화를 이루었습니다.
+검색엔진(SEO)와 성능을 최적화하였고 반응형 레이아웃을 적용하였습니다. 
 
 <br />
 <br />

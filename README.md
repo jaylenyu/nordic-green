@@ -81,13 +81,13 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 
 | Page              | GIF                                                                                                     | Contents |
 |-------------------|---------------------------------------------------------------------------------------------------------|----------|
-| Main & Login      | ![main login](https://github.com/jaylenyu/nordic-green/assets/124610396/2a37c0f1-c459-4cb4-bd30-2b0d5bc899a0) | MainPage SSG 생성. <br/> NextAuth를 사용하여 인증 기능을 구현. <br/> Google Login Provider 인증 구현. <br/> Prisma를 사용하여 세션 정보를 데이터베이스에 저장. <br/>        |
-| Products          | ![products](https://github.com/jaylenyu/nordic-green/assets/124610396/5ec1d9e3-a482-4395-8b5e-079541ba311a)   | useQuery를 활용하여 데이터 캐싱. <br/> useQuery와 useDebounce 훅으로 검색 성능 최적화. <br/> 필터링을 통해 정렬 구현 및 페이지네이션 구현. |
-| Cart              | ![cart](https://github.com/jaylenyu/nordic-green/assets/124610396/2cd71c1e-f851-469d-93b0-f11160be44f4)     | useQuery와 useMutation로 데이터를 효율적으로 캐싱 및 변경 작업을 처리함(Optomistic Update). <br/> useMemo로 Cart 내의 전체 상품 가격 계산을 캐싱 및 최적화. <br/> 추천상품을 랜덤으로 보일 수 있도록 Custom Hook으로 구현. |
-| Comment           | ![comment](https://github.com/jaylenyu/nordic-green/assets/124610396/c5387184-711f-4414-8038-a8394cab64cb)   | 리뷰내용과 평점(Rate) CRUD 구현. <br/> user의 session을 구분하여 작성한 사용자의 댓글만 수정 및 삭제가능하도록 구현. |
-| Order             | ![order](https://github.com/jaylenyu/nordic-green/assets/124610396/144b7719-f5d0-4285-9cb6-a4e675350222)   | useQuery로 데이터 캐싱. <br/> useMutation으로 Optomistic Update구현. <br/> 제품 주문부터 주문한 주문내역 삭제까지 CRUD 구현. <br/> 결제하기 버튼으로 주문상태 업데이트 및 후기작성을 가능하도록 구현         |
-| Wishlist          | ![wishlist](https://github.com/jaylenyu/nordic-green/assets/124610396/5a2d48b0-5669-4fe6-9158-723c94e52393) | useQuery로 데이터 캐싱. <br/> useMutation으로 위시리스트 Optomistic Update구현. |
-| SEO          |![seo](https://github.com/jaylenyu/nordic-green/assets/124610396/4d6df71f-b055-45b0-9c56-22e34fa8c7da) | 검색엔진(SEO)최적화. <br/> 웹 성능 최적화. |
+| Main & Login      | ![main   login](https://github.com/jaylenyu/nordic-green/assets/124610396/cc70e07f-0413-48ff-8a76-1c3ecaa1db26)| MainPage SSG 생성. <br/> NextAuth를 사용하여 인증 기능을 구현. <br/> Google Login Provider 인증 구현. <br/> Prisma를 사용하여 세션 정보를 데이터베이스에 저장. <br/>        |
+| Products          | ![products](https://github.com/jaylenyu/nordic-green/assets/124610396/fd5937f7-9b33-444c-b892-dc3622b0172c)| useQuery를 활용하여 데이터 캐싱. <br/> useQuery와 useDebounce 훅으로 검색 성능 최적화. <br/> 필터링을 통해 정렬 구현 및 페이지네이션 구현. |
+| Cart              |  ![cart](https://github.com/jaylenyu/nordic-green/assets/124610396/143c6bd1-55f8-4810-8935-2d632e9d0139)| useQuery와 useMutation로 데이터를 효율적으로 캐싱 및 변경 작업을 처리함(Optomistic Update). <br/> useMemo로 Cart 내의 전체 상품 가격 계산을 캐싱 및 최적화. <br/> 추천상품을 랜덤으로 보일 수 있도록 Custom Hook으로 구현. |
+| Comment           | ![comment](https://github.com/jaylenyu/nordic-green/assets/124610396/9d2e18f5-3df3-4490-bd0c-05af05ea08d5)| 리뷰내용과 평점(Rate) CRUD 구현. <br/> user의 session을 구분하여 작성한 사용자의 댓글만 수정 및 삭제가능하도록 구현. |
+| Order             | ![order](https://github.com/jaylenyu/nordic-green/assets/124610396/ccbf7adf-fa53-4d03-b5f0-1e0047ed80ab)| useQuery로 데이터 캐싱. <br/> useMutation으로 Optomistic Update구현. <br/> 제품 주문부터 주문한 주문내역 삭제까지 CRUD 구현. <br/> 결제하기 버튼으로 주문상태 업데이트 및 후기작성을 가능하도록 구현 |
+| Wishlist          |![wishlist](https://github.com/jaylenyu/nordic-green/assets/124610396/8fb9e09d-547a-4a66-94ef-fc56a55852d5)| useQuery로 데이터 캐싱. <br/> useMutation으로 위시리스트 Optomistic Update구현. |
+| SEO          | ![seo](https://github.com/jaylenyu/nordic-green/assets/124610396/4d19b7a7-d96c-4b28-a162-2e60c7374cfe)| 검색엔진(SEO)최적화. <br/> 웹 성능 최적화. |
 
 <br />
 <br />

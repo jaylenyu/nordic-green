@@ -4,7 +4,7 @@
 <br />
 
 <div align='center' >
-  <img width="50%" alt="Logo" src="https://github.com/jaylenyu/nordic-green/assets/124610396/c957bce1-a815-4717-82b0-a50d42205936">
+  <img width="50%" alt="Logo" src="https://github.com/jaylenyu/nordic-green/assets/124610396/7fa812ec-1b9b-4ad7-8341-961d1172a100">
 </div>
 
 <br />

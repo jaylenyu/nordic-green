@@ -75,11 +75,7 @@ const HeaderList = styled.li`
     color: rgba(0, 0, 0, 0.3);
   }
 
-  @media (max-width: 360px) {
-    font-size: 10px;
-  }
-
-  @media (min-width: 400px) {
+  @media (max-width: 500px) {
     font-size: 12px;
   }
 `;

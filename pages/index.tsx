@@ -33,8 +33,6 @@ export async function getStaticProps() {
 export default function Home({ product, carousel, sectionImage }: HomeProps) {
   const router = useRouter();
   const screenWidth = useScreenWidth();
-  const mobileProducts =
-    screenWidth < 640 && product?.length > 4 ? product.slice(2, 6) : product;
 
   return (
     <div className="pt-20">
@@ -85,9 +83,9 @@ export default function Home({ product, carousel, sectionImage }: HomeProps) {
         <div className="flex text-3xl xl:text-4xl md:text-2xl sm:text-2xl font-bold justify-center pb-40 md:pb-20 sm:pb-10 sx:pb-5 ">
           특별한 상품을 만나보세요 !
         </div>
-        <div className="grid gap-10 lg:gap-5 md:grid-cols-2 sm:grid-cols-2 sx:grid-cols-2 md:gap-5 sm:gap-2 sx:gap-2 justify-items-center">
-          {mobileProducts &&
-            mobileProducts.map((item, idx) => (
+        <div className="grid grid-cols-4 gap-10 lg:gap-5 md:grid-cols-2 sm:grid-cols-2 sx:grid-cols-2 md:gap-5 sm:gap-2 sx:gap-2 justify-items-center">
+          {product &&
+            product.map((item, idx) => (
               <ProductCard key={idx} products={item} />
             ))}
         </div>

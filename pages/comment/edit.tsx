@@ -87,7 +87,7 @@ export default function CommentEdit() {
         <CustomTitle>후기 작성</CustomTitle>
         <div className="flex items-center justify-center">
           {commentProduct && (
-            <div className="md:flex md:flex-col">
+            <div className="flex items-center md:flex md:flex-col">
               <Image
                 src={commentProduct?.image_url}
                 alt={commentProduct?.name}
@@ -112,7 +112,7 @@ export default function CommentEdit() {
           )}
         </div>
       </div>
-      <div className="mt-10 px-60 bg-white py-20 md:p-20 sm:p-10 sx:p-5">
+      <div className="mt-10 px-80 md:px-40 bg-white py-20 md:p-20 sm:p-10 sx:p-5">
         {editorState != null && (
           <>
             <p className="text-lg font-bold sm:text-base sx:text-sm">

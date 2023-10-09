@@ -86,6 +86,7 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 | Comment           | ![comment](https://github.com/jaylenyu/nordic-green/assets/124610396/c5387184-711f-4414-8038-a8394cab64cb)   | 리뷰내용과 평점(Rate) CRUD 구현. <br/> user의 session을 구분하여 작성한 사용자의 댓글만 수정 및 삭제가능하도록 구현. |
 | Order             | ![order](https://github.com/jaylenyu/nordic-green/assets/124610396/144b7719-f5d0-4285-9cb6-a4e675350222)   | useQuery로 데이터 캐싱. <br/> useMutation으로 Optomistic Update구현. <br/> 제품 주문부터 주문한 주문내역 삭제까지 CRUD 구현. <br/> 결제하기 버튼으로 주문상태 업데이트 및 후기작성을 가능하도록 구현         |
 | Wishlist          | ![wishlist](https://github.com/jaylenyu/nordic-green/assets/124610396/5a2d48b0-5669-4fe6-9158-723c94e52393) | useQuery로 데이터 캐싱. <br/> useMutation으로 위시리스트 Optomistic Update구현. |
+| SEO          |![seo](https://github.com/jaylenyu/nordic-green/assets/124610396/4d6df71f-b055-45b0-9c56-22e34fa8c7da) | 검색엔진(SEO)최적화. <br/> 웹 성능 최적화. |
 
 <br />
 <br />

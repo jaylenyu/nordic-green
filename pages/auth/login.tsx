@@ -1,4 +1,4 @@
-import GoogleLogin from "@components/GoogleLogin";
+import GoogleLogin from "@components/Auth/GoogleLogin";
 import React from "react";
 
 export default function Login() {

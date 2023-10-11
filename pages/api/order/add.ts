@@ -1,23 +1,38 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-import { authOption } from "./auth/[...nextauth]";
+import { OrderItem, PrismaClient } from "@prisma/client";
+import { authOption } from "../auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
-async function getComment(userId: string, orderItemIds: number) {
+async function addOrder(
+  userId: string,
+  items: Omit<OrderItem, "id">[],
+  orderInfo?: { receiver: string; address: string; phoneNumber: string }
+) {
   try {
-    const response = await prisma.comment.findUnique({
-      where: {
-        orderItemIds: orderItemIds,
+    let orderItemIds = [];
+
+    for (const item of items) {
+      const orderItem = await prisma.orderItem.create({
+        data: {
+          ...item,
+        },
+      });
+      orderItemIds.push(orderItem.id);
+    }
+
+    const response = await prisma.orders.create({
+      data: {
+        userId,
+        orderItemIds: orderItemIds.join(","),
+        ...orderInfo,
+        status: 0,
       },
     });
 
-    if (response?.userId == userId) {
-      return response;
-    }
-    return { message: "userId is not matched" };
+    return response;
   } catch (error) {
     console.error(error);
     return [];
@@ -34,7 +49,8 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const session = await getServerSession(req, res, authOption);
-  const { orderItemIds } = req.body;
+
+  const { items, orderInfo } = req.body;
 
   if (!session || !session.user) {
     res.status(200).json({ items: [], message: "No session" });
@@ -47,13 +63,8 @@ export default async function handler(
     return;
   }
 
-  if (orderItemIds == null) {
-    res.status(200).json({ items: [], message: "No orderItemIds" });
-    return;
-  }
-
   try {
-    const wishlist = await getComment(customUser.id, Number(orderItemIds));
+    const wishlist = await addOrder(customUser.id, items, orderInfo);
     res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

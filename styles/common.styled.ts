@@ -191,3 +191,17 @@ export const CartInfoContent = styled.div`
     font-size: 14px;
   }
 `;
+
+export const HeaderList = styled.li`
+  font-size: 16px;
+  font-weight: 500;
+
+  :hover {
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  @media (max-width: 500px) {
+    font-size: 12px;
+  }
+`;

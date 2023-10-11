@@ -1,15 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { authOption } from "./auth/[...nextauth]";
+import { authOption } from "../auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 
 const prisma = new PrismaClient();
 
-async function deleteComment({ orderItemIds }: { orderItemIds: number }) {
+async function deleteOrder(id: number) {
   try {
-    const response = await prisma.comment.delete({
+    const response = await prisma.orders.delete({
       where: {
-        orderItemIds,
+        id: id,
       },
     });
 
@@ -31,18 +31,15 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOption);
 
-  const { orderItemIds } = req.body;
+  const { id } = req.body;
 
-  if (!session || !session.user) {
+  if (session == null) {
     res.status(200).json({ items: [], message: "No session" });
     return;
   }
-
   try {
-    const comment = await deleteComment({
-      orderItemIds: orderItemIds,
-    });
-    res.status(200).json({ items: comment, message: "Success" });
+    const wishlist = await deleteOrder(id);
+    res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });
   }

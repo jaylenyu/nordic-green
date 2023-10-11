@@ -3,9 +3,9 @@ import { CATEGORY_MAP, FILTERS } from "constants/products";
 import { Pagination, Select, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { CategoryButton, CustomWrap } from "styles/common.styled";
-import EmptyBox from "@components/EmptyBox";
-import SpinnerComponent from "@components/Spinner";
-import ProductCard from "@components/ProductCard";
+import EmptyBox from "@components/UI/EmptyBox";
+import SpinnerComponent from "@components/UI/Spinner";
+import ProductCard from "@components/product/ProductCard";
 import useProductManagement from "hooks/useProducts";
 
 export default function Products() {

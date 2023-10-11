@@ -34,6 +34,7 @@ export const useAddOrder = () => {
         product?.forEach((cartItem) => {
           deleteCart(cartItem.id);
         });
+        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
       },
     }
   );

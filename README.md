@@ -100,22 +100,41 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 ```
 .
 ├── 📁 components
-│   ├── CommentItem.tsx
-│   ├── CountControl.tsx
-│   ├── Editor.tsx
-│   ├── EmptyBox.tsx
-│   ├── Footer.tsx
-│   ├── GoogleLogin.tsx
-│   ├── Header.tsx
-│   ├── ProductCard.tsx
-│   └── Spinner.tsx
+│   ├── 📁 UI
+│   │   ├── Spinner.tsx
+│   │   ├── EmptyBox.tsx
+│   │   └── CountControl.tsx
+│   ├── 📁 Layout
+│   │   ├── Header.tsx
+│   │   └── Footer.tsx
+│   ├── 📁 Authentication
+│   │   └── GoogleLogin.tsx
+│   ├── 📁 Product
+│   │   └── ProductCard.tsx
+│   ├── 📁 Comment
+│   │   ├── CommentItem.tsx
+│   │   └── Editor.tsx
 │
 ├── 📁 constants
 │
 ├── 📁 hooks
+│   ├── 📁 mutations
+│   │   ├── useAddCart.tsx
+│   │   ├── useAddOrder.tsx
+│   │   ├── useDeleteCart.tsx
+│   │   ├── useDeleteOrder.tsx
+│   │   ├── useDeleteWishlist.tsx
+│   │   ├── useUpdateCart.tsx
+│   │   ├── useUpdateOrderStatus.tsx
+│   │   └── useUpdateWishlist.tsx
+│   ├── 📁 queries
+│   │   ├── useQuery.tsx
+│   │   └── useComment.ts
 │   ├── useDebounce.ts
+│   ├── useProducts.ts
 │   ├── useRandomProducts.ts
-│   └── useScreenWidth.ts
+│   ├── useScreenWidth.ts
+│   └── useValidation.ts
 │
 ├── 📁 pages
 │   ├── 📁 api

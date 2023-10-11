@@ -1,34 +1,34 @@
 const API_PATHS = {
   MAIN: {
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=1&take=8&category=&orderBy=&contains=`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/get-all?skip=1&take=8&category=&orderBy=&contains=`,
   },
   PRODUCT: {
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-product`,
-    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-product`,
-    RECOMMENDED: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=&take=100`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/get`,
+    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/update`,
+    RECOMMENDED: `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/get-all?skip=&take=100`,
   },
   COMMENTS: {
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-comments`,
-    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-comment`,
-    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete-comment`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment/get-all`,
+    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment/update`,
+    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment/delete`,
   },
   ORDER: {
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-order`,
-    UPDATE_STATUS: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-order-status`,
-    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete-order`,
-    ADD: `${process.env.NEXT_PUBLIC_BASE_URL}/api/add-order`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/order/get`,
+    UPDATE_STATUS: `${process.env.NEXT_PUBLIC_BASE_URL}/api/order/update-status`,
+    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/order/delete`,
+    ADD: `${process.env.NEXT_PUBLIC_BASE_URL}/api/order/add`,
   },
   CART: {
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-cart`,
-    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-cart`,
-    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete-cart`,
-    ADD: `${process.env.NEXT_PUBLIC_BASE_URL}/api/add-cart`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/get`,
+    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/update`,
+    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/delete`,
+    ADD: `${process.env.NEXT_PUBLIC_BASE_URL}/api/cart/add`,
   },
   WISHLIST: {
-    GET_ALL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-wishlists`,
-    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/delete-wishlist`,
-    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-wishlist`,
-    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-wishlist`,
+    GET_ALL: `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlist/get-all`,
+    DELETE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlist/delete`,
+    UPDATE: `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlist/update`,
+    GET: `${process.env.NEXT_PUBLIC_BASE_URL}/api/wishlist/get`,
   },
 };
 

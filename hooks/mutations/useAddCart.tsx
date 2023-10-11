@@ -22,6 +22,9 @@ export const useAddCart = () => {
       onMutate: () => {
         queryClient.invalidateQueries([API_PATHS.CART.GET]);
       },
+      onSuccess: () => {
+        queryClient.invalidateQueries([API_PATHS.CART.GET]);
+      },
     }
   );
 };

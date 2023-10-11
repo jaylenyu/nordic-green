@@ -1,36 +1,32 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { OrderItem, PrismaClient } from "@prisma/client";
-import { authOption } from "./auth/[...nextauth]";
+import { authOption } from "../auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
-async function addOrder(
-  userId: string,
-  items: Omit<OrderItem, "id">[],
-  orderInfo?: { receiver: string; address: string; phoneNumber: string }
-) {
+async function getOrder(userId: string) {
   try {
-    let orderItemIds = [];
-
-    for (const item of items) {
-      const orderItem = await prisma.orderItem.create({
-        data: {
-          ...item,
-        },
-      });
-      orderItemIds.push(orderItem.id);
-    }
-
-    const response = await prisma.orders.create({
-      data: {
-        userId,
-        orderItemIds: orderItemIds.join(","),
-        ...orderInfo,
-        status: 0,
+    const orders = await prisma.orders.findMany({
+      where: {
+        userId: userId,
       },
     });
+
+    let response = [];
+
+    for (const order of orders) {
+      let orderItems: OrderItem[] = [];
+      for (const id of order.orderItemIds
+        .split(",")
+        .map((item) => Number(item))) {
+        const res: OrderItem[] =
+          await prisma.$queryRaw`SELECT i.id, quantity, amount, i.price, name, image_url, productId FROM OrderItem as i JOIN products as p ON i.productId=p.id WHERE i.id=${id}`;
+        orderItems.push.apply(orderItems, res);
+      }
+      response.push({ ...order, orderItems });
+    }
 
     return response;
   } catch (error) {
@@ -50,8 +46,6 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOption);
 
-  const { items, orderInfo } = req.body;
-
   if (!session || !session.user) {
     res.status(200).json({ items: [], message: "No session" });
     return;
@@ -64,7 +58,7 @@ export default async function handler(
   }
 
   try {
-    const wishlist = await addOrder(customUser.id, items, orderInfo);
+    const wishlist = await getOrder(customUser.id);
     res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

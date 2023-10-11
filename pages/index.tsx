@@ -1,4 +1,4 @@
-import ProductCard from "@components/ProductCard";
+import ProductCard from "@components/product/ProductCard";
 import axios from "axios";
 import { MainCarousel, SectionBackground } from "constants/homeData";
 import Image from "next/image";

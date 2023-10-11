@@ -20,7 +20,7 @@ export default function useComment(orderItemIds: string | undefined) {
     if (orderItemIds != null) {
       try {
         const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-comment?orderItemIds=${orderItemIds}`
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/comment/get?orderItemIds=${orderItemIds}`
         );
         const data = response.data;
         if (data.items.contents) {

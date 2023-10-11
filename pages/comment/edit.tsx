@@ -1,4 +1,4 @@
-import CustomEditor from "@components/Editor";
+import CustomEditor from "@components/comment/Editor";
 import { Button, Rate } from "antd";
 import axios from "axios";
 import { convertToRaw } from "draft-js";
@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { CustomTitle, ItemTitle } from "styles/common.styled";
 import { tooltips } from "constants/comment";
+import API_PATHS from "api";
 import useComment from "hooks/useComment";
 
 export default function CommentEdit() {
@@ -20,17 +21,14 @@ export default function CommentEdit() {
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-comment`,
-          {
-            rate: rate,
-            orderItemIds: Number(orderItemIds),
-            contents: JSON.stringify(
-              convertToRaw(editorState.getCurrentContent())
-            ),
-            images: [],
-          }
-        );
+        await axios.post(API_PATHS.COMMENTS.UPDATE, {
+          rate: rate,
+          orderItemIds: Number(orderItemIds),
+          contents: JSON.stringify(
+            convertToRaw(editorState.getCurrentContent())
+          ),
+          images: [],
+        });
       } catch (error) {
         console.error(error);
       }

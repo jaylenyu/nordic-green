@@ -1,20 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
-import { authOption } from "./auth/[...nextauth]";
+import { authOption } from "../auth/[...nextauth]";
 import { getServerSession } from "next-auth";
+import { getCustomUser } from "constants/user";
 
 const prisma = new PrismaClient();
 
-async function updateOrderStatus(id: number, status: number) {
+async function getWishlist(userId: string) {
   try {
-    const response = await prisma.orders.update({
+    const response = await prisma.wishList.findUnique({
       where: {
-        id: id,
+        userId: userId,
       },
-      data: { status: status },
     });
-
-    return response;
+    return response?.productIds?.split(",") || [];
   } catch (error) {
     console.error(error);
     return [];
@@ -32,14 +31,19 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOption);
 
-  const { id, status } = req.body;
-
-  if (session == null) {
+  if (!session || !session.user) {
     res.status(200).json({ items: [], message: "No session" });
     return;
   }
+
+  const customUser = getCustomUser(session);
+  if (!customUser || !customUser.id) {
+    res.status(400).json({ message: "Invalid user data" });
+    return;
+  }
+
   try {
-    const wishlist = await updateOrderStatus(id, status);
+    const wishlist = await getWishlist(customUser.id);
     res.status(200).json({ items: wishlist, message: "Success" });
   } catch (error) {
     res.status(400).json({ message: "Failed" });

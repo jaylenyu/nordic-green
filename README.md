@@ -128,8 +128,7 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 │   │   ├── useUpdateOrderStatus.tsx
 │   │   └── useUpdateWishlist.tsx
 │   ├── 📁 queries
-│   │   ├── useQuery.tsx
-│   │   └── useComment.ts
+│   │   └── useQuery.tsx
 │   ├── useDebounce.ts
 │   ├── useProducts.ts
 │   ├── useRandomProducts.ts

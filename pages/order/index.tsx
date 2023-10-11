@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import EmptyBox from "@components/EmptyBox";
-import SpinnerComponent from "@components/Spinner";
+import EmptyBox from "@components/UI/EmptyBox";
+import SpinnerComponent from "@components/UI/Spinner";
 import { Button } from "antd";
 import { ORDER_STATUS_MAP } from "constants/order";
 import { format } from "date-fns";

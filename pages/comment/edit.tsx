@@ -1,4 +1,4 @@
-import CustomEditor from "@components/Editor";
+import CustomEditor from "@components/comment/Editor";
 import { Button, Rate } from "antd";
 import axios from "axios";
 import { convertToRaw } from "draft-js";

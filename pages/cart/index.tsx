@@ -1,5 +1,5 @@
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
-import CountControl from "@components/CountControl";
+import CountControl from "@components/UI/CountControl";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useRandomProducts } from "../../hooks/useRandomProducts";
@@ -14,9 +14,9 @@ import {
   ItemTitle,
 } from "styles/common.styled";
 import { Button } from "antd";
-import EmptyBox from "@components/EmptyBox";
-import SpinnerComponent from "@components/Spinner";
-import ProductCard from "@components/ProductCard";
+import EmptyBox from "@components/UI/EmptyBox";
+import SpinnerComponent from "@components/UI/Spinner";
+import ProductCard from "@components/product/ProductCard";
 import { useScreenWidth } from "hooks/useScreenWidth";
 import { useCart, useRecommend } from "hooks/queries/useQuery";
 import { useDeleteCart } from "hooks/mutations/useDeleteCart";

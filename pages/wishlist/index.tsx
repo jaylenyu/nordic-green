@@ -1,6 +1,6 @@
 import { DeleteOutlined } from "@ant-design/icons";
-import EmptyBox from "@components/EmptyBox";
-import SpinnerComponent from "@components/Spinner";
+import EmptyBox from "@components/UI/EmptyBox";
+import SpinnerComponent from "@components/UI/Spinner";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import { useScreenWidth } from "hooks/useScreenWidth";
 import { useDeleteWishlist } from "hooks/mutations/useDeleteWishlist";

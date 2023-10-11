@@ -3,12 +3,12 @@ import Image from "next/image";
 import { GetServerSidePropsContext } from "next";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Carousel from "nuka-carousel";
 import axios from "axios";
 import { format } from "date-fns";
 import { convertFromRaw, EditorState } from "draft-js";
-import { Cart, OrderItem, products } from "@prisma/client";
+import { products } from "@prisma/client";
 import CustomEditor from "@components/Editor";
 import CountControl from "@components/CountControl";
 import CommentItem from "@components/CommentItem";
@@ -28,6 +28,9 @@ import {
   ShoppingOutlined,
 } from "@ant-design/icons";
 import Head from "next/head";
+import { useComments, useDetailWishlist } from "hooks/queries/useQuery";
+import { useUpdateWishlist } from "hooks/mutations/useUpdateWishlist";
+import useValidation from "hooks/useValidation";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
@@ -57,160 +60,26 @@ export default function ProductsDetail(props: {
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const product = props.product;
   const { data: session } = useSession();
   const { id: productId } = router.query;
+  const { mutate: updateWishlist } = useUpdateWishlist();
+  const { data: wishlist } = useDetailWishlist();
+  const { data: comments } = useComments(String(productId));
   const [index, setIndex] = useState(0);
   const [quantity, setQuantity] = useState<number | undefined>(1);
+  const validate = useValidation(product);
   const [editorState] = useState<EditorState | undefined>(() => {
-    if (!props.product) {
+    if (!product) {
       return EditorState.createEmpty();
     }
 
-    return props.product.contents
+    return product.contents
       ? EditorState.createWithContent(
-          convertFromRaw(JSON.parse(props.product.contents))
+          convertFromRaw(JSON.parse(product.contents))
         )
       : EditorState.createEmpty();
   });
-
-  const { data: comments } = useQuery(
-    [API_PATHS.COMMENTS.GET, productId],
-    async () => {
-      const response = await axios.get(API_PATHS.COMMENTS.GET, {
-        params: { productId: productId },
-      });
-      return response.data.items;
-    },
-    {
-      initialData: props.comments,
-    }
-  );
-
-  const { data: wishlist } = useQuery([API_PATHS.WISHLIST.GET], async () => {
-    try {
-      const {
-        data: { items },
-      } = await axios.get(API_PATHS.WISHLIST.GET);
-      return items;
-    } catch (error) {
-      console.error(error);
-      return [];
-    }
-  });
-
-  const { mutate } = useMutation<unknown, unknown, string, any>(
-    async (productId) => {
-      try {
-        const { data } = await axios.post(API_PATHS.WISHLIST.UPDATE, {
-          productId,
-        });
-        return data.items;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-    {
-      onMutate: async (productId) => {
-        await queryClient.cancelQueries([API_PATHS.WISHLIST.GET]);
-        const prev = queryClient.getQueriesData([API_PATHS.WISHLIST.GET]);
-        queryClient.setQueryData<string[]>([API_PATHS.WISHLIST.GET], (old) =>
-          old
-            ? old.includes(String(productId))
-              ? old.filter((id) => id !== String(productId))
-              : old.concat(String(productId))
-            : []
-        );
-        return { prev };
-      },
-      onError: (error, _, context) => {
-        queryClient.setQueryData([API_PATHS.WISHLIST.GET], context.prev);
-        console.error(error);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_PATHS.WISHLIST.GET]);
-      },
-    }
-  );
-
-  const { mutate: addCart } = useMutation<
-    unknown,
-    unknown,
-    Omit<Cart, "id" | "userId">,
-    any
-  >(
-    async (item) => {
-      try {
-        const { data } = await axios.post(API_PATHS.CART.ADD, {
-          item,
-        });
-        return data.items;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-    {
-      onMutate: () => {
-        queryClient.invalidateQueries([API_PATHS.CART.GET]);
-      },
-    }
-  );
-
-  const { mutate: addOrder } = useMutation<
-    unknown,
-    unknown,
-    Omit<OrderItem, "id">[],
-    any
-  >(
-    async (items) => {
-      try {
-        const { data } = await axios.post(API_PATHS.ORDER.ADD, {
-          items,
-        });
-        return data.items;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-    {
-      onMutate: () => {
-        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
-      },
-      onSuccess: () => {
-        router.push("/order");
-      },
-    }
-  );
-
-  const validate = (type: "cart" | "order") => {
-    if (quantity == null) {
-      alert("최소 수량을 입력하세요.");
-      return;
-    }
-    if (type == "cart") {
-      addCart({
-        productId: product.id,
-        quantity: quantity,
-        amount: product.price * quantity,
-      });
-      alert("장바구니에 등록되었습니다.");
-    }
-    if (type == "order") {
-      addOrder([
-        {
-          productId: product.id,
-          quantity: quantity,
-          amount: product.price * quantity,
-          price: product.price,
-        },
-      ]);
-      alert("결제화면으로 이동합니다.");
-    }
-  };
-
-  const product = props.product;
 
   const isWished =
     wishlist != null && productId != null
@@ -331,7 +200,7 @@ export default function ProductsDetail(props: {
                       signIn();
                       return;
                     }
-                    validate("cart");
+                    validate("cart", quantity);
                   }}
                   icon={<ShoppingCartOutlined />}
                 >
@@ -344,7 +213,7 @@ export default function ProductsDetail(props: {
                       signIn();
                       return;
                     }
-                    mutate(String(productId));
+                    updateWishlist(String(productId));
                   }}
                   icon={isWished ? <HeartFilled /> : <HeartOutlined />}
                 >
@@ -357,7 +226,7 @@ export default function ProductsDetail(props: {
                       signIn();
                       return;
                     }
-                    validate("order");
+                    validate("order", quantity);
                   }}
                   icon={<ShoppingOutlined />}
                 >

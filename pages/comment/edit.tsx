@@ -1,61 +1,21 @@
 import CustomEditor from "@components/Editor";
-import { useQuery } from "@tanstack/react-query";
 import { Button, Rate } from "antd";
 import axios from "axios";
-import { EditorState, convertFromRaw, convertToRaw } from "draft-js";
+import { convertToRaw } from "draft-js";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { CustomTitle, ItemTitle } from "styles/common.styled";
-import { OrderDetail } from "types/type";
 import { tooltips } from "constants/comment";
-import API_PATHS from "api";
+import useComment from "hooks/useComment";
 
 export default function CommentEdit() {
   const router = useRouter();
   const [rate, setRate] = useState(5);
   const { orderItemIds } = router.query;
-  const [editorState, setEditorState] = useState<EditorState | undefined>(
-    undefined
+  const { commentProduct, editorState, setEditorState } = useComment(
+    String(orderItemIds)
   );
-
-  const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
-    [API_PATHS.ORDER.GET],
-    () => axios.get(API_PATHS.ORDER.GET).then((res) => res.data.items)
-  );
-
-  const commentProduct = data
-    ?.find((item) =>
-      item.orderItems.some((orderItem) => orderItem.id === Number(orderItemIds))
-    )
-    ?.orderItems.find((orderItem) => orderItem.id === Number(orderItemIds));
-
-  const fetchComment = async () => {
-    if (orderItemIds != null) {
-      try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-comment?orderItemIds=${orderItemIds}`
-        );
-        const data = response.data;
-        if (data.items.contents) {
-          setEditorState(
-            EditorState.createWithContent(
-              convertFromRaw(JSON.parse(data.items.contents))
-            )
-          );
-          setRate(data.items.rate);
-        } else {
-          setEditorState(EditorState.createEmpty());
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    }
-  };
-
-  useEffect(() => {
-    fetchComment();
-  }, [orderItemIds]);
 
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {

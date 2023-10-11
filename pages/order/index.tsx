@@ -1,13 +1,12 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
-import { Cart } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Button } from "antd";
-import API_PATHS from "api";
-import axios from "axios";
 import { ORDER_STATUS_MAP } from "constants/order";
 import { format } from "date-fns";
+import { useDeleteOrder } from "hooks/mutations/useDeleteOrder";
+import { useUpdateOrderStatus } from "hooks/mutations/useUpdateOrderStatus";
+import { useOrder } from "hooks/queries/useQuery";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -20,18 +19,15 @@ import {
 import { OrderDetail, OrderItemDetail } from "types/type";
 
 export default function MyPage() {
-  const { data } = useQuery<{ items: OrderDetail[] }, unknown, OrderDetail[]>(
-    [API_PATHS.ORDER.GET],
-    () => axios.get(API_PATHS.ORDER.GET).then((res) => res.data.items)
-  );
+  const { data: products } = useOrder();
 
   return (
     <CustomWrap padding="150px 120px">
-      <CustomTitle>Orders ({data ? data?.length : 0})</CustomTitle>
+      <CustomTitle>Orders ({products ? products?.length : 0})</CustomTitle>
       <div>
-        {data ? (
-          data.length > 0 ? (
-            data
+        {products ? (
+          products && products.length > 0 ? (
+            products
               ?.map((item, idx) => <DetailItem key={idx} {...item} />)
               .reverse()
           ) : (
@@ -46,81 +42,8 @@ export default function MyPage() {
 }
 
 const DetailItem = (props: OrderDetail) => {
-  const queryClient = useQueryClient();
-
-  const { mutate: updateOrderStatus } = useMutation<
-    unknown,
-    unknown,
-    number,
-    any
-  >(
-    async (status) => {
-      try {
-        const { data } = await axios.post(API_PATHS.ORDER.UPDATE_STATUS, {
-          id: props.id,
-          status: status,
-          userId: props.userId,
-        });
-        return data.items;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-    {
-      onMutate: async (status) => {
-        await queryClient.cancelQueries([API_PATHS.ORDER.GET]);
-        const prev = queryClient.getQueryData([API_PATHS.ORDER.GET]);
-        queryClient.setQueryData<Cart[]>([API_PATHS.ORDER.GET], (old) =>
-          old?.map((category) => {
-            if (category.id === props.id) {
-              return { ...category, status: status };
-            }
-            return category;
-          })
-        );
-        return { prev };
-      },
-      onError: (error, _, context) => {
-        queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
-        console.error(error);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
-      },
-    }
-  );
-
-  const { mutate: deleteOrder } = useMutation<unknown, unknown, number, any>(
-    async (id) => {
-      try {
-        const { data } = await axios.post(API_PATHS.ORDER.DELETE, {
-          id,
-        });
-        return data.items;
-      } catch (error) {
-        console.error(error);
-        throw error;
-      }
-    },
-    {
-      onMutate: async (id) => {
-        await queryClient.cancelQueries([API_PATHS.ORDER.GET]);
-        const prev = queryClient.getQueriesData([API_PATHS.ORDER.GET]);
-        queryClient.setQueryData<Cart[]>([API_PATHS.ORDER.GET], (old) =>
-          old?.filter((category) => category.id !== id)
-        );
-        return { prev };
-      },
-      onError: (error, _, context) => {
-        queryClient.setQueryData([API_PATHS.ORDER.GET], context.prev);
-        console.error(error);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_PATHS.ORDER.GET]);
-      },
-    }
-  );
+  const { mutate: updateStatus } = useUpdateOrderStatus();
+  const { mutate: deleteOrder } = useDeleteOrder();
 
   const handleOrderDelete = async () => {
     const isConfirmed = window.confirm("삭제하시겠습니까?");
@@ -167,11 +90,27 @@ const DetailItem = (props: OrderDetail) => {
             </div>
             <div className="mt-10 lg:mt-5 md:mt-5 sm:mt-5 sx:mt-3">
               {props.status === -1 || props.status === 0 ? (
-                <CustomButton onClick={() => updateOrderStatus(2)}>
+                <CustomButton
+                  onClick={() =>
+                    updateStatus({
+                      id: props.id,
+                      status: 2,
+                      userId: Number(props.userId),
+                    })
+                  }
+                >
                   결제처리
                 </CustomButton>
               ) : (
-                <CustomWhiteButton onClick={() => updateOrderStatus(-1)}>
+                <CustomWhiteButton
+                  onClick={() =>
+                    updateStatus({
+                      id: props.id,
+                      status: -1,
+                      userId: Number(props.userId),
+                    })
+                  }
+                >
                   취소처리
                 </CustomWhiteButton>
               )}

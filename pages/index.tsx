@@ -5,9 +5,12 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import Carousel from "nuka-carousel";
 import React from "react";
-import { CustomButton, CustomWhiteButton } from "styles/common.styled";
+import {
+  CustomButton,
+  CustomSection,
+  CustomWhiteButton,
+} from "styles/common.styled";
 import { HomeProps } from "types/type";
-import styled from "@emotion/styled";
 import API_PATHS from "api";
 import { useScreenWidth } from "hooks/useScreenWidth";
 
@@ -90,7 +93,7 @@ export default function Home({ product, carousel, sectionImage }: HomeProps) {
             ))}
         </div>
       </section>
-      <Section bgImage={sectionImage}>
+      <CustomSection bgImage={sectionImage}>
         <div className="p-10 sm:p-4 sx:p-3 w-1/4 lg:w-1/3 md:w-1/2 sm:w-1/2 sx:w-1/2 h-1/2 md:h-1/2 sm:h-1/3 sx:h-1/3 absolute bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <div className="flex flex-col w-full h-full border justify-between items-center p-10 sm:p-4 sx:p-3">
             <div className="text-xl xl:text-2xl md:text-lg sm:text-base sx:text-sm font-bold ">
@@ -107,18 +110,7 @@ export default function Home({ product, carousel, sectionImage }: HomeProps) {
             </>
           </div>
         </div>
-      </Section>
+      </CustomSection>
     </div>
   );
 }
-
-const Section = styled.section<{ bgImage: string }>`
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  background-image: url(${(props) => props.bgImage});
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-`;

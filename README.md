@@ -122,8 +122,10 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 │   │   ├── useUpdateCart.tsx
 │   │   ├── useUpdateOrderStatus.tsx
 │   │   └── useUpdateWishlist.tsx
+│   │
 │   ├── 📁 queries
 │   │   └── useQuery.tsx
+│   │
 │   ├── useDebounce.ts
 │   ├── useProducts.ts
 │   ├── useRandomProducts.ts
@@ -135,26 +137,31 @@ useDebounce Hook을 React-Query를 이용하여 커스텀하여 서버에 부담
 │   │   ├── 📁 auth
 │   │   │   ├── [...nextauth].ts
 │   │   │   └── sign-up.ts
-│   │   ├── add-cart.ts
-│   │   ├── add-order.ts
-│   │   ├── delete-cart.ts
-│   │   ├── delete-comment.ts
-│   │   ├── delete-order.ts
-│   │   ├── delete-wishlist.ts
-│   │   ├── get-cart.ts
-│   │   ├── get-comment.ts
-│   │   ├── get-comments.ts
-│   │   ├── get-order.ts
-│   │   ├── get-product.ts
-│   │   ├── get-products-count.ts
-│   │   ├── get-products.ts
-│   │   ├── get-wishlist.ts
-│   │   ├── get-wishlists.ts
-│   │   ├── update-cart.ts
-│   │   ├── update-comment.ts
-│   │   ├── update-order-status.ts
-│   │   ├── update-product.ts
-│   │   └── update-wishlist.ts
+│   │   ├── 📁 cart
+│   │   │   ├── add.ts
+│   │   │   ├── delete.ts
+│   │   │   ├── get.ts
+│   │   │   └── update.ts
+│   │   ├── 📁 order
+│   │   │   ├── add.ts
+│   │   │   ├── delete.ts
+│   │   │   ├── get.ts
+│   │   │   └── update-status.ts
+│   │   ├── 📁 comment
+│   │   │   ├── delete.ts
+│   │   │   ├── get-single.ts
+│   │   │   ├── get-all.ts
+│   │   │   └── update.ts
+│   │   ├── 📁 product
+│   │   │   ├── get-single.ts
+│   │   │   ├── get-count.ts
+│   │   │   ├── get-all.ts
+│   │   │   └── update.ts
+│   │   └── 📁 wishlist
+│   │       ├── delete.ts
+│   │       ├── get-single.ts
+│   │       ├── get-all.ts
+│   │       └── update.ts
 │   │
 │   ├── 📁 auth
 │   │   └── login.tsx

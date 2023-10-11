@@ -11,6 +11,17 @@ export const Wrapper = styled.div<{ readOnly: boolean }>`
       : "border: 1px solid rgba(0,0,0,0.1); border-radius: 8px"}
 `;
 
+export const CustomSection = styled.section<{ bgImage: string }>`
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  background-image: url(${(props) => props.bgImage});
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+`;
+
 export const CustomButton = styled(Button)`
   font-size: x-large;
   height: 50px;

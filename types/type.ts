@@ -63,3 +63,9 @@ export type HomeProps = {
   carousel: CarouselData[];
   sectionImage: string;
 };
+
+export interface UpdateOrderStatusInput {
+  id: number;
+  status: number;
+  userId: number;
+}

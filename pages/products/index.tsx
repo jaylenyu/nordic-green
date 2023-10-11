@@ -1,58 +1,25 @@
-import { products } from "@prisma/client";
-import { ChangeEvent, useEffect, useState } from "react";
-import { CATEGORY_MAP, FILTERS, TAKE } from "constants/products";
+import { useEffect } from "react";
+import { CATEGORY_MAP, FILTERS } from "constants/products";
 import { Pagination, Select, Space, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import useDebounce from "hooks/useDebounce";
-import axios from "axios";
 import { CategoryButton, CustomWrap } from "styles/common.styled";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
 import ProductCard from "@components/ProductCard";
+import useProductManagement from "hooks/useProducts";
 
 export default function Products() {
-  const [activePage, setPage] = useState(1);
-  const [selectedFilter, setSelectedFilter] = useState<string>("name");
-  const [selectedCategory, setSelectedCategory] = useState<string>("-1");
-  const [searchValue, setSearchValue] = useState<string>("");
-  const debounceSearchValue = useDebounce<string>(searchValue);
-  const skip = TAKE * (activePage - 1);
-  const TOTAL_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
-  const PRODUCTS_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
-
-  const { data: total } = useQuery([TOTAL_QUERY_KEY], () =>
-    axios.get(TOTAL_QUERY_KEY).then((res) => Math.ceil(res.data.items / TAKE))
-  );
-
-  const { data: products } = useQuery<
-    { items: products[] },
-    unknown,
-    products[]
-  >([PRODUCTS_QUERY_KEY], () =>
-    axios.get(PRODUCTS_QUERY_KEY).then((res) => res.data.items)
-  );
-
-  const handleCategory = (categoryName: string) => {
-    if (categoryName === "ALL") {
-      setSelectedCategory("-1");
-    } else {
-      const categoryIndex = CATEGORY_MAP.indexOf(categoryName);
-      if (categoryIndex !== -1) {
-        setSelectedCategory((categoryIndex + 1).toString());
-      }
-    }
-    setPage(1);
-  };
-
-  const handleFilterChange = (value: string) => {
-    setSelectedFilter(value);
-    setPage(1);
-  };
-
-  const handleSearchInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setSearchValue(e.target.value);
-  };
+  const {
+    activePage,
+    setPage,
+    selectedCategory,
+    searchValue,
+    total,
+    products,
+    handleCategory,
+    handleFilterChange,
+    handleSearchInput,
+  } = useProductManagement();
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -99,14 +66,16 @@ export default function Products() {
               options={FILTERS.map(({ label, value }) => ({ label, value }))}
             />
           </Space>
-          {products && products?.length > 0 ? (
-            <div className="grid grid-cols-4 sm:grid-cols-2 sx:grid-cols-2 gap-5 lg:gap-3 md:gap-3 sm:gap-2 sx:gap-2  justify-items-center">
-              {products?.map((item) => (
-                <ProductCard products={item} />
-              ))}
-            </div>
-          ) : products?.length === 0 ? (
-            <EmptyBox />
+          {products ? (
+            products.length > 0 ? (
+              <div className="grid grid-cols-4 sm:grid-cols-2 sx:grid-cols-2 gap-5 lg:gap-3 md:gap-3 sm:gap-2 sx:gap-2  justify-items-center">
+                {products?.map((item, idx) => (
+                  <ProductCard key={idx} products={item} />
+                ))}
+              </div>
+            ) : (
+              <EmptyBox />
+            )
           ) : (
             <SpinnerComponent />
           )}

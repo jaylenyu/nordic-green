@@ -1,12 +1,9 @@
 import { DeleteOutlined } from "@ant-design/icons";
 import EmptyBox from "@components/EmptyBox";
 import SpinnerComponent from "@components/Spinner";
-import { WishList, products } from "@prisma/client";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import API_PATHS from "api";
-import axios from "axios";
 import { BLUR_IMAGE, CATEGORY_MAP } from "constants/products";
 import { useScreenWidth } from "hooks/useScreenWidth";
+import { useDeleteWishlist } from "hooks/mutations/useDeleteWishlist";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import {
@@ -16,22 +13,17 @@ import {
   ItemTitle,
 } from "styles/common.styled";
 import { WishlistItem } from "types/type";
+import { useWishlistAll } from "hooks/queries/useQuery";
 
 export default function Wishlist() {
-  const { data: products } = useQuery<
-    { items: products[] },
-    unknown,
-    products[]
-  >([API_PATHS.WISHLIST.GET_ALL], () =>
-    axios.get(API_PATHS.WISHLIST.GET_ALL).then((res) => res.data.items)
-  );
+  const { data: products } = useWishlistAll();
 
   return (
-    <CustomWrap>
+    <CustomWrap padding="150px 120px">
       <CustomTitle>
         Wishlists ({products?.length ? products?.length : 0})
       </CustomTitle>
-      <div>
+      <div className="px-20">
         {products ? (
           products && products.length > 0 ? (
             products?.map((item, idx) => <Item key={idx} {...item} />)
@@ -47,38 +39,13 @@ export default function Wishlist() {
 }
 
 const Item = (props: WishlistItem) => {
-  const queryClient = useQueryClient();
   const router = useRouter();
   const screenWitdh = useScreenWidth();
-
-  const { mutate: deleteWishlist } = useMutation(
-    async (productId: number) => {
-      await axios.post(API_PATHS.WISHLIST.DELETE, { productId });
-    },
-    {
-      onMutate: async (productId) => {
-        await queryClient.cancelQueries([API_PATHS.WISHLIST.GET_ALL]);
-        const prev = queryClient.getQueryData([API_PATHS.WISHLIST.GET_ALL]);
-        queryClient.setQueryData<WishList[]>(
-          [API_PATHS.WISHLIST.GET_ALL],
-          (old) => old?.filter((item) => item.id !== productId)
-        );
-
-        return { prev };
-      },
-      onError: (error, _, context: any) => {
-        queryClient.setQueryData([API_PATHS.WISHLIST.GET_ALL], context.prev);
-        console.error(error);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries([API_PATHS.WISHLIST.GET_ALL]);
-      },
-    }
-  );
+  const deleteWishlist = useDeleteWishlist();
 
   const handleWishlistDelete = async () => {
     try {
-      await deleteWishlist(props.id);
+      await deleteWishlist.mutate(props.id);
     } catch (error) {
       console.error(error);
     }

@@ -23,7 +23,7 @@ const Spinner = styled.div`
   margin: 0 auto;
   width: 50px;
   height: 50px;
-  border: 3px solid #15884129;
+  border: 3px solid #1588411e;
   border-top: 3px solid #158841;
   border-radius: 50%;
 `;

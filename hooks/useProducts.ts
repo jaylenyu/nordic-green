@@ -13,8 +13,8 @@ export default function useProductManagement() {
   const debounceSearchValue = useDebounce<string>(searchValue);
   const skip = TAKE * (activePage - 1);
 
-  const TOTAL_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/get-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
-  const PRODUCTS_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/product/get-all?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
+  const TOTAL_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products-count?category=${selectedCategory}&contains=${debounceSearchValue}`;
+  const PRODUCTS_QUERY_KEY = `${process.env.NEXT_PUBLIC_BASE_URL}/api/get-products?skip=${skip}&take=${TAKE}&category=${selectedCategory}&orderBy=${selectedFilter}&contains=${debounceSearchValue}`;
 
   const { data: total } = useQuery([TOTAL_QUERY_KEY], () =>
     axios.get(TOTAL_QUERY_KEY).then((res) => Math.ceil(res.data.items / TAKE))

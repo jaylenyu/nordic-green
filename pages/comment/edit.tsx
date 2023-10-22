@@ -8,6 +8,7 @@ import React, { useState } from "react";
 import { CustomTitle, ItemTitle } from "styles/common.styled";
 import { tooltips } from "constants/comment";
 import useComment from "hooks/useComment";
+import API_PATHS from "api";
 
 export default function CommentEdit() {
   const router = useRouter();
@@ -20,17 +21,14 @@ export default function CommentEdit() {
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/update-comment`,
-          {
-            rate: rate,
-            orderItemIds: Number(orderItemIds),
-            contents: JSON.stringify(
-              convertToRaw(editorState.getCurrentContent())
-            ),
-            images: [],
-          }
-        );
+        await axios.post(`${API_PATHS.COMMENTS.UPDATE}`, {
+          rate: rate,
+          orderItemIds: Number(orderItemIds),
+          contents: JSON.stringify(
+            convertToRaw(editorState.getCurrentContent())
+          ),
+          images: [],
+        });
       } catch (error) {
         console.error(error);
       }

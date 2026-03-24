@@ -1,0 +1,168 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Domain Models ───────────────────────────────────────────────────────────
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String
+  products Product[]
+}
+
+model Product {
+  id            Int            @id @default(autoincrement())
+  name          String
+  imageUrl      String?
+  categoryId    Int
+  contents      String?
+  price         Int
+  createdAt     DateTime       @default(now())
+  category      Category       @relation(fields: [categoryId], references: [id])
+  cartItems     Cart[]
+  orderItems    OrderItem[]
+  wishlistItems WishlistItem[]
+
+  @@index([categoryId])
+}
+
+// ─── NextAuth Models (managed by @auth/prisma-adapter) ───────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  cartItems     Cart[]
+  orders        Order[]
+  wishlist      Wishlist?
+  comments      Comment[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+
+model Cart {
+  id        Int     @id @default(autoincrement())
+  userId    String
+  productId Int
+  quantity  Int
+  amount    Int
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([productId])
+}
+
+// ─── Wishlist (was CSV string, now proper join table) ─────────────────────────
+
+model Wishlist {
+  id     Int            @id @default(autoincrement())
+  userId String         @unique
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items  WishlistItem[]
+}
+
+model WishlistItem {
+  id         Int      @id @default(autoincrement())
+  wishlistId Int
+  productId  Int
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([wishlistId, productId])
+  @@index([wishlistId])
+  @@index([productId])
+}
+
+// ─── Orders (was CSV string, now proper FK relation) ──────────────────────────
+
+model Order {
+  id          Int         @id @default(autoincrement())
+  userId      String
+  receiver    String?
+  address     String?
+  phoneNumber String?
+  createdAt   DateTime    @default(now())
+  status      Int         @default(0)
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+
+  @@index([userId])
+}
+
+model OrderItem {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  price     Int
+  amount    Int
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id])
+  comment   Comment?
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// ─── Comments ─────────────────────────────────────────────────────────────────
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  userId      String
+  orderItemId Int       @unique
+  rate        Int
+  contents    String?
+  images      String?
+  updatedAt   DateTime  @updatedAt
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

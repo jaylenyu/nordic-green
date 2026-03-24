@@ -1,0 +1,60 @@
+{
+  "name": "@nordic-green/frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "postbuild": "next-sitemap",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^5.3.6",
+    "@auth/prisma-adapter": "^2.4.2",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@tanstack/react-query": "^5.56.2",
+    "antd": "^5.20.6",
+    "axios": "^1.7.7",
+    "date-fns": "^3.6.0",
+    "draft-js": "^0.11.7",
+    "embla-carousel-react": "^8.3.0",
+    "jwt-decode": "^4.0.0",
+    "next": "^14.2.13",
+    "next-auth": "^5.0.0-beta.20",
+    "next-sitemap": "^4.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-draft-wysiwyg": "^1.15.0"
+  },
+  "devDependencies": {
+    "@types/draft-js": "^0.11.9",
+    "@types/node": "^22.7.4",
+    "@types/react": "^18.3.9",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-draft-wysiwyg": "^1.13.8",
+    "@typescript-eslint/eslint-plugin": "^8.7.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.13",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "postcss": "^8.4.47",
+    "postcss-simple-vars": "^7.0.1",
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.13",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

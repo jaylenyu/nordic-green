@@ -34,17 +34,28 @@ model Product {
 // ─── NextAuth Models (managed by @auth/prisma-adapter) ───────────────────────
 
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
+  // Email/password auth
+  password      String?
+  // Profile
+  phone         String?
+  // Member grade & points
+  grade         Int            @default(0) // 0=일반, 1=실버, 2=골드, 3=VIP
+  points        Int            @default(0)
+  totalSpent    Int            @default(0)
+  // Relations
   accounts      Account[]
   sessions      Session[]
   cartItems     Cart[]
   orders        Order[]
   wishlist      Wishlist?
   comments      Comment[]
+  payments      Payment[]
+  pointHistory  PointHistory[]
 }
 
 model Account {
@@ -99,7 +110,7 @@ model Cart {
   @@index([productId])
 }
 
-// ─── Wishlist (was CSV string, now proper join table) ─────────────────────────
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
 
 model Wishlist {
   id     Int            @id @default(autoincrement())
@@ -120,7 +131,7 @@ model WishlistItem {
   @@index([productId])
 }
 
-// ─── Orders (was CSV string, now proper FK relation) ──────────────────────────
+// ─── Orders ───────────────────────────────────────────────────────────────────
 
 model Order {
   id          Int         @id @default(autoincrement())
@@ -130,8 +141,10 @@ model Order {
   phoneNumber String?
   createdAt   DateTime    @default(now())
   status      Int         @default(0)
+  // 0=주문대기, 1=결제준비, 2=결제완료, 3=배송준비, 4=배송중, 5=배송완료, 6=주문취소, 7=환불
   user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   orderItems  OrderItem[]
+  payment     Payment?
 
   @@index([userId])
 }
@@ -149,6 +162,41 @@ model OrderItem {
 
   @@index([orderId])
   @@index([productId])
+}
+
+// ─── Payment (토스페이먼츠) ────────────────────────────────────────────────────
+
+model Payment {
+  id           Int       @id @default(autoincrement())
+  orderId      Int       @unique
+  userId       String
+  paymentKey   String    @unique
+  orderName    String
+  method       String?
+  amount       Int
+  status       String    // READY | IN_PROGRESS | DONE | CANCELED | ABORTED | EXPIRED
+  requestedAt  DateTime?
+  approvedAt   DateTime?
+  failReason   String?
+  cancelReason String?
+  createdAt    DateTime  @default(now())
+  order        Order     @relation(fields: [orderId], references: [id])
+  user         User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// ─── Points ───────────────────────────────────────────────────────────────────
+
+model PointHistory {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  amount    Int      // 양수=적립, 음수=사용
+  reason    String   // "purchase" | "cancel" | "use" | "admin"
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 // ─── Comments ─────────────────────────────────────────────────────────────────

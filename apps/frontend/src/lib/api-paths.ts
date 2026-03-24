@@ -34,5 +34,17 @@ export const API_PATHS = {
   AUTH: {
     SIGNUP: `${BASE}/auth/signup`,
     TOKEN: `${BASE}/auth/token`,
+    EMAIL_SIGNUP: `${BASE}/auth/signup/email`,
+    EMAIL_LOGIN: `${BASE}/auth/login/email`,
+  },
+  PAYMENTS: {
+    CONFIRM: `${BASE}/payments/confirm`,
+    GET: (orderId: number) => `${BASE}/payments/${orderId}`,
+    CANCEL: (orderId: number) => `${BASE}/payments/${orderId}/cancel`,
+  },
+  USER: {
+    ME: `${BASE}/user/me`,
+    POINTS: `${BASE}/user/me/points`,
+    GRADE: `${BASE}/user/me/grade`,
   },
 } as const;

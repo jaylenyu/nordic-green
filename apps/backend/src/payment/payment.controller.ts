@@ -7,6 +7,8 @@ import {
   ParseIntPipe,
   UseGuards,
   Request,
+  Headers,
+  UnauthorizedException,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -41,10 +43,17 @@ export class PaymentController {
     return this.paymentService.cancel(req.user.id, orderId, dto);
   }
 
-  /** 토스 웹훅 — 인증 없음 (토스 서버에서 직접 호출) */
+  /** 토스 웹훅 — Payment-Secret 헤더로 서명 검증 */
   @Post('webhook')
   @HttpCode(HttpStatus.OK)
-  webhook(@Body() payload: Record<string, unknown>) {
+  webhook(
+    @Headers('payment-secret') secret: string,
+    @Body() payload: Record<string, unknown>,
+  ) {
+    const webhookSecret = process.env.TOSS_WEBHOOK_SECRET;
+    if (webhookSecret && secret !== webhookSecret) {
+      throw new UnauthorizedException('웹훅 서명이 유효하지 않습니다.');
+    }
     return this.paymentService.handleWebhook(payload);
   }
 }

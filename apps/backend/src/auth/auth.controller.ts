@@ -27,4 +27,11 @@ export class AuthController {
   emailLogin(@Body() dto: EmailLoginDto) {
     return this.authService.emailLogin(dto);
   }
+
+  /** JWT stateless 로그아웃 — 클라이언트 측 토큰 삭제 책임 */
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  logout() {
+    return { message: '로그아웃되었습니다.' };
+  }
 }

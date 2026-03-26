@@ -1,20 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateProfileDto } from './user.dto';
-
-export const GRADE_LABELS: Record<number, string> = {
-  0: '일반',
-  1: '실버',
-  2: '골드',
-  3: 'VIP',
-};
-
-export const GRADE_THRESHOLDS: Record<number, number> = {
-  0: 0,
-  1: 100_000,
-  2: 300_000,
-  3: 1_000_000,
-};
+import { GRADE_LABELS, GRADE_THRESHOLDS } from '../common/constants';
 
 @Injectable()
 export class UserService {

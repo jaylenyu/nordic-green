@@ -36,6 +36,7 @@ export const API_PATHS = {
     TOKEN: `${BASE}/auth/token`,
     EMAIL_SIGNUP: `${BASE}/auth/signup/email`,
     EMAIL_LOGIN: `${BASE}/auth/login/email`,
+    LOGOUT: `${BASE}/auth/logout`,
   },
   PAYMENTS: {
     CONFIRM: `${BASE}/payments/confirm`,

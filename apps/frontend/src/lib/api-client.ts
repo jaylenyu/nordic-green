@@ -11,6 +11,10 @@ export function setAccessToken(token: string | null) {
   _accessToken = token;
 }
 
+export function clearAccessToken() {
+  _accessToken = null;
+}
+
 /**
  * Exchange the NextAuth userId for a short-lived NestJS JWT.
  * Call this after successful NextAuth sign-in.
@@ -27,5 +31,18 @@ apiClient.interceptors.request.use((config) => {
   }
   return config;
 });
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      clearAccessToken();
+      if (typeof window !== 'undefined') {
+        window.location.href = '/auth/login';
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default apiClient;

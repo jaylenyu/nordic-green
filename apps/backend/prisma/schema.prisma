@@ -142,9 +142,10 @@ model Order {
   createdAt   DateTime    @default(now())
   status      Int         @default(0)
   // 0=주문대기, 1=결제준비, 2=결제완료, 3=배송준비, 4=배송중, 5=배송완료, 6=주문취소, 7=환불
-  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orderItems  OrderItem[]
-  payment     Payment?
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems   OrderItem[]
+  payment      Payment?
+  pointHistory PointHistory[]
 
   @@index([userId])
 }
@@ -191,12 +192,15 @@ model Payment {
 model PointHistory {
   id        Int      @id @default(autoincrement())
   userId    String
+  orderId   Int?
   amount    Int      // 양수=적립, 음수=사용
   reason    String   // "purchase" | "cancel" | "use" | "admin"
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order     Order?   @relation(fields: [orderId], references: [id])
 
   @@index([userId])
+  @@index([orderId])
 }
 
 // ─── Comments ─────────────────────────────────────────────────────────────────

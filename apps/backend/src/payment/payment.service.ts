@@ -6,9 +6,9 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ConfirmPaymentDto, CancelPaymentDto } from './payment.dto';
+import { GRADE_THRESHOLDS, POINTS_RATE } from '../common/constants';
 
 const TOSS_API_URL = 'https://api.tosspayments.com/v1/payments';
-const GRADE_THRESHOLDS = [0, 100_000, 300_000, 1_000_000];
 
 @Injectable()
 export class PaymentService {
@@ -33,7 +33,6 @@ export class PaymentService {
       include: { orderItems: true },
     });
     if (!order || order.userId !== userId) throw new NotFoundException('주문을 찾을 수 없습니다.');
-    if (order.payment) throw new BadRequestException('이미 결제된 주문입니다.');
 
     // 토스 결제 승인 API 호출
     const tossRes = await fetch(`${TOSS_API_URL}/confirm`, {
@@ -55,22 +54,23 @@ export class PaymentService {
     }
 
     // DB 트랜잭션: Payment 생성 + Order 상태 업데이트 + 포인트/등급 처리
-    const earnedPoints = Math.floor(dto.amount * 0.01); // 1% 적립
+    const earnedPoints = Math.floor(dto.amount * POINTS_RATE);
 
-    await this.prisma.$transaction(async (tx) => {
-      await tx.payment.create({
-        data: {
-          orderId,
-          userId,
-          paymentKey: dto.paymentKey,
-          orderName: tossData.orderName ?? `주문 #${orderId}`,
-          method: tossData.method,
-          amount: dto.amount,
-          status: tossData.status ?? 'DONE',
-          requestedAt: tossData.requestedAt ? new Date(tossData.requestedAt) : null,
-          approvedAt: tossData.approvedAt ? new Date(tossData.approvedAt) : new Date(),
-        },
-      });
+    try {
+      await this.prisma.$transaction(async (tx) => {
+        await tx.payment.create({
+          data: {
+            orderId,
+            userId,
+            paymentKey: dto.paymentKey,
+            orderName: tossData.orderName ?? `주문 #${orderId}`,
+            method: tossData.method,
+            amount: dto.amount,
+            status: tossData.status ?? 'DONE',
+            requestedAt: tossData.requestedAt ? new Date(tossData.requestedAt) : null,
+            approvedAt: tossData.approvedAt ? new Date(tossData.approvedAt) : new Date(),
+          },
+        });
 
       await tx.order.update({
         where: { id: orderId },
@@ -88,6 +88,7 @@ export class PaymentService {
       await tx.pointHistory.create({
         data: {
           userId,
+          orderId,
           amount: earnedPoints,
           reason: 'purchase',
         },
@@ -101,6 +102,13 @@ export class PaymentService {
       const newGrade = this.calcGrade(updatedUser?.totalSpent ?? 0);
       await tx.user.update({ where: { id: userId }, data: { grade: newGrade } });
     });
+    } catch (err: any) {
+      // Prisma unique constraint violation (P2002) — 이중 결제 요청
+      if (err?.code === 'P2002') {
+        throw new BadRequestException('이미 결제된 주문입니다.');
+      }
+      throw err;
+    }
 
     return { message: '결제가 완료되었습니다.', earnedPoints };
   }
@@ -113,6 +121,10 @@ export class PaymentService {
     }
     if (payment.status !== 'DONE') {
       throw new BadRequestException('취소 가능한 결제가 아닙니다.');
+    }
+
+    if (dto.cancelAmount && dto.cancelAmount > payment.amount) {
+      throw new BadRequestException('환불 금액이 원결제 금액을 초과할 수 없습니다.');
     }
 
     const body: Record<string, unknown> = { cancelReason: dto.cancelReason };
@@ -130,7 +142,7 @@ export class PaymentService {
     }
 
     const canceledAmount = dto.cancelAmount ?? payment.amount;
-    const deductPoints = Math.floor(canceledAmount * 0.01);
+    const deductPoints = Math.floor(canceledAmount * POINTS_RATE);
 
     await this.prisma.$transaction(async (tx) => {
       await tx.payment.update({
@@ -152,7 +164,7 @@ export class PaymentService {
       });
 
       await tx.pointHistory.create({
-        data: { userId, amount: -deductPoints, reason: 'cancel' },
+        data: { userId, orderId, amount: -deductPoints, reason: 'cancel' },
       });
 
       const updatedUser = await tx.user.findUnique({
@@ -198,7 +210,7 @@ export class PaymentService {
 
     // 가상계좌 입금 완료 시 주문 상태 업데이트
     if (status === 'DONE') {
-      const earnedPoints = Math.floor(payment.amount * 0.01);
+      const earnedPoints = Math.floor(payment.amount * POINTS_RATE);
       await this.prisma.$transaction(async (tx) => {
         await tx.order.update({
           where: { id: payment.orderId },
@@ -221,9 +233,9 @@ export class PaymentService {
   }
 
   private calcGrade(totalSpent: number): number {
-    if (totalSpent >= GRADE_THRESHOLDS[3]) return 3; // VIP
-    if (totalSpent >= GRADE_THRESHOLDS[2]) return 2; // 골드
-    if (totalSpent >= GRADE_THRESHOLDS[1]) return 1; // 실버
-    return 0; // 일반
+    if (totalSpent >= GRADE_THRESHOLDS[3]) return 3;
+    if (totalSpent >= GRADE_THRESHOLDS[2]) return 2;
+    if (totalSpent >= GRADE_THRESHOLDS[1]) return 1;
+    return 0;
   }
 }

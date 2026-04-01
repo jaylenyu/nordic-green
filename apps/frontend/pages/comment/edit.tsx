@@ -1,22 +1,21 @@
 import CustomEditor from "@components/comment/Editor";
-import { Button, Rate } from "antd";
 import axios from "axios";
 import { convertToRaw } from "draft-js";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
-import { CustomTitle, ItemTitle } from "styles/common.styled";
+import { useState } from "react";
 import { tooltips } from "constants/comment";
 import useComment from "hooks/useComment";
 import API_PATHS from "api";
+import StarRating from "@components/ui/StarRating";
+import { Button } from "@components/ui/button";
+import { Badge } from "@components/ui/badge";
 
 export default function CommentEdit() {
   const router = useRouter();
   const [rate, setRate] = useState(5);
   const { orderItemIds } = router.query;
-  const { commentProduct, editorState, setEditorState } = useComment(
-    String(orderItemIds)
-  );
+  const { commentProduct, editorState, setEditorState } = useComment(String(orderItemIds));
 
   const handleSave = async () => {
     if (editorState && orderItemIds != null) {
@@ -24,9 +23,7 @@ export default function CommentEdit() {
         await axios.post(`${API_PATHS.COMMENTS.UPDATE}`, {
           rate: rate,
           orderItemIds: Number(orderItemIds),
-          contents: JSON.stringify(
-            convertToRaw(editorState.getCurrentContent())
-          ),
+          contents: JSON.stringify(convertToRaw(editorState.getCurrentContent())),
           images: [],
         });
       } catch (error) {
@@ -40,55 +37,39 @@ export default function CommentEdit() {
   };
 
   return (
-    <>
-      <div className="pt-40 px-60 md:px-20 sm:px-10 sx:px-5">
-        <CustomTitle>후기 작성</CustomTitle>
-        <div className="flex items-center justify-center">
-          {commentProduct && (
-            <div className="flex items-center md:flex md:flex-col">
-              <Image
-                src={commentProduct?.image_url}
-                alt={commentProduct?.name}
-                width={200}
-                height={200}
-                priority
-                unoptimized
-                className="rounded-2xl"
-              />
-              <div className="lg:pl-20 xl:pl-20 md:mt-5 sm:mt-5 sx:mt-3">
-                <ItemTitle>{commentProduct?.name}</ItemTitle>
-                <div>가격 : {commentProduct.price.toLocaleString()} ₩</div>
-                <div>수량 : {commentProduct.quantity} 개</div>
-                <div>
-                  합계 :{" "}
-                  <span className="font-bold">
-                    {commentProduct.amount.toLocaleString()} ₩
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
+    <main className="min-h-screen pt-24 px-4 sm:px-10 lg:px-60 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold mb-8">후기 작성</h1>
+
+      {commentProduct && (
+        <div className="flex items-center gap-6 mb-8 flex-col sm:flex-row">
+          <Image
+            src={commentProduct.image_url}
+            alt={commentProduct.name}
+            width={160}
+            height={160}
+            priority
+            unoptimized
+            className="rounded-xl object-cover shrink-0"
+          />
+          <div className="space-y-1">
+            <p className="text-lg font-bold">{commentProduct.name}</p>
+            <p className="text-sm text-muted-foreground">가격: {commentProduct.price.toLocaleString()} ₩</p>
+            <p className="text-sm text-muted-foreground">수량: {commentProduct.quantity}개</p>
+            <p className="text-sm font-semibold">합계: {commentProduct.amount.toLocaleString()} ₩</p>
+          </div>
         </div>
-      </div>
-      <div className="mt-10 px-80 md:px-40 bg-white py-20 md:p-20 sm:p-10 sx:p-5">
+      )}
+
+      <div className="bg-card border border-border rounded-xl p-6 sm:p-10">
         {editorState != null && (
           <>
-            <p className="text-lg font-bold sm:text-base sx:text-sm">
-              제품 후기를 남겨주세요 !
-            </p>
-            <Rate
-              tooltips={tooltips}
-              defaultValue={5}
-              value={rate}
-              onChange={setRate}
-              allowClear={false}
-              className="my-5"
-            />
-            {rate ? (
-              <Button className="ml-3 text-xs">{tooltips[rate - 1]}</Button>
-            ) : (
-              ""
-            )}
+            <p className="text-base font-bold mb-4">제품 후기를 남겨주세요!</p>
+            <div className="flex items-center gap-3 mb-5">
+              <StarRating value={rate} onChange={setRate} />
+              {rate > 0 && (
+                <Badge variant="secondary">{tooltips[rate - 1]}</Badge>
+              )}
+            </div>
             <CustomEditor
               editorState={editorState}
               onEditorStateChange={setEditorState}
@@ -97,6 +78,6 @@ export default function CommentEdit() {
           </>
         )}
       </div>
-    </>
+    </main>
   );
 }

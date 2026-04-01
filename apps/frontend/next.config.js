@@ -2,9 +2,6 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  compiler: {
-    emotion: true,
-  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'picsum.photos' },

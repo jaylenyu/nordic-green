@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Spin, message } from 'antd';
+import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function PaymentPage() {
   const router = useRouter();
@@ -28,15 +30,12 @@ export default function PaymentPage() {
         paymentWidgetRef.current = widget;
 
         await widget.setAmount({ currency: 'KRW', value: amount });
-        await widget.renderPaymentMethods({
-          selector: '#payment-widget',
-          variantKey: 'DEFAULT',
-        });
+        await widget.renderPaymentMethods({ selector: '#payment-widget', variantKey: 'DEFAULT' });
         await widget.renderAgreement({ selector: '#agreement' });
 
         setReady(true);
-      } catch (err) {
-        message.error('결제 모듈 로드에 실패했습니다.');
+      } catch {
+        toast.error('결제 모듈 로드에 실패했습니다.');
       }
     }
 
@@ -56,47 +55,43 @@ export default function PaymentPage() {
       });
     } catch (err: any) {
       if (err?.code !== 'USER_CANCEL') {
-        message.error('결제 요청에 실패했습니다.');
+        toast.error('결제 요청에 실패했습니다.');
       }
     }
   };
 
   return (
-    <main className="mx-auto max-w-xl px-4 py-10">
-      <h1 className="mb-6 text-2xl font-bold text-gray-800">결제하기</h1>
+    <main className="min-h-screen pt-16">
+      <div className="mx-auto max-w-xl px-4 py-10">
+        <h1 className="mb-6 text-2xl font-bold">결제하기</h1>
 
-      <div className="mb-4 rounded-xl bg-gray-50 p-4">
-        <p className="text-sm text-gray-500">주문명</p>
-        <p className="font-semibold">{orderName}</p>
-        <p className="mt-1 text-sm text-gray-500">결제 금액</p>
-        <p className="text-xl font-bold text-green-700">₩{amount.toLocaleString()}</p>
+        <div className="mb-4 rounded-lg border border-border bg-muted/40 p-4 space-y-1">
+          <p className="text-xs text-muted-foreground">주문명</p>
+          <p className="font-semibold">{orderName}</p>
+          <p className="text-xs text-muted-foreground mt-2">결제 금액</p>
+          <p className="text-xl font-bold text-primary">₩{amount.toLocaleString()}</p>
+        </div>
+
+        {!ready && (
+          <div className="flex justify-center py-10">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
+        <div id="payment-widget" className="mb-4" />
+        <div id="agreement" className="mb-6" />
+
+        {ready && (
+          <div className="flex gap-3">
+            <Button variant="outline" className="flex-1" onClick={() => router.back()}>
+              취소
+            </Button>
+            <Button className="flex-1" onClick={handlePayment}>
+              결제하기
+            </Button>
+          </div>
+        )}
       </div>
-
-      {!ready && (
-        <div className="flex justify-center py-10">
-          <Spin size="large" />
-        </div>
-      )}
-
-      <div id="payment-widget" className="mb-4" />
-      <div id="agreement" className="mb-6" />
-
-      {ready && (
-        <div className="flex gap-3">
-          <Button size="large" block onClick={() => router.back()}>
-            취소
-          </Button>
-          <Button
-            type="primary"
-            size="large"
-            block
-            onClick={handlePayment}
-            className="bg-green-700 hover:bg-green-800"
-          >
-            결제하기
-          </Button>
-        </div>
-      )}
     </main>
   );
 }

@@ -2,17 +2,11 @@ import ProductCard from "@components/product/ProductCard";
 import axios from "axios";
 import { MainCarousel, SectionBackground } from "constants/homeData";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import Link from "next/link";
 import Carousel from "nuka-carousel";
-import React from "react";
-import {
-  CustomButton,
-  CustomSection,
-  CustomWhiteButton,
-} from "styles/common.styled";
+import { Button } from "@components/ui/button";
 import { HomeProps } from "types/type";
 import API_PATHS from "api";
-import { useScreenWidth } from "hooks/useScreenWidth";
 
 export async function getStaticProps() {
   try {
@@ -20,7 +14,6 @@ export async function getStaticProps() {
     const responseProducts = response.data.items;
     const responseCarousel = MainCarousel;
     const responseSection = SectionBackground;
-
     return {
       props: {
         product: responseProducts,
@@ -34,83 +27,65 @@ export async function getStaticProps() {
 }
 
 export default function Home({ product, carousel, sectionImage }: HomeProps) {
-  const router = useRouter();
-  const screenWidth = useScreenWidth();
-
   return (
-    <div className="pt-20">
+    <div className="pt-16">
+      {/* Hero Carousel */}
       <section className="w-full">
-        <Carousel
-          autoplay={true}
-          speed={500}
-          withoutControls
-          wrapAround
-          pauseOnHover={false}
-        >
-          {carousel &&
-            carousel.map(({ title, contents, image }, idx) => (
-              <div key={idx} className="w-full relative">
-                <div className="w-screen h-full">
-                  <Image
-                    className="relative"
-                    src={image}
-                    alt={title}
-                    width={5870}
-                    height={3000}
-                    priority
-                    unoptimized
-                  />
-                  <div className="sx:w-full absolute grid gap-10 justify-items-center text-gray-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                    <div className="xl:text-5xl font-bold lg:text-4xl text-2xl">
-                      {title}
-                    </div>
-                    {screenWidth >= 640 && (
-                      <div className="xl:text-lg lg:text-base md:text-xs sm:text-xs">
-                        {contents}
-                      </div>
-                    )}
-                    <div className="w-1/2">
-                      <CustomWhiteButton
-                        onClick={() => router.push("/products")}
-                      >
-                        <span className="sm:text-sm sx:text-xs">제품 보기</span>
-                      </CustomWhiteButton>
-                    </div>
-                  </div>
-                </div>
+        <Carousel autoplay speed={500} withoutControls wrapAround pauseOnHover={false}>
+          {carousel?.map(({ title, contents, image }, idx) => (
+            <div key={idx} className="w-full relative">
+              <Image
+                src={image}
+                alt={title}
+                width={5870}
+                height={3000}
+                priority
+                unoptimized
+                className="w-full h-[60vh] lg:h-[80vh] object-cover"
+              />
+              <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center gap-6 px-4 text-white">
+                <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold text-center tracking-tight">
+                  {title}
+                </h1>
+                <p className="hidden sm:block text-sm lg:text-lg text-center text-white/80 max-w-lg">
+                  {contents}
+                </p>
+                <Button asChild variant="outline" size="lg" className="border-white text-white bg-white/10 hover:bg-white hover:text-foreground backdrop-blur-sm">
+                  <Link href="/products">제품 보기</Link>
+                </Button>
               </div>
-            ))}
+            </div>
+          ))}
         </Carousel>
       </section>
-      <section className="px-20 py-40 md:px-10 md:py-20 sm:px-5 sm:py-10 sx:px-5 sx:py-20">
-        <div className="flex text-3xl xl:text-4xl md:text-2xl sm:text-2xl font-bold justify-center pb-40 md:pb-20 sm:pb-10 sx:pb-5 ">
-          특별한 상품을 만나보세요 !
-        </div>
-        <div className="grid grid-cols-4 gap-10 lg:gap-5 md:grid-cols-2 sm:grid-cols-2 sx:grid-cols-2 md:gap-5 sm:gap-2 sx:gap-2 justify-items-center">
-          {product &&
-            product.map((item, idx) => (
-              <ProductCard key={idx} products={item} />
-            ))}
+
+      {/* Featured Products */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-24">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">
+          특별한 상품을 만나보세요
+        </h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {product?.map((item, idx) => (
+            <ProductCard key={idx} products={item} />
+          ))}
         </div>
       </section>
-      <CustomSection bgImage={sectionImage}>
-        <div className="p-10 sm:p-4 sx:p-3 w-1/4 lg:w-1/3 md:w-1/2 sm:w-1/2 sx:w-1/2 h-1/2 md:h-1/2 sm:h-1/3 sx:h-1/3 absolute bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="flex flex-col w-full h-full border justify-between items-center p-10 sm:p-4 sx:p-3">
-            <div className="text-xl xl:text-2xl md:text-lg sm:text-base sx:text-sm font-bold ">
-              무료배송 이벤트
-            </div>
-            <div className="text-4xl text-green-700 font-bold">0 ₩</div>
-            <>
-              <div className="text-md sm:text-sm sx:text-xs">
-                쉽고 빠르게 배송받으세요.
-              </div>
-              <CustomButton onClick={() => router.push("/products")}>
-                제품 보기
-              </CustomButton>
-            </>
-          </div>
+
+      {/* Promo Section */}
+      <section
+        className="relative w-full h-[50vh] lg:h-[60vh] bg-cover bg-center bg-fixed flex items-center justify-center"
+        style={{ backgroundImage: `url(${sectionImage})` }}
+      >
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="relative z-10 bg-white p-8 sm:p-12 max-w-sm w-full mx-4 flex flex-col items-center gap-5 text-center shadow-2xl">
+          <p className="text-lg font-bold">무료배송 이벤트</p>
+          <p className="text-5xl font-bold text-primary">0 ₩</p>
+          <p className="text-sm text-muted-foreground">쉽고 빠르게 배송받으세요.</p>
+          <Button asChild className="w-full">
+            <Link href="/products">제품 보기</Link>
+          </Button>
         </div>
-      </CustomSection>
+      </section>
     </div>
   );
 }

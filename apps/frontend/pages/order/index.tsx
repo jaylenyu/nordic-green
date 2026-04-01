@@ -1,127 +1,100 @@
-import { DeleteOutlined } from "@ant-design/icons";
-import EmptyBox from "@components/UI/EmptyBox";
-import SpinnerComponent from "@components/UI/Spinner";
-import { Button } from "antd";
+import EmptyBox from "@components/ui/EmptyBox";
+import SpinnerComponent from "@components/ui/Spinner";
 import { ORDER_STATUS_MAP } from "constants/order";
 import { format } from "date-fns";
 import { useDeleteOrder } from "hooks/mutations/useDeleteOrder";
 import { useUpdateOrderStatus } from "hooks/mutations/useUpdateOrderStatus";
 import { useOrder } from "hooks/queries/useQuery";
+import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import {
-  CustomButton,
-  CustomTitle,
-  CustomWhiteButton,
-  CustomWrap,
-} from "styles/common.styled";
+import { useEffect, useState } from "react";
 import { OrderDetail, OrderItemDetail } from "types/type";
+import { Button } from "@components/ui/button";
+import { Badge } from "@components/ui/badge";
+import { Separator } from "@components/ui/separator";
+import { cn } from "@/lib/utils";
+
+const STATUS_CLASS: Record<number, string> = {
+  0: "bg-muted text-muted-foreground",
+  1: "bg-blue-100 text-blue-700",
+  2: "bg-primary/10 text-primary",
+  3: "bg-cyan-100 text-cyan-700",
+  4: "bg-sky-100 text-sky-700",
+  5: "bg-green-100 text-green-700",
+  6: "bg-red-100 text-red-700",
+  7: "bg-orange-100 text-orange-700",
+};
 
 export default function MyPage() {
   const { data: products } = useOrder();
 
   return (
-    <CustomWrap padding="150px 120px">
-      <CustomTitle>Orders ({products ? products?.length : 0})</CustomTitle>
-      <div>
-        {products ? (
-          products && products.length > 0 ? (
-            products
-              ?.map((item, idx) => <DetailItem key={idx} {...item} />)
-              .reverse()
+    <main className="min-h-screen pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 lg:py-16">
+        <h1 className="text-2xl font-bold mb-8">Orders ({products?.length ?? 0})</h1>
+        <div className="space-y-6">
+          {products ? (
+            products.length > 0 ? (
+              [...products].reverse().map((item, idx) => <DetailItem key={idx} {...item} />)
+            ) : (
+              <EmptyBox />
+            )
           ) : (
-            <EmptyBox />
-          )
-        ) : (
-          <SpinnerComponent />
-        )}
+            <SpinnerComponent />
+          )}
+        </div>
       </div>
-    </CustomWrap>
+    </main>
   );
 }
 
 const DetailItem = (props: OrderDetail) => {
   const { mutate: updateStatus } = useUpdateOrderStatus();
   const { mutate: deleteOrder } = useDeleteOrder();
+  const total = props.orderItems.map((i) => i.amount).reduce((a, b) => a + b, 0);
 
   const handleOrderDelete = async () => {
-    const isConfirmed = window.confirm("삭제하시겠습니까?");
-
-    if (isConfirmed) {
-      await deleteOrder(props.id);
-    } else {
-      return;
-    }
+    if (window.confirm("삭제하시겠습니까?")) await deleteOrder(props.id);
   };
 
   return (
-    <>
-      <div className="flex justify-between relative sm:flex-col sm:justify-center sx:flex-col sx:justify-center">
-        <div className="w-2/3 sm:w-full sx:w-full">
-          <div className="w-full">
-            {props.orderItems.map((orderItem, idx) => (
-              <Item key={idx} {...orderItem} status={props.status} />
-            ))}
-          </div>
+    <div className="border border-border rounded-lg bg-card overflow-hidden">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="flex items-center gap-3">
+          <Badge className={cn("border-0", STATUS_CLASS[props.status] ?? STATUS_CLASS[0])}>
+            {ORDER_STATUS_MAP[props.status + 1]}
+          </Badge>
+          <span className="text-xs text-muted-foreground">
+            {format(new Date(props.createAt), "yyyy년 M월 d일 HH:mm")}
+          </span>
         </div>
-        <div className="flex flex-col justify-between ml-10 w-1/3 pt-10 sm:ml-0 sm:px-10 sm:w-full sx:ml-0 sx:px-5 sx:w-full">
-          <div className="sticky top-32">
-            <div className="text-xl mb-10">주문 정보</div>
-            <DeleteOutlined
-              onClick={handleOrderDelete}
-              className="absolute top-0 right-0 text-2xl hover:cursor-pointer"
-            />
-            <div className="flex justify-between">
-              <div>주문 상태</div>
-              <div className="font-bold">
-                {ORDER_STATUS_MAP[props.status + 1]}
-              </div>
-            </div>
-            <div className="flex justify-between mt-5 border-b">
-              <div>총 주문 금액</div>
-              <div className="font-bold">
-                {props.orderItems
-                  .map((item) => item.amount)
-                  .reduce((prev, curr) => prev + curr, 0)
-                  .toLocaleString()}{" "}
-                ₩
-              </div>
-            </div>
-            <div className="mt-10 lg:mt-5 md:mt-5 sm:mt-5 sx:mt-3">
-              {props.status === -1 || props.status === 0 ? (
-                <CustomButton
-                  onClick={() =>
-                    updateStatus({
-                      id: props.id,
-                      status: 2,
-                      userId: Number(props.userId),
-                    })
-                  }
-                >
-                  결제처리
-                </CustomButton>
-              ) : (
-                <CustomWhiteButton
-                  onClick={() =>
-                    updateStatus({
-                      id: props.id,
-                      status: -1,
-                      userId: Number(props.userId),
-                    })
-                  }
-                >
-                  취소처리
-                </CustomWhiteButton>
-              )}
-            </div>
-          </div>
+        <div className="flex items-center gap-4">
+          <span className="text-sm font-semibold">{total.toLocaleString()} ₩</span>
+          <button onClick={handleOrderDelete} className="text-muted-foreground hover:text-destructive transition-colors">
+            <Trash2 className="w-4 h-4" />
+          </button>
         </div>
       </div>
-      <div className="flex justify-end text-sm text-gray-500 border-b py-10 pb-20">
-        주문일자 : {format(new Date(props.createAt), "yyyy년 M월 d일 HH:mm:ss")}
+
+      <div className="divide-y divide-border">
+        {props.orderItems.map((orderItem, idx) => (
+          <Item key={idx} {...orderItem} status={props.status} />
+        ))}
       </div>
-    </>
+
+      <div className="px-5 py-4 border-t border-border flex justify-end gap-2">
+        {props.status === -1 || props.status === 0 ? (
+          <Button size="sm" onClick={() => updateStatus({ id: props.id, status: 2, userId: Number(props.userId) })}>
+            결제처리
+          </Button>
+        ) : (
+          <Button size="sm" variant="outline" onClick={() => updateStatus({ id: props.id, status: -1, userId: Number(props.userId) })}>
+            취소처리
+          </Button>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -131,46 +104,34 @@ const Item = (props: OrderItemDetail & { status: number }) => {
   const [amount, setAmount] = useState<number>(props.quantity);
 
   useEffect(() => {
-    if (quantity != null) {
-      setAmount(quantity * Number(props.price));
-    }
+    if (quantity != null) setAmount(quantity * Number(props.price));
   }, [quantity, props.price]);
 
-  const handleComment = () => {
-    router.push(`/comment/edit?orderItemIds=${props.id}`);
-  };
-
   return (
-    <div className="flex w-full py-10 border-b justify-between">
-      <div className="flex w-4/5">
-        <div className="object-cover relative hover:cursor-pointer">
-          <Image
-            className="rounded-2xl"
-            width="200"
-            height="200"
-            priority
-            unoptimized
-            src={props.image_url}
-            alt={props.name}
-            onClick={() => router.push(`/products/${props.productId}`)}
-          />
+    <div className="flex gap-4 px-5 py-4">
+      <Image
+        className="rounded-md object-cover cursor-pointer shrink-0"
+        width={80}
+        height={80}
+        priority
+        unoptimized
+        src={props.image_url}
+        alt={props.name}
+        onClick={() => router.push(`/products/${props.productId}`)}
+      />
+      <div className="flex flex-1 justify-between items-start min-w-0 gap-4">
+        <div className="min-w-0">
+          <p className="font-semibold text-sm truncate">{props.name}</p>
+          <p className="text-xs text-muted-foreground mt-1">
+            {props.price.toLocaleString()} ₩ × {quantity}개
+          </p>
+          <p className="text-sm font-medium mt-0.5">{amount.toLocaleString()} ₩</p>
         </div>
-        <div className="flex flex-col justify-between ml-10 py-2 sm:ml-5 sx:ml-5 w-full">
-          <div className="font-bold md:text-sm sm:text-sm sx:text-sm">
-            {props.name}
-          </div>
-          <div className="text-sm md:text-sx sm:text-sx sx:text-sx">
-            <div>가격 : {props.price.toLocaleString()} ₩</div>
-            <div>수량 : {quantity} 개</div>
-            <div className="font-bold">합계 : {amount.toLocaleString()} ₩</div>
-          </div>
-        </div>
-      </div>
-      <div className="flex justify-end">
         {props.status === 2 && (
           <Button
-            className="h-8 w-full rounded-full bg-white text-green-800 sm:h-8 sm:text-sm sx:h-8 sx:text-xs"
-            onClick={handleComment}
+            size="sm"
+            variant="outline"
+            onClick={() => router.push(`/comment/edit?orderItemIds=${props.id}`)}
           >
             후기작성
           </Button>

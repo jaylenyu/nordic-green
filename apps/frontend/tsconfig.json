@@ -18,9 +18,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"]
+      "@components/ui/*": ["./src/components/ui/*"],
+      "@components/*": ["./components/*"]
     },
-    "types": ["@emotion/react/types/css-prop", "node"]
+    "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"],

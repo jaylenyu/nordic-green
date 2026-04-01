@@ -41,5 +41,4 @@ yarn-error.log*
 # env
 .env
 
-# prisma
-prisma/migrations/
+!.env.example

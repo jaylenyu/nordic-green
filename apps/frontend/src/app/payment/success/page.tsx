@@ -2,8 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Result, Button, Spin } from 'antd';
+import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useConfirmPayment } from '@/hooks/mutations/useConfirmPayment';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 export default function PaymentSuccessPage() {
   const router = useRouter();
@@ -24,45 +26,52 @@ export default function PaymentSuccessPage() {
 
   if (isPending) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <Spin size="large" />
-        <p className="text-gray-500">결제를 확인하고 있습니다...</p>
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 text-muted-foreground">
+        <Loader2 className="w-10 h-10 animate-spin" />
+        <p>결제를 확인하고 있습니다...</p>
       </div>
     );
   }
 
   if (isError) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
-        <Result
-          status="error"
-          title="결제 확인 실패"
-          subTitle="결제는 완료되었으나 확인 중 오류가 발생했습니다. 고객센터에 문의해 주세요."
-          extra={
-            <Button type="primary" onClick={() => router.push('/mypage/orders')} className="bg-green-700">
+      <main className="flex min-h-screen items-center justify-center px-4">
+        <Card className="w-full max-w-sm text-center">
+          <CardContent className="pt-8 pb-6 space-y-4">
+            <AlertCircle className="w-14 h-14 mx-auto text-destructive" />
+            <div>
+              <p className="text-lg font-bold">결제 확인 실패</p>
+              <p className="text-sm text-muted-foreground mt-1">결제는 완료되었으나 확인 중 오류가 발생했습니다. 고객센터에 문의해 주세요.</p>
+            </div>
+            <Button className="w-full" onClick={() => router.push('/mypage/orders')}>
               주문 내역 확인
             </Button>
-          }
-        />
+          </CardContent>
+        </Card>
       </main>
     );
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <Result
-        status="success"
-        title="결제가 완료되었습니다!"
-        subTitle={`주문 번호: ${orderId} · ₩${amount.toLocaleString()}`}
-        extra={[
-          <Button key="orders" type="primary" onClick={() => router.push('/mypage/orders')} className="bg-green-700">
-            주문 내역 보기
-          </Button>,
-          <Button key="home" onClick={() => router.push('/')}>
-            쇼핑 계속하기
-          </Button>,
-        ]}
-      />
+    <main className="flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-sm text-center">
+        <CardContent className="pt-8 pb-6 space-y-4">
+          <CheckCircle2 className="w-14 h-14 mx-auto text-primary" />
+          <div>
+            <p className="text-lg font-bold">결제가 완료되었습니다!</p>
+            <p className="text-sm text-muted-foreground mt-1">주문 번호: {orderId}</p>
+            <p className="text-sm text-muted-foreground">₩{amount.toLocaleString()}</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" className="flex-1" onClick={() => router.push('/')}>
+              쇼핑 계속하기
+            </Button>
+            <Button className="flex-1" onClick={() => router.push('/mypage/orders')}>
+              주문 내역 보기
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </main>
   );
 }

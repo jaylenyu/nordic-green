@@ -6256,6 +6256,11 @@ npm-run-path@^5.1.0:
   dependencies:
     path-key "^4.0.0"
 
+nuka-carousel@^8.2.0:
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/nuka-carousel/-/nuka-carousel-8.2.0.tgz#fd086423e02acec7643dd04d38aa3d891cc2bd6a"
+  integrity sha512-Wt6rAlSKnhQyZQETfdb5HGSzNc1hcnWls2pA+WpHqi6xq+F44k+oaldFEaSTxvSuVMz2Fo8LhDFGInlYlXepeQ==
+
 nypm@^0.6.0:
   version "0.6.5"
   resolved "https://registry.yarnpkg.com/nypm/-/nypm-0.6.5.tgz#5edd97310ee468fa3306b9ef5fe82b8ef6605b57"

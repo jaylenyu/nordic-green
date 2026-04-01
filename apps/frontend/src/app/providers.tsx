@@ -2,8 +2,8 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SessionProvider } from 'next-auth/react';
-import { ConfigProvider } from 'antd';
 import { useState } from 'react';
+import { Toaster } from 'sonner';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -18,20 +18,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <SessionProvider>
       <QueryClientProvider client={queryClient}>
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: '#158041',
-              colorBgContainer: '#fff',
-              colorLink: '#45a96f',
-            },
-            components: {
-              Button: { textHoverBg: 'none' },
-            },
-          }}
-        >
-          {children}
-        </ConfigProvider>
+        {children}
+        <Toaster richColors position="top-right" />
       </QueryClientProvider>
     </SessionProvider>
   );

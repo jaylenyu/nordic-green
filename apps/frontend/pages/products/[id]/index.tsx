@@ -9,24 +9,15 @@ import axios from "axios";
 import { format } from "date-fns";
 import { convertFromRaw, EditorState } from "draft-js";
 import { products } from "@prisma/client";
+import { Heart, ShoppingCart, ShoppingBag } from "lucide-react";
 import CustomEditor from "@components/comment/Editor";
-import CountControl from "@components/UI/CountControl";
+import CountControl from "@components/ui/CountControl";
 import CommentItem from "@components/comment/CommentItem";
-import SpinnerComponent from "@components/UI/Spinner";
+import SpinnerComponent from "@components/ui/Spinner";
 import API_PATHS from "api";
 import { CommentsItemType } from "types/type";
 import { BLUR_IMAGE } from "constants/products";
-import {
-  CustomButton,
-  CustomWhiteButton,
-  CustomWhiteWrap,
-} from "styles/common.styled";
-import {
-  HeartFilled,
-  HeartOutlined,
-  ShoppingCartOutlined,
-  ShoppingOutlined,
-} from "@ant-design/icons";
+import { Button } from "@components/ui/button";
 import Head from "next/head";
 import { useComments, useDetailWishlist } from "hooks/queries/useQuery";
 import { useUpdateWishlist } from "hooks/mutations/useUpdateWishlist";
@@ -70,14 +61,9 @@ export default function ProductsDetail(props: {
   const [quantity, setQuantity] = useState<number | undefined>(1);
   const validate = useValidation(product);
   const [editorState] = useState<EditorState | undefined>(() => {
-    if (!product) {
-      return EditorState.createEmpty();
-    }
-
+    if (!product) return EditorState.createEmpty();
     return product.contents
-      ? EditorState.createWithContent(
-          convertFromRaw(JSON.parse(product.contents))
-        )
+      ? EditorState.createWithContent(convertFromRaw(JSON.parse(product.contents)))
       : EditorState.createEmpty();
   });
 
@@ -90,170 +76,119 @@ export default function ProductsDetail(props: {
     <>
       {product != null && productId != null ? (
         <>
-          <div className="flex pt-40 sx:flex-col sx:justify-center sx:items-center">
-            <Head>
-              <title>{product.name} - Nordic Green</title>
-              <meta
-                name="description"
-                content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`}
-              />
-              <meta
-                name="keywords"
-                content={`${product.name}, plants, Nordic Green, boutique`}
-              />
-              <meta
-                property="og:title"
-                content={`${product.name} - Nordic Green`}
-              />
-              <meta
-                property="og:description"
-                content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`}
-              />
-              <meta property="og:image" content={product.images[0]} />
-              <meta
-                property="og:url"
-                content={`https://nordic-green.vercel.app/products/${product.id}`}
-              />
-              <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <div className="flex justify-end w-3/5 sm:w-full sm:justify-center sx:w-full sx:justify-center">
-              <div>
+          <Head>
+            <title>{product.name} - Nordic Green</title>
+            <meta name="description" content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`} />
+            <meta name="keywords" content={`${product.name}, plants, Nordic Green, boutique`} />
+            <meta property="og:title" content={`${product.name} - Nordic Green`} />
+            <meta property="og:description" content={`Discover ${product.name} on Nordic Green. Elevate your indoor spaces with our premium products.`} />
+            <meta property="og:image" content={product.images[0]} />
+            <link rel="icon" href="/favicon.ico" />
+          </Head>
+
+          <div className="flex flex-col lg:flex-row pt-24 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto gap-8 lg:gap-12">
+            {/* 이미지 영역 */}
+            <div className="flex gap-3 lg:w-3/5">
+              <div className="flex flex-col gap-2 shrink-0">
                 {product.images.map((url, idx) => (
-                  <div
-                    key={idx}
-                    className="mb-5 mr-5 hover:opacity-50 w-20 h-20"
-                  >
+                  <div key={idx} className="w-16 h-16 cursor-pointer rounded-lg overflow-hidden border border-border hover:opacity-70 transition-opacity">
                     <Image
                       src={url}
                       alt="image"
-                      className="rounded-2xl"
-                      width={80}
-                      height={80}
+                      width={64}
+                      height={64}
                       priority
                       unoptimized
                       placeholder="blur"
                       blurDataURL={BLUR_IMAGE}
+                      className="object-cover w-full h-full"
                       onMouseOver={() => setIndex(idx)}
                     />
                   </div>
                 ))}
               </div>
-              <div className="w-2/3">
-                <Carousel
-                  animation="zoom"
-                  withoutControls
-                  wrapAround
-                  speed={200}
-                  slideIndex={index}
-                >
+              <div className="flex-1 rounded-xl overflow-hidden">
+                <Carousel animation="zoom" withoutControls wrapAround speed={200} slideIndex={index}>
                   {product.images.map((url, idx) => (
-                    <Image
-                      className="rounded-2xl"
-                      key={idx}
-                      src={url}
-                      alt="image"
-                      width={500}
-                      height={500}
-                      priority
-                      unoptimized
-                    />
+                    <Image key={idx} src={url} alt="image" width={600} height={600} priority unoptimized className="object-cover w-full" />
                   ))}
                 </Carousel>
               </div>
             </div>
-            <div className="w-2/5 px-20 flex flex-col justify-between sm:w-full sm:mt-5 sx:w-full sx:mt-3 md:px-10 sm:px-10 sx:px-10">
-              <div className="text-2xl font-bold md:text-xl sm:text-xl sx:text-lg">
-                {product.name}
+
+            {/* 상품 정보 영역 */}
+            <div className="lg:w-2/5 flex flex-col gap-4">
+              <div>
+                <h1 className="text-2xl font-bold">{product.name}</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  등록일: {format(new Date(product.createAt), "yyyy년 M월 d일")}
+                </p>
               </div>
-              <div className="text-slate-500 sm:text-sm sx:text-xs">
-                등록일 : {format(new Date(product.createAt), "yyyy년 M월 d일")}
-              </div>
+
               {editorState != null && (
-                <div className="text-slate-500 sm:text-sm sx:text-sm">
+                <div className="text-sm text-muted-foreground">
                   <CustomEditor editorState={editorState} readOnly />
                 </div>
               )}
-              <div className="text-lg md:text-base sm:text-sm sx:text-sm">
-                {product.price.toLocaleString()} ₩
+
+              <p className="text-xl font-semibold">{product.price.toLocaleString()} ₩</p>
+
+              <div className="flex items-center justify-between py-3 border-y border-border">
+                <span className="text-sm text-muted-foreground">수량</span>
+                <CountControl disabled={false} value={quantity} setValue={setQuantity} />
               </div>
-              <div className="flex justify-between sm:flex-col sx:flex-col">
-                <div>
-                  <span className="md:text-sm sm:text-sm sx:text-sm">
-                    수량 :{" "}
-                  </span>
-                  <CountControl
-                    disabled={false}
-                    value={quantity}
-                    setValue={setQuantity}
-                  />
-                </div>
-                <div className="font-bold md:text-sm sm:text-sm sx:text-sm">
-                  총 가격 :{" "}
-                  {quantity && (quantity * product.price).toLocaleString()} ₩
-                </div>
+
+              <div className="text-right font-bold">
+                총 가격: {quantity && (quantity * product.price).toLocaleString()} ₩
               </div>
-              <div className="mt-5 grid gap-5 md:gap-4 sm:gap-3 sx:gap-2">
-                <CustomButton
+
+              <div className="flex flex-col gap-2 mt-2">
+                <Button
+                  className="w-full"
                   onClick={() => {
-                    if (session == null) {
-                      alert("로그인 하세요.");
-                      signIn();
-                      return;
-                    }
+                    if (session == null) { alert("로그인 하세요."); signIn(); return; }
                     validate("cart", quantity);
                   }}
-                  icon={<ShoppingCartOutlined />}
                 >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
                   장바구니
-                </CustomButton>
-                <CustomWhiteButton
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
                   onClick={() => {
-                    if (session == null) {
-                      alert("로그인 하세요.");
-                      signIn();
-                      return;
-                    }
+                    if (session == null) { alert("로그인 하세요."); signIn(); return; }
                     updateWishlist(String(productId));
                   }}
-                  icon={isWished ? <HeartFilled /> : <HeartOutlined />}
                 >
+                  <Heart className={`w-4 h-4 mr-2 ${isWished ? 'fill-primary text-primary' : ''}`} />
                   위시리스트
-                </CustomWhiteButton>
-                <CustomButton
+                </Button>
+                <Button
+                  className="w-full"
                   onClick={() => {
-                    if (session == null) {
-                      alert("로그인 하세요.");
-                      signIn();
-                      return;
-                    }
+                    if (session == null) { alert("로그인 하세요."); signIn(); return; }
                     validate("order", quantity);
                   }}
-                  icon={<ShoppingOutlined />}
                 >
+                  <ShoppingBag className="w-4 h-4 mr-2" />
                   결제하기
-                </CustomButton>
+                </Button>
               </div>
             </div>
           </div>
-          <CustomWhiteWrap>
-            <p className="text-lg font-bold mb-12 sm:mb-5 sx:mb-3 sm:text-base sx:text-sm">
-              제품 후기
-            </p>
+
+          {/* 후기 섹션 */}
+          <div className="mt-20 px-4 sm:px-8 lg:px-16 max-w-7xl mx-auto py-10 border-t border-border">
+            <p className="text-lg font-bold mb-8">제품 후기</p>
             {comments && comments.length > 0 ? (
-              comments
-                .map((comment: any, idx: number) => (
-                  <CommentItem
-                    key={idx}
-                    item={comment}
-                    queryClient={queryClient}
-                    productId={productId}
-                  />
-                ))
-                .reverse()
+              [...comments].reverse().map((comment: any, idx: number) => (
+                <CommentItem key={idx} item={comment} queryClient={queryClient} productId={productId} />
+              ))
             ) : (
-              <div>후기가 없습니다.</div>
+              <div className="text-muted-foreground">후기가 없습니다.</div>
             )}
-          </CustomWhiteWrap>
+          </div>
         </>
       ) : (
         <SpinnerComponent />

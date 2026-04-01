@@ -1,4 +1,3 @@
-import { Button, Rate } from "antd";
 import { format } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { CommentsItemType } from "types/type";
@@ -9,10 +8,11 @@ import axios from "axios";
 import API_PATHS from "api";
 import { tooltips } from "constants/comment";
 import { getCustomUser } from "constants/user";
+import { Button } from "@components/ui/button";
+import StarRating from "@components/ui/StarRating";
+import { toast } from "sonner";
 
-const CustomEditor = dynamic(() => import("./Editor"), {
-  ssr: false,
-});
+const CustomEditor = dynamic(() => import("./Editor"), { ssr: false });
 
 export default function CommentItem({
   item,
@@ -27,18 +27,12 @@ export default function CommentItem({
   const user = getCustomUser(session);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [rate, setRate] = useState(5);
-  const [editorState, setEditorState] = useState<EditorState | undefined>(
-    undefined
-  );
-  const maskedUserId = item.userId
-    ? `${item.userId.slice(0, 3)}*****`
-    : "Anonymous";
+  const [editorState, setEditorState] = useState<EditorState | undefined>(undefined);
+  const maskedUserId = item.userId ? `${item.userId.slice(0, 3)}*****` : "Anonymous";
 
   const fetchComment = async () => {
     if (item && item.contents) {
-      setEditorState(
-        EditorState.createWithContent(convertFromRaw(JSON.parse(item.contents)))
-      );
+      setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(item.contents))));
       setRate(item.rate);
     } else {
       setEditorState(EditorState.createEmpty());
@@ -50,23 +44,22 @@ export default function CommentItem({
       const rawContent = editorState.getCurrentContent();
       const textContent = rawContent.getPlainText().trim();
 
-      if (!textContent || textContent.length === 0) {
-        alert("후기를 입력하세요!");
+      if (!textContent) {
+        toast.error("후기를 입력하세요!");
         return;
       }
 
       try {
         await axios.post(API_PATHS.COMMENTS.UPDATE, {
-          rate: rate,
+          rate,
           orderItemIds: Number(item.orderItemIds),
           contents: JSON.stringify(convertToRaw(rawContent)),
           images: [],
         });
-
-        alert("후기 등록 성공!");
+        toast.success("후기 등록 성공!");
       } catch (error) {
         console.error(error);
-        alert("후기 등록 실패!");
+        toast.error("후기 등록 실패!");
       } finally {
         queryClient.invalidateQueries([API_PATHS.COMMENTS.GET, productId]);
         setEditMode(false);
@@ -75,96 +68,67 @@ export default function CommentItem({
   };
 
   const handleDeleteComment = async () => {
-    const isConfirmed = confirm("댓글을 삭제하시겠습니까?");
-
-    if (!isConfirmed) return;
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
 
     try {
       await axios.delete(API_PATHS.COMMENTS.DELETE, {
         data: { orderItemIds: item.orderItemIds },
       });
-
       queryClient.invalidateQueries([API_PATHS.COMMENTS.GET, productId]);
-
-      alert("댓글이 삭제되었습니다.");
+      toast.success("댓글이 삭제되었습니다.");
     } catch (error) {
-      console.error("Failed to delete the comment:", error);
-      alert("댓글 삭제 실패. 다시 시도해주세요.");
+      console.error(error);
+      toast.error("댓글 삭제 실패. 다시 시도해주세요.");
     }
   };
 
-  useEffect(() => {
-    fetchComment();
-  }, [productId]);
+  useEffect(() => { fetchComment(); }, [productId]);
 
   return (
-    <div className="border-b mb-10">
-      <div className="flex justify-between">
-        <div className="flex">
-          <div className="font-bold mb-3 mr-3 sm:text-sm sx:text-sm">
-            {maskedUserId}
-          </div>
-          <div className="text-sm sm:text-xs sx:text-xs">
-            ({item.quantity}개 구매)
-          </div>
+    <div className="border-b border-border pb-6 mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-semibold">{maskedUserId}</span>
+          <span className="text-xs text-muted-foreground">({item.quantity}개 구매)</span>
         </div>
-        <div className="text-sm sm:text-xs sx:text-xs text-slate-500">
+        <span className="text-xs text-muted-foreground">
           {format(new Date(item.updatedAt), "yyyy년 M월 d일")}
+        </span>
+      </div>
+
+      {editMode ? (
+        <div className="space-y-3">
+          <div className="flex items-center gap-3">
+            <StarRating value={rate} onChange={setRate} />
+            <span className="text-xs text-muted-foreground">{tooltips[rate - 1]}</span>
+          </div>
+          <CustomEditor editorState={editorState} onEditorStateChange={setEditorState} onSave={handleSave} />
+          {item.userId === user?.id && (
+            <div className="flex gap-2 justify-end">
+              <Button size="sm" onClick={handleSave}>저장</Button>
+              <Button size="sm" variant="outline" onClick={() => setEditMode(false)}>취소</Button>
+            </div>
+          )}
         </div>
-      </div>
-      <div className="flex justify-between w-full">
-        {editMode ? (
-          <>
-            <div className="w-full">
-              <Rate
-                tooltips={tooltips}
-                defaultValue={5}
-                value={rate}
-                onChange={setRate}
-                allowClear={false}
+      ) : (
+        <div className="space-y-2">
+          <StarRating value={item.rate} disabled />
+          <div className="flex justify-between items-start gap-3">
+            <div className="flex-1">
+              <CustomEditor
+                editorState={EditorState.createWithContent(convertFromRaw(JSON.parse(item.contents ?? "{}")))}
+                readOnly
               />
-              {rate && (
-                <Button type="text" className="text-center ml-3 text-xs ">
-                  {tooltips[rate - 1]}
-                </Button>
-              )}
-              <div className="w-full relative">
-                <CustomEditor
-                  editorState={editorState}
-                  onEditorStateChange={setEditorState}
-                  onSave={handleSave}
-                />
-                {item.userId === user?.id && (
-                  <div className="z-20 absolute top-1 right-0">
-                    <Button onClick={handleSave}>저장</Button>
-                    <Button onClick={() => setEditMode(false)}>취소</Button>
-                  </div>
-                )}
-              </div>
             </div>
-          </>
-        ) : (
-          <>
-            <div className="w-full">
-              <Rate disabled value={item.rate} />
-              <div className="flex justify-between items-center w-full">
-                <CustomEditor
-                  editorState={EditorState.createWithContent(
-                    convertFromRaw(JSON.parse(item.contents ?? ""))
-                  )}
-                  readOnly
-                />
-                {item.userId === user?.id && (
-                  <div className="flex">
-                    <Button onClick={() => setEditMode(true)}>수정</Button>
-                    <Button onClick={handleDeleteComment}>삭제</Button>
-                  </div>
-                )}
+            {item.userId === user?.id && (
+              <div className="flex gap-1 shrink-0">
+                <Button size="sm" variant="ghost" onClick={() => setEditMode(true)}>수정</Button>
+                <Button size="sm" variant="ghost" className="text-destructive hover:text-destructive" onClick={handleDeleteComment}>삭제</Button>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

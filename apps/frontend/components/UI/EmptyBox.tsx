@@ -1,4 +1,4 @@
-import { Empty } from "antd";
+import { PackageOpen } from "lucide-react";
 import { useRouter } from "next/router";
 
 export default function EmptyBox() {
@@ -12,9 +12,9 @@ export default function EmptyBox() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-80">
-      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      <div>{messages[router.pathname]}</div>
+    <div className="flex flex-col items-center justify-center h-64 gap-3 text-muted-foreground">
+      <PackageOpen className="w-12 h-12 opacity-40" />
+      <p className="text-sm">{messages[router.pathname] ?? "항목이 없습니다."}</p>
     </div>
   );
 }

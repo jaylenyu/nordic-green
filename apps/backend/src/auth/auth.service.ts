@@ -93,7 +93,7 @@ export class AuthService {
   private signToken(userId: string, email: string) {
     return this.jwtService.sign(
       { sub: userId, email },
-      { expiresIn: process.env.JWT_EXPIRES_IN ?? '24h' },
+      { expiresIn: (process.env.JWT_EXPIRES_IN ?? '24h') as any },
     );
   }
 }

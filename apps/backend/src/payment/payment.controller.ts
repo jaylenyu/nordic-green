@@ -28,7 +28,10 @@ export class PaymentController {
 
   @Get(':orderId')
   @UseGuards(JwtAuthGuard)
-  findByOrder(@Request() req: any, @Param('orderId', ParseIntPipe) orderId: number) {
+  findByOrder(
+    @Request() req: any,
+    @Param('orderId', ParseIntPipe) orderId: number,
+  ) {
     return this.paymentService.findByOrder(req.user.id, orderId);
   }
 

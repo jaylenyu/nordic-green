@@ -1,13 +1,21 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useConfirmPayment } from '@/hooks/mutations/useConfirmPayment';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function PaymentSuccessPage() {
+export default function PaymentSuccessPageWrapper() {
+  return (
+    <Suspense>
+      <PaymentSuccessPage />
+    </Suspense>
+  );
+}
+
+function PaymentSuccessPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const confirmed = useRef(false);
@@ -16,7 +24,7 @@ export default function PaymentSuccessPage() {
   const orderId = searchParams.get('orderId') ?? '';
   const amount = Number(searchParams.get('amount') ?? 0);
 
-  const { mutate: confirmPayment, isPending, isSuccess, isError } = useConfirmPayment();
+  const { mutate: confirmPayment, isPending, isError } = useConfirmPayment();
 
   useEffect(() => {
     if (!paymentKey || !orderId || !amount || confirmed.current) return;
@@ -41,7 +49,9 @@ export default function PaymentSuccessPage() {
             <AlertCircle className="w-14 h-14 mx-auto text-destructive" />
             <div>
               <p className="text-lg font-bold">결제 확인 실패</p>
-              <p className="text-sm text-muted-foreground mt-1">결제는 완료되었으나 확인 중 오류가 발생했습니다. 고객센터에 문의해 주세요.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                결제는 완료되었으나 확인 중 오류가 발생했습니다. 고객센터에 문의해 주세요.
+              </p>
             </div>
             <Button className="w-full" onClick={() => router.push('/mypage/orders')}>
               주문 내역 확인

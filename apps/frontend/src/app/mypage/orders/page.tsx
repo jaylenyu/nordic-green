@@ -11,9 +11,14 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const STATUS_LABEL: Record<number, string> = {
-  0: '주문대기', 1: '결제준비', 2: '결제완료',
-  3: '배송준비', 4: '배송중', 5: '배송완료',
-  6: '주문취소', 7: '환불',
+  0: '주문대기',
+  1: '결제준비',
+  2: '결제완료',
+  3: '배송준비',
+  4: '배송중',
+  5: '배송완료',
+  6: '주문취소',
+  7: '환불',
 };
 
 const STATUS_CLASS: Record<number, string> = {
@@ -30,7 +35,12 @@ const STATUS_CLASS: Record<number, string> = {
 export default function OrdersPage() {
   const { data: orders, isLoading } = useOrder();
 
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">로딩 중...</div>;
+  if (isLoading)
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        로딩 중...
+      </div>
+    );
 
   return (
     <main className="min-h-screen pt-16">
@@ -47,6 +57,7 @@ export default function OrdersPage() {
           </div>
         ) : (
           <div className="space-y-4">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {orders.map((order: any) => (
               <Card key={order.id}>
                 <CardContent className="pt-4">
@@ -54,16 +65,23 @@ export default function OrdersPage() {
                     <span className="text-xs text-muted-foreground">
                       {format(new Date(order.createdAt), 'yyyy.MM.dd HH:mm', { locale: ko })}
                     </span>
-                    <Badge className={cn('border-0', STATUS_CLASS[order.status] ?? STATUS_CLASS[0])}>
+                    <Badge
+                      className={cn('border-0', STATUS_CLASS[order.status] ?? STATUS_CLASS[0])}
+                    >
                       {STATUS_LABEL[order.status]}
                     </Badge>
                   </div>
 
                   <div className="space-y-2">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {order.orderItems.map((item: any) => (
                       <div key={item.id} className="flex items-center gap-3">
                         {item.product?.imageUrl && (
-                          <img src={item.product.imageUrl} alt={item.product.name} className="h-14 w-14 rounded-md object-cover shrink-0" />
+                          <img
+                            src={item.product.imageUrl}
+                            alt={item.product.name}
+                            className="h-14 w-14 rounded-md object-cover shrink-0"
+                          />
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="font-medium text-sm truncate">{item.product?.name}</p>
@@ -77,7 +95,11 @@ export default function OrdersPage() {
 
                   <div className="mt-3 border-t pt-3 text-right">
                     <span className="font-semibold text-sm">
-                      총 ₩{order.orderItems.reduce((s: number, i: any) => s + i.amount, 0).toLocaleString()}
+                      총 ₩
+                      {order.orderItems
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        .reduce((s: number, i: any) => s + i.amount, 0)
+                        .toLocaleString()}
                     </span>
                   </div>
                 </CardContent>

@@ -41,9 +41,16 @@ export class OrdersService {
     });
   }
 
-  async updateStatus(userId: string, orderId: number, dto: UpdateOrderStatusDto) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order || order.userId !== userId) throw new NotFoundException('Order not found');
+  async updateStatus(
+    userId: string,
+    orderId: number,
+    dto: UpdateOrderStatusDto,
+  ) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order || order.userId !== userId)
+      throw new NotFoundException('Order not found');
 
     return this.prisma.order.update({
       where: { id: orderId },
@@ -52,8 +59,11 @@ export class OrdersService {
   }
 
   async remove(userId: string, orderId: number) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order || order.userId !== userId) throw new NotFoundException('Order not found');
+    const order = await this.prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order || order.userId !== userId)
+      throw new NotFoundException('Order not found');
 
     return this.prisma.order.delete({ where: { id: orderId } });
   }

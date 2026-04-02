@@ -14,17 +14,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'yarn'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck frontend
-        run: yarn workspace @nordic-green/frontend typecheck
+        run: pnpm --filter @nordic-green/frontend typecheck
 
       - name: Lint frontend
-        run: yarn workspace @nordic-green/frontend lint
+        run: pnpm --filter @nordic-green/frontend lint

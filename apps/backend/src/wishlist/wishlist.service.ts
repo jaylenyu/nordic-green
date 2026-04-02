@@ -41,7 +41,12 @@ export class WishlistService {
 
     if (exists) {
       await this.prisma.wishlistItem.delete({
-        where: { wishlistId_productId: { wishlistId: wishlist.id, productId: dto.productId } },
+        where: {
+          wishlistId_productId: {
+            wishlistId: wishlist.id,
+            productId: dto.productId,
+          },
+        },
       });
       return { action: 'removed', productId: dto.productId };
     } else {
@@ -54,10 +59,14 @@ export class WishlistService {
 
   /** Clear the entire wishlist */
   async clear(userId: string) {
-    const wishlist = await this.prisma.wishlist.findUnique({ where: { userId } });
+    const wishlist = await this.prisma.wishlist.findUnique({
+      where: { userId },
+    });
     if (!wishlist) return { message: 'Wishlist not found' };
 
-    await this.prisma.wishlistItem.deleteMany({ where: { wishlistId: wishlist.id } });
+    await this.prisma.wishlistItem.deleteMany({
+      where: { wishlistId: wishlist.id },
+    });
     return { message: 'Wishlist cleared' };
   }
 }

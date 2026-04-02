@@ -1,15 +1,16 @@
 FROM node:20-alpine AS base
 ENV NEXT_TELEMETRY_DISABLED=1
+RUN corepack enable pnpm
 
 # ── 1단계: 의존성 설치 ────────────────────────────────────────────────────────
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/ ./packages/
-RUN yarn install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # ── 2단계: 빌드 ───────────────────────────────────────────────────────────────
 FROM base AS builder
@@ -24,7 +25,7 @@ ARG NEXT_PUBLIC_TOSS_CLIENT_KEY
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_TOSS_CLIENT_KEY=$NEXT_PUBLIC_TOSS_CLIENT_KEY
 
-RUN yarn workspace @nordic-green/frontend build
+RUN pnpm --filter @nordic-green/frontend build
 
 # ── 3단계: 실행 이미지 ────────────────────────────────────────────────────────
 FROM base AS runner

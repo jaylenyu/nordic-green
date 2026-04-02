@@ -1,11 +1,20 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function PaymentFailPage() {
+export default function PaymentFailPageWrapper() {
+  return (
+    <Suspense>
+      <PaymentFailPage />
+    </Suspense>
+  );
+}
+
+function PaymentFailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -21,7 +30,9 @@ export default function PaymentFailPage() {
           <div>
             <p className="text-lg font-bold">결제에 실패했습니다</p>
             <p className="text-sm text-muted-foreground mt-1">{errorMessage}</p>
-            {errorCode && <p className="text-xs text-muted-foreground mt-0.5">오류 코드: {errorCode}</p>}
+            {errorCode && (
+              <p className="text-xs text-muted-foreground mt-0.5">오류 코드: {errorCode}</p>
+            )}
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="flex-1" onClick={() => router.push('/cart')}>

@@ -1,18 +1,27 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export default function PaymentPage() {
+export default function PaymentPageWrapper() {
+  return (
+    <Suspense>
+      <PaymentPage />
+    </Suspense>
+  );
+}
+
+function PaymentPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
   const amount = Number(searchParams.get('amount') ?? 0);
   const orderName = searchParams.get('orderName') ?? '상품 결제';
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const paymentWidgetRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
 
@@ -53,6 +62,7 @@ export default function PaymentPage() {
         customerEmail: undefined,
         customerName: undefined,
       });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       if (err?.code !== 'USER_CANCEL') {
         toast.error('결제 요청에 실패했습니다.');

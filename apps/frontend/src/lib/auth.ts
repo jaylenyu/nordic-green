@@ -20,6 +20,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     session({ session, user }) {
       if (session.user && user) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (session.user as any).id = user.id;
       }
       return session;

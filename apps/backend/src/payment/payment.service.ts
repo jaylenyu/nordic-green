@@ -20,19 +20,24 @@ export class PaymentService {
 
   private tossAuthHeader() {
     const encoded = Buffer.from(`${this.tossSecretKey}:`).toString('base64');
-    return { Authorization: `Basic ${encoded}`, 'Content-Type': 'application/json' };
+    return {
+      Authorization: `Basic ${encoded}`,
+      'Content-Type': 'application/json',
+    };
   }
 
   /** 토스 결제 승인 */
   async confirm(userId: string, dto: ConfirmPaymentDto) {
     const orderId = parseInt(dto.orderId, 10);
-    if (isNaN(orderId)) throw new BadRequestException('올바르지 않은 orderId 형식입니다.');
+    if (isNaN(orderId))
+      throw new BadRequestException('올바르지 않은 orderId 형식입니다.');
 
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: { orderItems: true },
     });
-    if (!order || order.userId !== userId) throw new NotFoundException('주문을 찾을 수 없습니다.');
+    if (!order || order.userId !== userId)
+      throw new NotFoundException('주문을 찾을 수 없습니다.');
 
     // 토스 결제 승인 API 호출
     const tossRes = await fetch(`${TOSS_API_URL}/confirm`, {
@@ -67,41 +72,48 @@ export class PaymentService {
             method: tossData.method,
             amount: dto.amount,
             status: tossData.status ?? 'DONE',
-            requestedAt: tossData.requestedAt ? new Date(tossData.requestedAt) : null,
-            approvedAt: tossData.approvedAt ? new Date(tossData.approvedAt) : new Date(),
+            requestedAt: tossData.requestedAt
+              ? new Date(tossData.requestedAt)
+              : null,
+            approvedAt: tossData.approvedAt
+              ? new Date(tossData.approvedAt)
+              : new Date(),
           },
         });
 
-      await tx.order.update({
-        where: { id: orderId },
-        data: { status: 2 }, // 결제완료
-      });
+        await tx.order.update({
+          where: { id: orderId },
+          data: { status: 2 }, // 결제완료
+        });
 
-      await tx.user.update({
-        where: { id: userId },
-        data: {
-          points: { increment: earnedPoints },
-          totalSpent: { increment: dto.amount },
-        },
-      });
+        await tx.user.update({
+          where: { id: userId },
+          data: {
+            points: { increment: earnedPoints },
+            totalSpent: { increment: dto.amount },
+          },
+        });
 
-      await tx.pointHistory.create({
-        data: {
-          userId,
-          orderId,
-          amount: earnedPoints,
-          reason: 'purchase',
-        },
-      });
+        await tx.pointHistory.create({
+          data: {
+            userId,
+            orderId,
+            amount: earnedPoints,
+            reason: 'purchase',
+          },
+        });
 
-      // 등급 재계산
-      const updatedUser = await tx.user.findUnique({
-        where: { id: userId },
-        select: { totalSpent: true },
+        // 등급 재계산
+        const updatedUser = await tx.user.findUnique({
+          where: { id: userId },
+          select: { totalSpent: true },
+        });
+        const newGrade = this.calcGrade(updatedUser?.totalSpent ?? 0);
+        await tx.user.update({
+          where: { id: userId },
+          data: { grade: newGrade },
+        });
       });
-      const newGrade = this.calcGrade(updatedUser?.totalSpent ?? 0);
-      await tx.user.update({ where: { id: userId }, data: { grade: newGrade } });
-    });
     } catch (err: any) {
       // Prisma unique constraint violation (P2002) — 이중 결제 요청
       if (err?.code === 'P2002') {
@@ -115,7 +127,9 @@ export class PaymentService {
 
   /** 결제 취소/환불 */
   async cancel(userId: string, orderId: number, dto: CancelPaymentDto) {
-    const payment = await this.prisma.payment.findUnique({ where: { orderId } });
+    const payment = await this.prisma.payment.findUnique({
+      where: { orderId },
+    });
     if (!payment || payment.userId !== userId) {
       throw new NotFoundException('결제 정보를 찾을 수 없습니다.');
     }
@@ -124,21 +138,28 @@ export class PaymentService {
     }
 
     if (dto.cancelAmount && dto.cancelAmount > payment.amount) {
-      throw new BadRequestException('환불 금액이 원결제 금액을 초과할 수 없습니다.');
+      throw new BadRequestException(
+        '환불 금액이 원결제 금액을 초과할 수 없습니다.',
+      );
     }
 
     const body: Record<string, unknown> = { cancelReason: dto.cancelReason };
     if (dto.cancelAmount) body.cancelAmount = dto.cancelAmount;
 
-    const tossRes = await fetch(`${TOSS_API_URL}/${payment.paymentKey}/cancel`, {
-      method: 'POST',
-      headers: this.tossAuthHeader(),
-      body: JSON.stringify(body),
-    });
+    const tossRes = await fetch(
+      `${TOSS_API_URL}/${payment.paymentKey}/cancel`,
+      {
+        method: 'POST',
+        headers: this.tossAuthHeader(),
+        body: JSON.stringify(body),
+      },
+    );
 
     const tossData = await tossRes.json();
     if (!tossRes.ok) {
-      throw new InternalServerErrorException(tossData.message ?? '결제 취소에 실패했습니다.');
+      throw new InternalServerErrorException(
+        tossData.message ?? '결제 취소에 실패했습니다.',
+      );
     }
 
     const canceledAmount = dto.cancelAmount ?? payment.amount;
@@ -172,7 +193,10 @@ export class PaymentService {
         select: { totalSpent: true },
       });
       const newGrade = this.calcGrade(updatedUser?.totalSpent ?? 0);
-      await tx.user.update({ where: { id: userId }, data: { grade: newGrade } });
+      await tx.user.update({
+        where: { id: userId },
+        data: { grade: newGrade },
+      });
     });
 
     return { message: '결제가 취소되었습니다.' };
@@ -182,7 +206,9 @@ export class PaymentService {
   async findByOrder(userId: string, orderId: number) {
     const payment = await this.prisma.payment.findUnique({
       where: { orderId },
-      include: { order: { include: { orderItems: { include: { product: true } } } } },
+      include: {
+        order: { include: { orderItems: { include: { product: true } } } },
+      },
     });
     if (!payment || payment.userId !== userId) {
       throw new NotFoundException('결제 정보를 찾을 수 없습니다.');
@@ -200,7 +226,9 @@ export class PaymentService {
 
     if (!paymentKey || !status) return { received: true };
 
-    const payment = await this.prisma.payment.findUnique({ where: { paymentKey } });
+    const payment = await this.prisma.payment.findUnique({
+      where: { paymentKey },
+    });
     if (!payment) return { received: true };
 
     await this.prisma.payment.update({
@@ -224,7 +252,11 @@ export class PaymentService {
           },
         });
         await tx.pointHistory.create({
-          data: { userId: payment.userId, amount: earnedPoints, reason: 'purchase' },
+          data: {
+            userId: payment.userId,
+            amount: earnedPoints,
+            reason: 'purchase',
+          },
         });
       });
     }

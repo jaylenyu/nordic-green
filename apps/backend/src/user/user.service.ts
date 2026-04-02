@@ -24,7 +24,8 @@ export class UserService {
     if (!user) throw new NotFoundException('유저를 찾을 수 없습니다.');
 
     const nextGrade = user.grade < 3 ? user.grade + 1 : null;
-    const nextThreshold = nextGrade !== null ? GRADE_THRESHOLDS[nextGrade] : null;
+    const nextThreshold =
+      nextGrade !== null ? GRADE_THRESHOLDS[nextGrade] : null;
     const progress =
       nextThreshold !== null
         ? Math.min(

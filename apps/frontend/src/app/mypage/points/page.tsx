@@ -35,17 +35,26 @@ export default function PointsPage() {
           </div>
         ) : (
           <div className="space-y-3">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
             {history.map((item: any) => (
               <Card key={item.id}>
                 <CardContent className="py-3 px-5 flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-sm">{REASON_LABEL[item.reason] ?? item.reason}</p>
+                    <p className="font-medium text-sm">
+                      {REASON_LABEL[item.reason] ?? item.reason}
+                    </p>
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {format(new Date(item.createdAt), 'yyyy.MM.dd HH:mm', { locale: ko })}
                     </p>
                   </div>
-                  <span className={cn('font-bold text-base', item.amount > 0 ? 'text-primary' : 'text-destructive')}>
-                    {item.amount > 0 ? '+' : ''}{item.amount.toLocaleString()}P
+                  <span
+                    className={cn(
+                      'font-bold text-base',
+                      item.amount > 0 ? 'text-primary' : 'text-destructive',
+                    )}
+                  >
+                    {item.amount > 0 ? '+' : ''}
+                    {item.amount.toLocaleString()}P
                   </span>
                 </CardContent>
               </Card>

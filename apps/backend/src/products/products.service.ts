@@ -18,7 +18,9 @@ export class ProductsService {
       where.name = { contains, mode: 'insensitive' };
     }
 
-    let orderByClause: Prisma.ProductOrderByWithRelationInput = { createdAt: 'desc' };
+    let orderByClause: Prisma.ProductOrderByWithRelationInput = {
+      createdAt: 'desc',
+    };
     if (orderBy === 'price_asc') orderByClause = { price: 'asc' };
     if (orderBy === 'price_desc') orderByClause = { price: 'desc' };
     if (orderBy === 'name_asc') orderByClause = { name: 'asc' };

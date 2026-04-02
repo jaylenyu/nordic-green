@@ -9,7 +9,14 @@ import { useMe } from '@/hooks/queries/useUser';
 import { useUpdateProfile } from '@/hooks/mutations/useUpdateProfile';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 const schema = z.object({
   name: z.string().min(1, '이름을 입력해주세요.'),
@@ -38,7 +45,12 @@ export default function ProfilePage() {
     }
   };
 
-  if (isLoading) return <div className="flex min-h-screen items-center justify-center text-muted-foreground">로딩 중...</div>;
+  if (isLoading)
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        로딩 중...
+      </div>
+    );
 
   return (
     <main className="min-h-screen pt-16">
@@ -47,22 +59,41 @@ export default function ProfilePage() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField control={form.control} name="name" render={({ field }) => (
-              <FormItem>
-                <FormLabel>이름</FormLabel>
-                <FormControl><Input placeholder="이름을 입력하세요" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
-            <FormField control={form.control} name="phone" render={({ field }) => (
-              <FormItem>
-                <FormLabel>전화번호 <span className="text-muted-foreground font-normal">(선택)</span></FormLabel>
-                <FormControl><Input placeholder="010-0000-0000" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>이름</FormLabel>
+                  <FormControl>
+                    <Input placeholder="이름을 입력하세요" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    전화번호 <span className="text-muted-foreground font-normal">(선택)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="010-0000-0000" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="flex gap-3 pt-2">
-              <Button type="button" variant="outline" className="flex-1" onClick={() => router.back()}>
+              <Button
+                type="button"
+                variant="outline"
+                className="flex-1"
+                onClick={() => router.back()}
+              >
                 취소
               </Button>
               <Button type="submit" className="flex-1" disabled={isPending}>

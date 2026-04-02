@@ -41,7 +41,9 @@ async function migrate() {
     await pgPrisma.$connect();
 
     // 1. Migrate Categories
-    const categories = await mysqlPrisma.$queryRaw<any[]>`SELECT * FROM categories`;
+    const categories = await mysqlPrisma.$queryRaw<
+      any[]
+    >`SELECT * FROM categories`;
     log(`Found ${categories.length} categories`);
     if (!isDryRun) {
       for (const cat of categories) {
@@ -102,7 +104,12 @@ async function migrate() {
     if (!isDryRun) {
       for (const a of accounts) {
         await pgPrisma.account.upsert({
-          where: { provider_providerAccountId: { provider: a.provider, providerAccountId: a.providerAccountId } },
+          where: {
+            provider_providerAccountId: {
+              provider: a.provider,
+              providerAccountId: a.providerAccountId,
+            },
+          },
           create: {
             id: a.id,
             userId: a.userId,
@@ -160,7 +167,9 @@ async function migrate() {
     }
 
     // 7. Migrate OrderItems (before Orders to get IDs)
-    const orderItems = await mysqlPrisma.$queryRaw<any[]>`SELECT * FROM OrderItem`;
+    const orderItems = await mysqlPrisma.$queryRaw<
+      any[]
+    >`SELECT * FROM OrderItem`;
     log(`Found ${orderItems.length} order items`);
 
     // 8. Migrate Orders + wire OrderItems via CSV → FK
@@ -193,7 +202,9 @@ async function migrate() {
           for (const itemId of itemIds) {
             const item = orderItems.find((oi) => oi.id === itemId);
             if (!item) {
-              console.warn(`  ⚠ OrderItem ${itemId} not found for Order ${order.id}`);
+              console.warn(
+                `  ⚠ OrderItem ${itemId} not found for Order ${order.id}`,
+              );
               continue;
             }
             await pgPrisma.orderItem.upsert({
@@ -214,7 +225,9 @@ async function migrate() {
     }
 
     // 9. Migrate WishLists: CSV → WishlistItem join table
-    const wishlists = await mysqlPrisma.$queryRaw<any[]>`SELECT * FROM WishList`;
+    const wishlists = await mysqlPrisma.$queryRaw<
+      any[]
+    >`SELECT * FROM WishList`;
     log(`Found ${wishlists.length} wishlists`);
 
     if (!isDryRun) {
@@ -231,11 +244,15 @@ async function migrate() {
             .map((id: string) => parseInt(id.trim(), 10))
             .filter((id: number) => !isNaN(id));
 
-          log(`  Wishlist ${wishlist.id}: migrating ${productIds.length} product IDs`);
+          log(
+            `  Wishlist ${wishlist.id}: migrating ${productIds.length} product IDs`,
+          );
 
           for (const productId of productIds) {
             await pgPrisma.wishlistItem.upsert({
-              where: { wishlistId_productId: { wishlistId: wishlist.id, productId } },
+              where: {
+                wishlistId_productId: { wishlistId: wishlist.id, productId },
+              },
               create: { wishlistId: wishlist.id, productId },
               update: {},
             });
@@ -272,7 +289,9 @@ async function migrate() {
 
     console.log('\n✅ Migration complete!');
     if (isDryRun) {
-      console.log('This was a dry run. Run without --dry-run to apply changes.');
+      console.log(
+        'This was a dry run. Run without --dry-run to apply changes.',
+      );
     }
   } finally {
     await mysqlPrisma.$disconnect();

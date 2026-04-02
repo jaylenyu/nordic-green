@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AddCartDto, UpdateCartDto } from './cart.dto';
 
@@ -15,7 +19,9 @@ export class CartService {
   }
 
   async add(userId: string, dto: AddCartDto) {
-    const product = await this.prisma.product.findUnique({ where: { id: dto.productId } });
+    const product = await this.prisma.product.findUnique({
+      where: { id: dto.productId },
+    });
     if (!product) throw new NotFoundException('상품을 찾을 수 없습니다.');
 
     return this.prisma.cart.create({
@@ -25,7 +31,8 @@ export class CartService {
 
   async update(userId: string, id: number, dto: UpdateCartDto) {
     const item = await this.prisma.cart.findUnique({ where: { id } });
-    if (!item || item.userId !== userId) throw new NotFoundException('Cart item not found');
+    if (!item || item.userId !== userId)
+      throw new NotFoundException('Cart item not found');
 
     return this.prisma.cart.update({
       where: { id },
@@ -35,7 +42,8 @@ export class CartService {
 
   async remove(userId: string, id: number) {
     const item = await this.prisma.cart.findUnique({ where: { id } });
-    if (!item || item.userId !== userId) throw new NotFoundException('Cart item not found');
+    if (!item || item.userId !== userId)
+      throw new NotFoundException('Cart item not found');
 
     return this.prisma.cart.delete({ where: { id } });
   }

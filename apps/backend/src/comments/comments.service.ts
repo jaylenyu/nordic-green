@@ -50,7 +50,8 @@ export class CommentsService {
 
   async remove(userId: string, id: number) {
     const comment = await this.prisma.comment.findUnique({ where: { id } });
-    if (!comment || comment.userId !== userId) throw new NotFoundException('Comment not found');
+    if (!comment || comment.userId !== userId)
+      throw new NotFoundException('Comment not found');
 
     return this.prisma.comment.delete({ where: { id } });
   }

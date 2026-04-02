@@ -23,9 +23,16 @@ export default function MyPage() {
   const { data: user, isLoading } = useMe();
 
   if (isLoading) {
-    return <div className="flex min-h-screen items-center justify-center text-muted-foreground">로딩 중...</div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+        로딩 중...
+      </div>
+    );
   }
-  if (!user) { router.push('/auth/login'); return null; }
+  if (!user) {
+    router.push('/auth/login');
+    return null;
+  }
 
   const menuItems = [
     { icon: User, label: '프로필 수정', href: '/mypage/profile' },
@@ -43,7 +50,9 @@ export default function MyPage() {
           <CardContent className="pt-6 flex items-center gap-4">
             <Avatar className="h-16 w-16">
               <AvatarImage src={user.image ?? undefined} />
-              <AvatarFallback className="text-lg">{user.name?.charAt(0) ?? <User />}</AvatarFallback>
+              <AvatarFallback className="text-lg">
+                {user.name?.charAt(0) ?? <User />}
+              </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -61,7 +70,9 @@ export default function MyPage() {
             <CardContent className="pt-6 text-center">
               <Trophy className="w-7 h-7 mx-auto mb-2 text-yellow-500" />
               <p className="text-xs text-muted-foreground">보유 포인트</p>
-              <p className="text-xl font-bold text-primary mt-0.5">{user.points.toLocaleString()}P</p>
+              <p className="text-xl font-bold text-primary mt-0.5">
+                {user.points.toLocaleString()}P
+              </p>
             </CardContent>
           </Card>
           <Card>
@@ -79,7 +90,10 @@ export default function MyPage() {
             <CardContent className="pt-6">
               <div className="flex justify-between text-xs text-muted-foreground mb-2">
                 <span>{GRADE_LABELS[user.grade]}</span>
-                <span>{user.nextGradeLabel}까지 ₩{(user.nextGradeThreshold - user.totalSpent).toLocaleString()}</span>
+                <span>
+                  {user.nextGradeLabel}까지 ₩
+                  {(user.nextGradeThreshold - user.totalSpent).toLocaleString()}
+                </span>
               </div>
               <Progress value={user.gradeProgress} />
             </CardContent>
